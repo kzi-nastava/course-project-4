@@ -14,7 +14,7 @@ namespace Hospital.Repository
         {
             List<User> users = new List<User>();
 
-            using (TextFieldParser parser = new TextFieldParser(@"Data\users.csv"))
+            using (TextFieldParser parser = new TextFieldParser(@"..\..\Data\users.csv"))
             {
                 parser.TextFieldType = FieldType.Delimited;
                 parser.SetDelimiters(",");
