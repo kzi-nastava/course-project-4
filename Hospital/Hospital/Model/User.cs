@@ -24,14 +24,14 @@ namespace Hospital.Model
         }
 
         private Role role;
-        private string username;
+        private string email;
         private string password;
         private State state;
 
-        public User(Role role, string username, string password, State state)
+        public User(Role role, string email, string password, State state)
         {
             this.role = role;
-            this.username = username;
+            this.email = email;
             this.password = password;
             this.state = state;
         }

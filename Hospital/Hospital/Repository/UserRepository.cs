@@ -23,11 +23,11 @@ namespace Hospital.Repository
                     string[] fields = parser.ReadFields();
                     
                     User.Role role = (User.Role)int.Parse(fields[0]);
-                    string username = fields[1];
+                    string email = fields[1];
                     string password = fields[2];
                     User.State state = (User.State)int.Parse(fields[3]);
                     
-                    User user = new User(role, username, password, state);
+                    User user = new User(role, email, password, state);
                     users.Add(user);
                 }
             }
