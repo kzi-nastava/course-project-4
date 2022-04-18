@@ -28,6 +28,11 @@ namespace Hospital.Model
         private string password;
         private State state;
 
+        public Role UserRole { get { return role; } }
+        public string Email { get { return email; } }
+        public string Password { get { return password; } }
+        public State UserState { get { return state; } }
+
         public User(Role role, string email, string password, State state)
         {
             this.role = role;
