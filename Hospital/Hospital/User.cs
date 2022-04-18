@@ -18,9 +18,10 @@ namespace Hospital.Model
 
         public enum State
         {
-            BlockedBySystem = 1,
-            BlockedBySecretary = 2,
-            Active = 3
+            BlockedBySystem,
+            BlockedBySecretary,
+            Active
+
         }
 
         private Role role;
