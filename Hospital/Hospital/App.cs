@@ -9,9 +9,11 @@ using Hospital.Service;
 namespace Hospital
 {
     public class App
-    {
+    { 
         static void Main(string[] args)
         {
+            AppointmentService appointmentService = new AppointmentService();   // loading all appointments
+
             Console.Write("Prijava na sistem\n");
             Console.Write("------------------\n");
 
@@ -50,8 +52,8 @@ namespace Hospital
             }
 
             Console.WriteLine("Uspesno ste se ulogovali!");
-            Console.WriteLine($"Dobrodosli {user.Email}");
-            Console.ReadLine();
+            Console.WriteLine($"\nDobrodosli {user.Email}");
+
         }
     }
 }
