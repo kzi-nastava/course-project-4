@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Hospital.Model;
 using Hospital.Service;
+using Hospital.PatientImplementation;
 
 namespace Hospital
 {
@@ -12,8 +13,6 @@ namespace Hospital
     { 
         static void Main(string[] args)
         {
-            AppointmentService appointmentService = new AppointmentService();   // loading all appointments
-
             Console.Write("Prijava na sistem\n");
             Console.Write("------------------\n");
 
@@ -54,6 +53,13 @@ namespace Hospital
             Console.WriteLine("Uspesno ste se ulogovali!");
             Console.WriteLine($"\nDobrodosli {user.Email}");
 
+            if (user.UserRole == User.Role.Patient) {
+                HelperClass helper = new HelperClass(user, userService.Users);
+
+                // patient
+                Patient registeredPatient = new Patient(user.Email, helper.refreshPatientAppointments(), helper);
+                registeredPatient.patientMeni();
+            }
         }
     }
 }
