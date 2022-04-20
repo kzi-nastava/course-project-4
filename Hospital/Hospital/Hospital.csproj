@@ -39,6 +39,8 @@
     <Compile Include="App.cs" />
     <Compile Include="Model\Appointment.cs" />
     <Compile Include="Model\User.cs" />
+    <Compile Include="PatientImplementation\HelperClass.cs" />
+    <Compile Include="PatientImplementation\Patient.cs" />
     <Compile Include="Repository\AppointmentRepository.cs" />
     <Compile Include="Repository\UserRepository.cs" />
     <Compile Include="Service\AppointmentService.cs" />

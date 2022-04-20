@@ -13,6 +13,8 @@ namespace Hospital.Service
         private UserRepository userRepository;
         private List<User> users;
 
+        public List<User> Users { get { return this.users; } }
+
         public bool IsEmailValid(string email)
         {
             foreach (User user in users)

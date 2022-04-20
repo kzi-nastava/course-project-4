@@ -17,28 +17,40 @@ namespace Hospital.Model
             DeleteRequest = 5
         }
 
+        private string id;
         private string patientEmail;
         private string doctorEmail;
         private DateTime dateExamination;
-        private DateTime startExamination;
-        private DateTime endExamination;
+        private DateTime startTime;
+        private DateTime endTime;
         private AppointmentState state;
 
+        public string AppointmentId { get { return id; } }
         public string PatientEmail { get { return patientEmail; } }
         public string DoctorEmail { get { return doctorEmail; } }
         public DateTime DateExamination { get { return dateExamination; } }
-        public DateTime StartExamination { get { return startExamination; } }
-        public DateTime EndExamination { get { return endExamination; } }
-        public AppointmentState UserState { get { return state; } }
+        public DateTime StartTime { get { return startTime; } }
+        public DateTime EndTime { get { return endTime; } }
+        public AppointmentState GetAppointmentState { get { return state; } }
 
-        public Appointment(string patientEmail, string doctorEmail, DateTime date, DateTime start, DateTime end, AppointmentState state)
+        public Appointment(string id, string patientEmail, string doctorEmail, 
+            DateTime date, DateTime start, DateTime end, AppointmentState state)
         {
+            this.id = id;
             this.patientEmail = patientEmail;
             this.doctorEmail = doctorEmail;
             this.dateExamination = date;
-            this.startExamination = start;
-            this.endExamination = end;
+            this.startTime = start;
+            this.endTime = end;
             this.state = state;
+        }
+
+        public override string ToString()
+        {
+            return "Doktor: " + this.doctorEmail + 
+                " Datum: " + this.dateExamination.Day + "/" + this.dateExamination.Month + "/" + this.dateExamination.Year +
+                " Pocetak: " + this.startTime.Hour + ":" + this.startTime.Minute +
+                " Kraj: " + this.endTime.Hour + ":" + this.endTime.Minute;
         }
     }
 }
