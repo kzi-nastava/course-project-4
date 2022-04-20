@@ -13,6 +13,9 @@ namespace Hospital.Service
         private AppointmentRepository appointmentRepository;
         private List<Appointment> appointments;
 
+        public AppointmentRepository AppointmentRepository { get { return appointmentRepository; } }
+        public List<Appointment> Appointments { get { return appointments; } }
+
         public AppointmentService()
         {
             appointmentRepository = new AppointmentRepository();
