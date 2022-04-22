@@ -25,12 +25,14 @@ namespace Hospital.Repository
                     string id = fields[0];
                     string patientEmail = fields[1];
                     string doctorEmail = fields[2];
-                    DateTime dateExamination = DateTime.Parse(fields[3]);
-                    DateTime startExamination = DateTime.Parse(fields[4]);
-                    DateTime endExamination = DateTime.Parse(fields[5]);
-                    Appointment.AppointmentState state = (Appointment.AppointmentState)int.Parse(fields[6]);
+                    DateTime schedulingDate = DateTime.Parse(fields[3]);
+                    DateTime dateExamination = DateTime.Parse(fields[4]);
+                    DateTime startExamination = DateTime.Parse(fields[5]);
+                    DateTime endExamination = DateTime.Parse(fields[6]);
+                    Appointment.AppointmentState state = (Appointment.AppointmentState)int.Parse(fields[7]);
 
-                    Appointment appointment = new Appointment(id, patientEmail, doctorEmail, dateExamination, startExamination, endExamination, state);
+                    Appointment appointment = new Appointment(id, patientEmail, doctorEmail, schedulingDate,
+                                                    dateExamination, startExamination, endExamination, state);
                     allApointments.Add(appointment);
                 }
             }
