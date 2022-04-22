@@ -57,7 +57,7 @@ namespace Hospital
                 HelperClass helper = new HelperClass(user, userService.Users);
 
                 // patient
-                Patient registeredPatient = new Patient(user.Email, helper.refreshPatientAppointments(), helper);
+                Patient registeredPatient = new Patient(user.Email, helper);
                 registeredPatient.patientMeni();
             }
         }
