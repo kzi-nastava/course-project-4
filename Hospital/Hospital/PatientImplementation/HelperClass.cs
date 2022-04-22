@@ -1,4 +1,5 @@
 ﻿// HEADER
+/*In HelperClass there are functions that enable the implementation of the patient's functionalities*/
 
 
 using System;
