@@ -20,6 +20,7 @@ namespace Hospital.Model
         private string id;
         private string patientEmail;
         private string doctorEmail;
+        private DateTime schedulingDate;
         private DateTime dateExamination;
         private DateTime startTime;
         private DateTime endTime;
@@ -28,18 +29,20 @@ namespace Hospital.Model
         public string AppointmentId { get { return id; } }
         public string PatientEmail { get { return patientEmail; } }
         public string DoctorEmail { get { return doctorEmail; } }
+        public DateTime SchedulingDate { get { return schedulingDate; } }
         public DateTime DateExamination { get { return dateExamination; } }
         public DateTime StartTime { get { return startTime; } }
         public DateTime EndTime { get { return endTime; } }
         public AppointmentState GetAppointmentState { get { return state; } }
 
-        public Appointment(string id, string patientEmail, string doctorEmail, 
-            DateTime date, DateTime start, DateTime end, AppointmentState state)
+        public Appointment(string id, string patientEmail, string doctorEmail, DateTime schedulingDate,
+        DateTime dateExamination, DateTime start, DateTime end, AppointmentState state)
         {
             this.id = id;
             this.patientEmail = patientEmail;
             this.doctorEmail = doctorEmail;
-            this.dateExamination = date;
+            this.schedulingDate = schedulingDate;
+            this.dateExamination = dateExamination;
             this.startTime = start;
             this.endTime = end;
             this.state = state;
