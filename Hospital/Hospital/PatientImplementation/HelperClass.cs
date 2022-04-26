@@ -31,18 +31,62 @@ namespace Hospital.PatientImplementation
             allAppointments = appointmentService.AppointmentRepository.Load();
         }
 
-        public List<Appointment> refreshPatientAppointments() 
+        public void refreshPatientAppointments(Patient currentlyRegisteredPatient) 
         {
              this.allAppointments = appointmentService.AppointmentRepository.Load();
 
-            // finding all appointments for the registered patient
-            List<Appointment> patientAppointment = new List<Appointment>();
+            // finding all appointments for the registered patient that have not been deleted and has not yet passed
+            List<Appointment> patientCurrentAppointment = new List<Appointment>();
             foreach (Appointment appointment in allAppointments)
             {
-                if (appointment.PatientEmail.Equals(currentRegisteredUser.Email))
-                    patientAppointment.Add(appointment);
+                if (appointment.PatientEmail.Equals(currentRegisteredUser.Email) &&
+                    appointment.GetAppointmentState != Appointment.AppointmentState.Deleted &&
+                    appointment.DateExamination >= DateTime.Now.Date)
+                {
+                    // check if today's appointment has passed
+                    if (appointment.DateExamination == DateTime.Now.Date && appointment.StartTime.Hour <= DateTime.Now.Hour)
+                        continue;
+                    patientCurrentAppointment.Add(appointment);
+                }
             }
-            return patientAppointment;
+            currentlyRegisteredPatient.PatientAppointments = patientCurrentAppointment;
+        }
+
+        public List<Appointment> findAppointmentsForDeleteAndUpdate(Patient currentlyRegisteredPatient, string typeAction)
+        {
+            int appointmentOrdinalNumber = 0;
+
+            if(typeAction.Equals("delete"))
+                Console.WriteLine("\n\tPREGLEDI ZA BRISANJE");
+            else
+                Console.WriteLine("\n\tPREGLEDI ZA IZMENU");
+            Console.Write("-------------------------------------------\n");
+
+            List<Appointment> appointmentsForChange = new List<Appointment>();
+            foreach (Appointment appointment in currentlyRegisteredPatient.PatientAppointments) 
+            {
+                if (appointment.GetAppointmentState != Appointment.AppointmentState.ChangeRequest &&
+                    appointment.GetAppointmentState != Appointment.AppointmentState.DeleteRequest)
+                {
+                    appointmentsForChange.Add(appointment);
+                    appointmentOrdinalNumber++;
+                    Console.WriteLine(appointmentOrdinalNumber + ". " + appointment.ToString());
+                }
+            }
+            Console.WriteLine();
+
+            return appointmentsForChange;
+        }
+
+        public bool hasPatientAppointment(Patient patient)
+        {
+            if (patient.PatientAppointments.Count == 0)
+            {
+                Console.WriteLine("\nJos uvek nemate nijedan zakazan pregled!");
+                return false;
+            }
+            else
+                return true;
         }
 
         public bool isValidInput(string doctorEmail, string newDateAppointment, string newStartAppointment)
@@ -97,6 +141,19 @@ namespace Hospital.PatientImplementation
             return this.allAppointments.Count + 1;
         }
 
+        public List<UserAction> loadMyCurrentActions(string registeredUserEmail)
+        {
+            ActionService actionService = new ActionService();  // loading all users actions
+            List<UserAction> myCurrentActions = new List<UserAction>();
+
+            foreach (UserAction action in actionService.Actions)
+            {
+                if (registeredUserEmail.Equals(action.PatientEmail) && (DateTime.Now - action.ActionDate).TotalDays <= 30)
+                    myCurrentActions.Add(action);
+            }
+            return myCurrentActions;
+        }
+
         public void blockAccessApplication(string registeredUserEmail)
         {
             // read from file
@@ -111,6 +168,21 @@ namespace Hospital.PatientImplementation
             }
             // saving changes
             File.WriteAllLines(filePath, lines);
+        }
+
+        public void appendToActionFile(string registeredUserEmail, string typeAction)
+        {
+            string filePath = @"..\..\Data\actions.csv";
+
+            UserAction newAction;
+            if (typeAction.Equals("kreiranje"))
+                newAction = new UserAction(registeredUserEmail, DateTime.Now, UserAction.ActionState.Created);
+            else if(typeAction.Equals("izmena"))
+                newAction = new UserAction(registeredUserEmail, DateTime.Now, UserAction.ActionState.Modified);
+            else
+                newAction = new UserAction(registeredUserEmail, DateTime.Now, UserAction.ActionState.Deleted);
+
+            File.AppendAllText(filePath, newAction.ToString());
         }
     }
 }
