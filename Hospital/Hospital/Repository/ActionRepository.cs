@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,8 +25,8 @@ namespace Hospital.Repository
 
                     string patientEmail = fields[0];
                     UserAction.ActionState state = (UserAction.ActionState)int.Parse(fields[1]);
-                    DateTime actionDate = DateTime.Parse(fields[2]);
-                    
+                    DateTime actionDate = DateTime.ParseExact(fields[2], "MM/dd/yyyy", CultureInfo.InvariantCulture);
+
 
                     UserAction action = new UserAction(patientEmail, actionDate, state);
                     allActions.Add(action);
