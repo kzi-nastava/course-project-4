@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Hospital.Model;
 using Hospital.Service;
 using Hospital.PatientImplementation;
+using Hospital.DoctorImplementation;
 
 namespace Hospital
 {
@@ -54,11 +55,16 @@ namespace Hospital
             Console.WriteLine($"\nDobrodosli {user.Email}");
 
             if (user.UserRole == User.Role.Patient) {
-                HelperClass helper = new HelperClass(user, userService.Users);
+                Helper helper = new Helper(user, userService.Users);
 
                 // patient
                 Patient registeredPatient = new Patient(user.Email, helper);
                 registeredPatient.patientMeni();
+            }else if (user.UserRole == User.Role.Doctor) {
+                Helper helper = new Helper(user, userService.Users);
+                //doctor
+                Doctor registeredDoctor = new Doctor(user, helper);
+                registeredDoctor.doctorMenu();
             }
         }
     }

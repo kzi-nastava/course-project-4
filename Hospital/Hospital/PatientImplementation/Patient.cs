@@ -14,6 +14,7 @@ namespace Hospital.PatientImplementation
     {
         string email;
         Helper helper;
+
         List<Appointment> currentAppointments; 
 
         public string Email { get { return email; } }
@@ -287,6 +288,7 @@ namespace Hospital.PatientImplementation
                 Console.WriteLine("\nU proteklih 30 dana previse puta ste kreirali termin.\nPristup aplikaciji Vam je sada blokiran!");
             else
                 return;
+          
             helper.blockAccessApplication(this.email);
             System.Environment.Exit(0); //exit from application
         }

@@ -120,6 +120,7 @@ namespace Hospital.PatientImplementation
             return false;
         }
 
+
         public bool isAppointmentFree(string patientEmail, string doctorEmail, string newDateExamination, string newStartTime)
         {
             DateTime dateExamination = DateTime.Parse(newDateExamination);
