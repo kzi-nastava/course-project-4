@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -44,6 +45,33 @@ namespace Hospital.Service
             }
             return null;
         }
+
+        public void BlockUser(User userForBlocking)
+		{
+            foreach(User user in users)
+			{
+                if(user.Email == userForBlocking.Email)
+				{
+                    user.UserState = User.State.BlockedBySecretary;
+                    break;
+				}
+			}
+
+            string filePath = @"..\..\Data\users.csv";
+
+            List<string> lines = new List<String>();
+
+            string line;
+            foreach(User user in users)
+			{
+                int role = (int)user.UserRole;
+                int state = (int)user.UserState;
+                line = role.ToString() + "," + user.Email + "," + user.Password + "," + user.Name + "," + user.Surname + "," +state.ToString();
+                lines.Add(line);
+			}
+            File.WriteAllLines(filePath, lines.ToArray());
+
+		}
 
         public UserService()
         {

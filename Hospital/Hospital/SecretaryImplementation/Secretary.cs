@@ -136,7 +136,6 @@ namespace Hospital.SecretaryImplementation
 			}
 		}
 
-		//TODO: not done
 		public void BlockPatient()
 		{
 			List<User> activePatients = this.FilterActivePatients();
@@ -160,17 +159,10 @@ namespace Hospital.SecretaryImplementation
 
 			User patient = activePatients[patientIndex-1];
 
-			for(int i = 0; i < service.Users.Count; i++)
-			{
-				User user = service.Users[i];
-				if(user.Email == patient.Email)
-				{
-					user.UserState = User.State.BlockedBySecretary;
-					break;
-				}
-				
-			}
+			service.BlockUser(patient);
+			this.patients = FilterPatients(service.Users);
 
+			Console.WriteLine("\nPacijent " + patient.Name + " " + patient.Surname + " je uspesno blokiran.\n");
 		}
 
 		private void LogOut()
