@@ -41,10 +41,10 @@ namespace Hospital.PatientImplementation
             {
                 if (appointment.PatientEmail.Equals(currentRegisteredUser.Email) &&
                     appointment.GetAppointmentState != Appointment.AppointmentState.Deleted &&
-                    appointment.DateExamination >= DateTime.Now.Date)
+                    appointment.DateAppointment >= DateTime.Now.Date)
                 {
                     // check if today's appointment has passed
-                    if (appointment.DateExamination == DateTime.Now.Date && appointment.StartTime.Hour <= DateTime.Now.Hour)
+                    if (appointment.DateAppointment == DateTime.Now.Date && appointment.StartTime.Hour <= DateTime.Now.Hour)
                         continue;
                     patientCurrentAppointment.Add(appointment);
                 }
@@ -60,12 +60,12 @@ namespace Hospital.PatientImplementation
                 Console.WriteLine("\n\tPREGLEDI ZA BRISANJE");
             else
                 Console.WriteLine("\n\tPREGLEDI ZA IZMENU");
-            Console.Write("-------------------------------------------\n");
+            Console.Write("-----------------------------------------\n");
 
             List<Appointment> appointmentsForChange = new List<Appointment>();
             foreach (Appointment appointment in currentlyRegisteredPatient.PatientAppointments) 
             {
-                if (appointment.GetAppointmentState != Appointment.AppointmentState.ChangeRequest &&
+                if (appointment.GetAppointmentState != Appointment.AppointmentState.UpdateRequest &&
                     appointment.GetAppointmentState != Appointment.AppointmentState.DeleteRequest)
                 {
                     appointmentsForChange.Add(appointment);
@@ -127,13 +127,13 @@ namespace Hospital.PatientImplementation
             DateTime startTime = DateTime.Parse(newStartTime);
 
             foreach (Appointment appointment in appointmentService.Appointments) {
-                if (appointment.DoctorEmail.Equals(doctorEmail) && appointment.DateExamination == dateExamination
+                if (appointment.DoctorEmail.Equals(doctorEmail) && appointment.DateAppointment == dateExamination
                     && appointment.StartTime <= startTime && appointment.EndTime > startTime)
                 {
                     Console.WriteLine("Izabran doktor je zauzet u tom terminu!");
                     return false;
                 }
-                else if (appointment.PatientEmail.Equals(patientEmail) && appointment.DateExamination == dateExamination
+                else if (appointment.PatientEmail.Equals(patientEmail) && appointment.DateAppointment == dateExamination
                     && appointment.StartTime <= startTime && appointment.EndTime > startTime)
                 {
                     Console.WriteLine("Vec imate zakazan pregled u tom terminu!");
