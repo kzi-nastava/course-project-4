@@ -12,13 +12,13 @@ namespace Hospital.PatientImplementation
     class Patient
     {
         string email;
-        HelperClass helper;
+        Helper helper;
         List<Appointment> allMyAppointments;
 
         public string Email { get { return email; } }
         public List<Appointment> PatientAppointments { get { return allMyAppointments; } }
 
-        public Patient(string email, HelperClass helper)
+        public Patient(string email, Helper helper)
         {
             this.email = email;
             this.helper = helper;
@@ -72,7 +72,7 @@ namespace Hospital.PatientImplementation
                 // check if the appointment is scheduled and has not yet passed
                 if ((appointment.GetAppointmentState == Appointment.AppointmentState.Created ||
                     appointment.GetAppointmentState == Appointment.AppointmentState.Modified) &&
-                    appointment.DateExamination > DateTime.Now)
+                    appointment.DateAppointment > DateTime.Now)
                 {
                     Console.WriteLine(i + ". " + appointment.ToString());
                     i++;
@@ -108,7 +108,7 @@ namespace Hospital.PatientImplementation
 
                     string deletionDate = DateTime.Now.Month + "/" + DateTime.Now.Day + "/" + DateTime.Now.Year;
 
-                    if ((DateTime.Now - appointmentForDelete.DateExamination).TotalDays <= 2)
+                    if ((DateTime.Now - appointmentForDelete.DateAppointment).TotalDays <= 2)
                     {
                         lines[i] = id + "," + fields[1] + "," + fields[2] + "," + deletionDate + "," + fields[4] + "," + fields[5] 
                             + "," + fields[6] + "," + (int)Appointment.AppointmentState.DeleteRequest;
@@ -179,7 +179,7 @@ namespace Hospital.PatientImplementation
                         DateTime startTime = DateTime.Parse(newStartTime);
                         DateTime newEndTime = startTime.AddMinutes(15);
 
-                        if ((DateTime.Now - appointmentForUpdate.DateExamination).TotalDays <= 2)
+                        if ((DateTime.Now - appointmentForUpdate.DateAppointment).TotalDays <= 2)
                         {
                             lines[i] = id + "," + fields[1] + "," + doctorEmail + "," + modificationDate + "," + newDate + "," +
                                 newStartTime + "," + newEndTime.Hour + ":" + newEndTime.Minute + "," + 
@@ -253,7 +253,7 @@ namespace Hospital.PatientImplementation
             int created = 0;
 
             foreach (Appointment appointment in allMyAppointments) {
-                if ((DateTime.Now - appointment.SchedulingDate).TotalDays <= 30) {
+                if ((DateTime.Now - appointment.DateAppointment).TotalDays <= 30) {
                     if (appointment.GetAppointmentState == Appointment.AppointmentState.Created)
                         created += 1;
                     else if (appointment.GetAppointmentState == Appointment.AppointmentState.Modified)
