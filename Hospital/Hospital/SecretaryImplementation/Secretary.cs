@@ -1,18 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Hospital.Model;
+using Hospital.Service;
 
 namespace Hospital.SecretaryImplementation
 {
 	class Secretary
 	{
 		private List<User> patients;
-		public Secretary(List<User> users)
+		private UserService service;
+		public Secretary(UserService service)
 		{
-			this.patients = FilterPatients(users);
+			this.service = service;
+			this.patients = FilterPatients(service.Users);
 		}
 
 		public void SecretaryMenu()
@@ -37,7 +41,15 @@ namespace Hospital.SecretaryImplementation
 				}
 				else if (choice == "2")
 				{
-					ShowActivePatients(FilterActivePatients());
+					List<User> activePatients = FilterActivePatients();
+					if(activePatients.Count != 0)
+					{
+						ShowPatients(activePatients);
+					}
+					else
+					{
+						Console.WriteLine("Trenutno nema aktivnih pacijenata.");
+					}
 				}
 				else if (choice == "3")
 				{
@@ -45,11 +57,19 @@ namespace Hospital.SecretaryImplementation
 				}
 				else if (choice == "4")
 				{
-
+					BlockPatient();
 				}
 				else if (choice == "5")
 				{
-					ShowBlockedPatients(FilterBlockedPatients());
+					List<User> blockedPatients = FilterBlockedPatients();
+					if (blockedPatients.Count != 0)
+					{
+						ShowPatients(blockedPatients);
+					}
+					else
+					{
+						Console.WriteLine("Trenutno nema blokiranih pacijenata.");
+					}
 				}
 				else if (choice == "6")
 				{
@@ -107,7 +127,7 @@ namespace Hospital.SecretaryImplementation
 			return blockedPatients;
 		}
 
-		public void ShowActivePatients(List<User> patients)
+		public void ShowPatients(List<User> patients)
 		{
 			for (int i = 0; i < patients.Count; i++)
 			{
@@ -116,14 +136,41 @@ namespace Hospital.SecretaryImplementation
 			}
 		}
 
-		public void ShowBlockedPatients(List<User> patients)
+		//TODO: not done
+		public void BlockPatient()
 		{
-			for (int i = 0; i < patients.Count; i++)
+			List<User> activePatients = this.FilterActivePatients();
+			if(activePatients.Count == 0)
 			{
-				User patient = patients[i];
-				Console.WriteLine("{0}. {1}", i + 1, patient.Name + " " + patient.Surname);
-
+				Console.WriteLine("Trenutno nema aktivnih pacijenata. ");
+				return;
 			}
+			ShowPatients(activePatients);
+
+			Console.WriteLine("--------------------------------------");
+			string patientIndexInput;
+			int patientIndex;
+			do
+			{
+				Console.WriteLine("Unesite redni broj pacijenta ciji nalog zelite da blokirate");
+				Console.Write(">>");
+				patientIndexInput = Console.ReadLine();
+			}
+			while (!int.TryParse(patientIndexInput, out patientIndex) || patientIndex < 1 || patientIndex > activePatients.Count);
+
+			User patient = activePatients[patientIndex-1];
+
+			for(int i = 0; i < service.Users.Count; i++)
+			{
+				User user = service.Users[i];
+				if(user.Email == patient.Email)
+				{
+					user.UserState = User.State.BlockedBySecretary;
+					break;
+				}
+				
+			}
+
 		}
 
 		private void LogOut()

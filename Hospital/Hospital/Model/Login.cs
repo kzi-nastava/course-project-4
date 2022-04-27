@@ -69,7 +69,7 @@ namespace Hospital.Model
             }
             else if(this.registeredUser.UserRole == User.Role.Secretary)
 			{
-                Secretary registeredSecretary = new Secretary(this.userService.Users);
+                Secretary registeredSecretary = new Secretary(this.userService);
                 registeredSecretary.SecretaryMenu();
 			}
         }
