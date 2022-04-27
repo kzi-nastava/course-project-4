@@ -37,7 +37,7 @@ namespace Hospital.SecretaryImplementation
 				}
 				else if (choice == "2")
 				{
-					//ShowActivePatients(FilterActivePatients());
+					ShowActivePatients(FilterActivePatients());
 				}
 				else if (choice == "3")
 				{
@@ -49,7 +49,7 @@ namespace Hospital.SecretaryImplementation
 				}
 				else if (choice == "5")
 				{
-					//ShowBlockedPatients(FilterBlockedPatients());
+					ShowBlockedPatients(FilterBlockedPatients());
 				}
 				else if (choice == "6")
 				{
@@ -57,7 +57,7 @@ namespace Hospital.SecretaryImplementation
 				}
 				else if (choice == "x")
 				{
-					break;
+					this.LogOut();
 				}
 				else
 				{
@@ -107,24 +107,24 @@ namespace Hospital.SecretaryImplementation
 			return blockedPatients;
 		}
 
-		//public void ShowActivePatients(List<User> patients)
-		//{
-		//	for (int i = 0; i < patients.Count; i++)
-		//	{
-		//		User patient = patients[i];
-		//		Console.WriteLine("{0}. {1}", i + 1, patient.Name + " " + patient.Surname);
-		//	}
-		//}
+		public void ShowActivePatients(List<User> patients)
+		{
+			for (int i = 0; i < patients.Count; i++)
+			{
+				User patient = patients[i];
+				Console.WriteLine("{0}. {1}", i + 1, patient.Name + " " + patient.Surname);
+			}
+		}
 
-		//public void ShowBlockedPatients(List<User> patients)
-		//{
-		//	for (int i = 0; i < patients.Count; i++)
-		//	{
-		//		User patient = patients[i];
-		//		Console.WriteLine("{0}. {1}", i + 1, patient.Name + " " + patient.Surname);
+		public void ShowBlockedPatients(List<User> patients)
+		{
+			for (int i = 0; i < patients.Count; i++)
+			{
+				User patient = patients[i];
+				Console.WriteLine("{0}. {1}", i + 1, patient.Name + " " + patient.Surname);
 
-		//	}
-		//}
+			}
+		}
 
 		private void LogOut()
 		{
