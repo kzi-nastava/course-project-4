@@ -43,7 +43,7 @@ namespace Hospital.Service
             return doctorAppointment;
         }
 
-        public bool isAppointmentFreeForDoctor(string doctorEmail,string patientEmail,DateTime newDate,DateTime startTime, DateTime newEndTime, int newRoomNumber)
+        public bool IsAppointmentFreeForDoctor(string doctorEmail,string patientEmail,DateTime newDate,DateTime startTime, DateTime newEndTime, int newRoomNumber)
         {
             foreach (Appointment appointment in appointments)
             {
@@ -66,7 +66,7 @@ namespace Hospital.Service
  
 
 
-        public bool isPatientEmailValid(string patientEmail)
+        public bool IsPatientEmailValid(string patientEmail)
         {
 
             foreach(User user in users)
@@ -80,7 +80,7 @@ namespace Hospital.Service
             return false;
         }
 
-        public bool isDateFormValid(string date)
+        public bool IsDateFormValid(string date)
         {
             DateTime checkDate;
             bool validDate = DateTime.TryParseExact(date, "MM/dd/yyyy", DateTimeFormatInfo.InvariantInfo, DateTimeStyles.None, out checkDate);
@@ -97,7 +97,7 @@ namespace Hospital.Service
             return true;
         }
 
-        public bool isTimeFormValid(string time)
+        public bool IsTimeFormValid(string time)
         {
             TimeSpan checkTime;
             bool validTime = TimeSpan.TryParse(time, out checkTime);
@@ -110,14 +110,14 @@ namespace Hospital.Service
         }
 
         
-        public bool isRoomNumberValid(string roomNumber)
+        public bool IsRoomNumberValid(string roomNumber)
         {
             //add a check to see if the room exists
             return true;
 
         }
 
-        public bool isIntegerValid(string number)
+        public bool IsIntegerValid(string number)
         {
             bool isNumeric = true;
             foreach (char c in number)
@@ -132,7 +132,7 @@ namespace Hospital.Service
             return isNumeric;
         }
 
-        public void deleteAppointment(Appointment appointment)
+        public void DeleteAppointment(Appointment appointment)
         {
             string filePath = @"..\..\Data\appointments.csv";
             string[] lines = File.ReadAllLines(filePath);
@@ -156,7 +156,7 @@ namespace Hospital.Service
             File.WriteAllLines(filePath, lines);
         }
 
-        public void updateAppointment(Appointment appointmentChange)
+        public void UpdateAppointment(Appointment appointmentChange)
         {
             string filePath = @"..\..\Data\appointments.csv";
             string[] lines = File.ReadAllLines(filePath);
