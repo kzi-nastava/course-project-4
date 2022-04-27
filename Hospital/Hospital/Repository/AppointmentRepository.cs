@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,18 +22,20 @@ namespace Hospital.Repository
                 while (!parser.EndOfData)
                 {
                     string[] fields = parser.ReadFields();
-
                     string id = fields[0];
                     string patientEmail = fields[1];
                     string doctorEmail = fields[2];
-                    DateTime schedulingDate = DateTime.Parse(fields[3]);
-                    DateTime dateExamination = DateTime.Parse(fields[4]);
-                    DateTime startExamination = DateTime.Parse(fields[5]);
-                    DateTime endExamination = DateTime.Parse(fields[6]);
-                    Appointment.AppointmentState state = (Appointment.AppointmentState)int.Parse(fields[7]);
 
-                    Appointment appointment = new Appointment(id, patientEmail, doctorEmail, schedulingDate,
-                                                    dateExamination, startExamination, endExamination, state);
+                    
+                    DateTime dateAppointment
+                        = DateTime.ParseExact(fields[3], "MM/dd/yyyy", CultureInfo.InvariantCulture);
+                    DateTime startExamination = DateTime.ParseExact(fields[4], "HH:mm", CultureInfo.InvariantCulture);
+                    DateTime endExamination = DateTime.ParseExact(fields[5], "HH:mm", CultureInfo.InvariantCulture);
+                    Appointment.AppointmentState state = (Appointment.AppointmentState)int.Parse(fields[6]);
+                    int roomNumber = Int32.Parse(fields[7]);
+                    Appointment.TypeOfTerm term = (Appointment.TypeOfTerm)int.Parse(fields[8]);
+                    Appointment appointment = new Appointment(id, patientEmail, doctorEmail,
+                                                    dateAppointment, startExamination, endExamination, state, roomNumber,term);
                     allApointments.Add(appointment);
                 }
             }
