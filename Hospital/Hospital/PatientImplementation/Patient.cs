@@ -13,7 +13,7 @@ namespace Hospital.PatientImplementation
     class Patient
     {
         string email;
-        HelperClass helper;
+        Helper helper;
         List<Appointment> currentAppointments; 
 
         public string Email { get { return email; } }
@@ -23,7 +23,7 @@ namespace Hospital.PatientImplementation
             set { currentAppointments = value; }
         } 
 
-        public Patient(string email, HelperClass helper)
+        public Patient(string email, Helper helper)
         {
             this.email = email;
             this.helper = helper;
