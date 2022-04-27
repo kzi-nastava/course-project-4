@@ -52,7 +52,7 @@ namespace Hospital.Model
             }
 
             Console.WriteLine("Uspesno ste se ulogovali!");
-            Console.WriteLine($"\nDobrodosli {this.registeredUser.Email}");
+            Console.WriteLine($"\nDobrodosli {this.registeredUser.Name + " " + this.registeredUser.Surname}");
 
             Helper helper = new Helper(this.registeredUser, userService.Users);
             if (this.registeredUser.UserRole == User.Role.Patient)
