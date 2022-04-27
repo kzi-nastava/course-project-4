@@ -46,14 +46,23 @@ namespace Hospital.Service
             return null;
         }
 
-        public void BlockUser(User userForBlocking)
+        public void BlockOrUnblockUser(User forUpdate, Boolean blocking)
 		{
             foreach(User user in users)
 			{
-                if(user.Email == userForBlocking.Email)
+                if(user.Email == forUpdate.Email)
 				{
-                    user.UserState = User.State.BlockedBySecretary;
-                    break;
+					if (blocking)
+					{
+                        user.UserState = User.State.BlockedBySecretary;
+                        break;
+					}
+					else
+					{
+                        user.UserState = User.State.Active;
+                        break;
+					}
+                    
 				}
 			}
 

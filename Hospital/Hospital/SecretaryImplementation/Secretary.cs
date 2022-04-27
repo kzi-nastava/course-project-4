@@ -29,8 +29,9 @@ namespace Hospital.SecretaryImplementation
 				Console.WriteLine("2. Pregled aktivnih naloga pacijenata");
 				Console.WriteLine("3. Izmena naloga pacijenta");
 				Console.WriteLine("4. Blokiranje naloga pacijenta");
-				Console.WriteLine("5. Pregled blokiranih naloga pacijenata");
-				Console.WriteLine("6. Pregled pristiglih zahteva za izmenu/brisanje pregleda");
+				Console.WriteLine("5. Odblokiranje naloga pacijenata");
+				Console.WriteLine("6. Pregled blokiranih naloga pacijenata");
+				Console.WriteLine("7. Pregled pristiglih zahteva za izmenu/brisanje pregleda");
 				Console.WriteLine("x. Odjavi se");
 				Console.WriteLine("--------------------------------------------");
 				Console.Write(">>");
@@ -61,6 +62,10 @@ namespace Hospital.SecretaryImplementation
 				}
 				else if (choice == "5")
 				{
+					UnblockPatient();
+				}
+				else if (choice == "6")
+				{
 					List<User> blockedPatients = FilterBlockedPatients();
 					if (blockedPatients.Count != 0)
 					{
@@ -70,10 +75,6 @@ namespace Hospital.SecretaryImplementation
 					{
 						Console.WriteLine("Trenutno nema blokiranih pacijenata.");
 					}
-				}
-				else if (choice == "6")
-				{
-
 				}
 				else if (choice == "x")
 				{
@@ -159,10 +160,39 @@ namespace Hospital.SecretaryImplementation
 
 			User patient = activePatients[patientIndex-1];
 
-			service.BlockUser(patient);
+			service.BlockOrUnblockUser(patient, true);
 			this.patients = FilterPatients(service.Users);
 
 			Console.WriteLine("\nPacijent " + patient.Name + " " + patient.Surname + " je uspesno blokiran.\n");
+		}
+
+
+		public void UnblockPatient()
+		{
+			List<User> blockedPatients = this.FilterBlockedPatients();
+			if (blockedPatients.Count == 0)
+			{
+				Console.WriteLine("Trenutno nema blokiranih pacijenata. ");
+				return;
+			}
+			ShowPatients(blockedPatients);
+			Console.WriteLine("--------------------------------------");
+			string patientIndexInput;
+			int patientIndex;
+			do
+			{
+				Console.WriteLine("Unesite redni broj pacijenta ciji nalog zelite da odblokirate");
+				Console.Write(">>");
+				patientIndexInput = Console.ReadLine();
+			} 
+			while (!int.TryParse(patientIndexInput, out patientIndex) || patientIndex < 1 || patientIndex > blockedPatients.Count);
+
+			User patient = blockedPatients[patientIndex - 1];
+			service.BlockOrUnblockUser(patient, false);
+			this.patients = FilterPatients(service.Users);
+
+			Console.WriteLine("\nPacijent " + patient.Name + " " + patient.Surname + " je uspesno odblokiran.\n");
+
 		}
 
 		private void LogOut()
