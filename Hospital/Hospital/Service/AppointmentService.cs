@@ -170,17 +170,13 @@ namespace Hospital.Service
                 {
 
                     lines[i] = id + "," + fields[1] + "," + fields[2] + "," + fields[3] + "," + fields[4] + "," + fields[5]
-                        + "," + (int)Appointment.AppointmentState.Modified + "," + fields[7] + "," + fields[8];
+                        + "," + (int)Appointment.AppointmentState.Updated + "," + fields[7] + "," + fields[8];
                     Console.WriteLine("Uspesno ste izmenili termin!");
 
                 }
             }
-
             // saving changes
             File.WriteAllLines(filePath, lines);
-
         }
-
-
     }
 }
