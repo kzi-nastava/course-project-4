@@ -139,7 +139,7 @@ namespace Hospital.DoctorImplementation
             foreach (Appointment appointment in this.allMyAppointments)
             {
                 if ((appointment.GetAppointmentState == Appointment.AppointmentState.Created ||
-                    appointment.GetAppointmentState == Appointment.AppointmentState.Modified) &&
+                    appointment.GetAppointmentState == Appointment.AppointmentState.Updated) &&
                     appointment.DateAppointment > DateTime.Now)
                 {
                     Console.WriteLine(appointment.ToStringDisplayForDoctor(serialNumberAppointment));
@@ -395,7 +395,7 @@ namespace Hospital.DoctorImplementation
             }
             appointmentService.Appointments.Remove(appointmentForUpdate);
             this.allMyAppointments.Remove(appointmentForUpdate);
-            Appointment newAppointment = new Appointment(appointmentForUpdate.AppointmentId, patientEmail, currentRegisteredDoctor.Email, dateOfAppointment, startTime, newEndTime, Appointment.AppointmentState.Modified, roomNumber, appointmentForUpdate.GetTypeOfTerm);
+            Appointment newAppointment = new Appointment(appointmentForUpdate.AppointmentId, patientEmail, currentRegisteredDoctor.Email, dateOfAppointment, startTime, newEndTime, Appointment.AppointmentState.Updated, roomNumber, appointmentForUpdate.GetTypeOfTerm);
             appointmentService.Appointments.Add(newAppointment);
             this.allMyAppointments.Add(newAppointment);
             appointmentService.updateAppointment(appointmentForUpdate);

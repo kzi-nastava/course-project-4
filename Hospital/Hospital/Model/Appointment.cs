@@ -11,9 +11,9 @@ namespace Hospital.Model
         public enum AppointmentState
         {
             Created = 1,
-            Modified = 2,
+            Updated = 2,
             Deleted = 3,
-            ChangeRequest = 4,
+            UpdateRequest = 4,
             DeleteRequest = 5
         }
         public enum TypeOfTerm
@@ -61,7 +61,7 @@ namespace Hospital.Model
         public override string ToString()
         {
             return "Doktor: " + this.doctorEmail + 
-                " Datum: " + this.dateAppointment.Day + "/" + this.dateAppointment.Month + "/" + this.dateAppointment.Year +
+                " Datum: " + this.dateAppointment.Month + "/" + this.dateAppointment.Day + "/" + this.dateAppointment.Year +
                 " Pocetak: " + this.startTime.Hour + ":" + this.startTime.Minute +
                 " Kraj: " + this.endTime.Hour + ":" + this.endTime.Minute;
         }
