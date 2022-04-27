@@ -120,7 +120,7 @@ namespace Hospital.PatientImplementation
             return false;
         }
 
-        public bool isAppointmentFree(string doctorEmail, string newDateExamination, string newStartTime)
+        public bool isAppointmentFree(string patientEmail, string doctorEmail, string newDateExamination, string newStartTime)
         {
             DateTime dateExamination = DateTime.Parse(newDateExamination);
             DateTime startTime = DateTime.Parse(newStartTime);
@@ -129,7 +129,13 @@ namespace Hospital.PatientImplementation
                 if (appointment.DoctorEmail.Equals(doctorEmail) && appointment.DateExamination == dateExamination
                     && appointment.StartTime <= startTime && appointment.EndTime > startTime)
                 {
-                    Console.WriteLine("Termin je vec zauzet!");
+                    Console.WriteLine("Izabran doktor je zauzet u tom terminu!");
+                    return false;
+                }
+                else if (appointment.PatientEmail.Equals(patientEmail) && appointment.DateExamination == dateExamination
+                    && appointment.StartTime <= startTime && appointment.EndTime > startTime)
+                {
+                    Console.WriteLine("Vec imate zakazan pregled u tom terminu!");
                     return false;
                 }
             }
