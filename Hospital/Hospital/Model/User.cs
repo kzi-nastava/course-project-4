@@ -40,5 +40,7 @@ namespace Hospital.Model
             this.password = password;
             this.state = state;
         }
+
+       
     }
 }

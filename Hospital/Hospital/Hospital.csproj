@@ -37,9 +37,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.cs" />
+    <Compile Include="DoctorImplementation\Doctor.cs" />
     <Compile Include="Model\Appointment.cs" />
     <Compile Include="Model\User.cs" />
-    <Compile Include="PatientImplementation\HelperClass.cs" />
+    <Compile Include="PatientImplementation\Helper.cs" />
     <Compile Include="PatientImplementation\Patient.cs" />
     <Compile Include="Repository\AppointmentRepository.cs" />
     <Compile Include="Repository\UserRepository.cs" />
