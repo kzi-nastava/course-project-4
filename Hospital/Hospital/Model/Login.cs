@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Hospital.Service;
 using Hospital.PatientImplementation;
 using Hospital.DoctorImplementation;
+using Hospital.SecretaryImplementation;
 
 namespace Hospital.Model
 {
@@ -14,7 +15,7 @@ namespace Hospital.Model
         UserService userService = new UserService();
         User registeredUser;
 
-        public void logIn()
+        public void LogIn()
         {
             Console.WriteLine("\nPrijava na sistem");
             Console.WriteLine("------------------");
@@ -66,6 +67,11 @@ namespace Hospital.Model
                 Doctor registeredDoctor = new Doctor(this.registeredUser, helper);
                 registeredDoctor.doctorMenu();
             }
+            else if(this.registeredUser.UserRole == User.Role.Secretary)
+			{
+                Secretary registeredSecretary = new Secretary(this.userService.Users);
+                registeredSecretary.SecretaryMenu();
+			}
         }
     }
 }
