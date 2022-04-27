@@ -5,8 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Hospital.Model;
 using System.IO;
-using Microsoft.VisualBasic.FileIO;
-using System.Text.RegularExpressions;
+using System.Globalization;
 
 namespace Hospital.PatientImplementation
 {
@@ -14,7 +13,6 @@ namespace Hospital.PatientImplementation
     {
         string email;
         Helper helper;
-
         List<Appointment> currentAppointments; 
 
         public string Email { get { return email; } }
@@ -32,7 +30,7 @@ namespace Hospital.PatientImplementation
         }
 
         // methods
-        public void patientMeni()
+        public void patientMenu()
         {
             // the menu
             string choice;
@@ -57,7 +55,9 @@ namespace Hospital.PatientImplementation
                     this.updateAppointment();
                 else if (choice.Equals("4"))
                     this.deleteAppointment();
-            } while (choice != "5");
+                else if (choice.Equals("5"))
+                    this.logOut();
+            } while (true);
         }
 
         private void readOwnAppointments()
@@ -107,18 +107,16 @@ namespace Hospital.PatientImplementation
 
                 if (id.Equals(appointmentForDelete.AppointmentId)) {
 
-                    string deletionDate = DateTime.Now.Month + "/" + DateTime.Now.Day + "/" + DateTime.Now.Year;
-
-                    if ((appointmentForDelete.DateExamination - DateTime.Now).TotalDays <= 2)
+                    if ((appointmentForDelete.DateAppointment - DateTime.Now).TotalDays <= 2)
                     {
-                        lines[i] = id + "," + fields[1] + "," + fields[2] + "," + deletionDate + "," + fields[4] + "," + fields[5] 
-                            + "," + fields[6] + "," + (int)Appointment.AppointmentState.DeleteRequest;
+                        lines[i] = id + "," + fields[1] + "," + fields[2] + "," + fields[3] + "," + fields[4] 
+                            + "," + fields[5] + "," + (int)Appointment.AppointmentState.DeleteRequest;
                         Console.WriteLine("Zahtev za brisanje je poslat sekretaru!");
                     }
                     else
                     {
-                        lines[i] = id + "," + fields[1] + "," + fields[2] + "," + deletionDate + "," + fields[4] + "," + fields[5]
-                            + "," + fields[6] + "," + (int)Appointment.AppointmentState.Deleted;
+                        lines[i] = id + "," + fields[1] + "," + fields[2] + "," + fields[3] + "," + fields[4]
+                            + "," + fields[5] + "," + (int)Appointment.AppointmentState.Deleted;
                         Console.WriteLine("Uspesno ste obrisali pregled!");
                     }
                 }
@@ -185,22 +183,21 @@ namespace Hospital.PatientImplementation
 
                     if (id.Equals(appointmentForUpdate.AppointmentId))
                     {
-                        string modificationDate = DateTime.Now.Month + "/" + DateTime.Now.Day + "/" + DateTime.Now.Year;
-                        DateTime startTime = DateTime.Parse(newStartTime);
+                        DateTime startTime = DateTime.ParseExact(newStartTime, "HH:mm", CultureInfo.InvariantCulture);
                         DateTime newEndTime = startTime.AddMinutes(15);
 
-                        if ((appointmentForUpdate.DateExamination - DateTime.Now).TotalDays <= 2)
+                        if ((appointmentForUpdate.DateAppointment - DateTime.Now).TotalDays <= 2)
                         {
-                            lines[i] = id + "," + fields[1] + "," + doctorEmail + "," + modificationDate + "," + newDate + "," +
+                            lines[i] = id + "," + fields[1] + "," + doctorEmail + "," + newDate + "," +
                                 newStartTime + "," + newEndTime.Hour + ":" + newEndTime.Minute + "," + 
-                                (int)Appointment.AppointmentState.ChangeRequest;
+                                (int)Appointment.AppointmentState.UpdateRequest;
                             Console.WriteLine("Zahtev za izmenu je poslat sekretaru!");
                         }
                         else
                         {
-                            lines[i] = id + "," + fields[1] + "," + doctorEmail + "," + modificationDate + "," + newDate + "," + 
+                            lines[i] = id + "," + fields[1] + "," + doctorEmail + "," + newDate + "," + 
                                 newStartTime + "," + newEndTime.Hour + ":" + newEndTime.Minute + "," + 
-                                (int)Appointment.AppointmentState.Modified;
+                                (int)Appointment.AppointmentState.Updated;
                             Console.WriteLine("Uspesno ste izvrsili izmenu pregleda!");
                         }
                     }
@@ -242,7 +239,7 @@ namespace Hospital.PatientImplementation
             {
                 int id = helper.getNewAppointmentId();
                 string schedulingDate = DateTime.Now.Month + "/" + DateTime.Now.Day + "/" + DateTime.Now.Year;
-                DateTime startTime = DateTime.Parse(newStartTime);
+                DateTime startTime = DateTime.ParseExact(newStartTime, "HH:mm", CultureInfo.InvariantCulture);
                 DateTime newEndTime = startTime.AddMinutes(15);
 
                 string newAppointment = "\n" + id + "," + this.email + "," + doctorEmail + "," + schedulingDate + "," + newDate + "," + 
@@ -290,7 +287,13 @@ namespace Hospital.PatientImplementation
                 return;
           
             helper.blockAccessApplication(this.email);
-            System.Environment.Exit(0); //exit from application
+            this.logOut(); //log out from account
+        }
+
+        private void logOut()
+        {
+            Login loging = new Login();
+            loging.logIn();
         }
     }
 }
