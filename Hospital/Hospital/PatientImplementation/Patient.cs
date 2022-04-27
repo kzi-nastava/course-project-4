@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Hospital.Model;
 using System.IO;
 using Microsoft.VisualBasic.FileIO;
+using System.Text.RegularExpressions;
 
 namespace Hospital.PatientImplementation
 {
@@ -13,22 +14,27 @@ namespace Hospital.PatientImplementation
     {
         string email;
         Helper helper;
-        List<Appointment> allMyAppointments;
+
+        List<Appointment> currentAppointments; 
 
         public string Email { get { return email; } }
-        public List<Appointment> PatientAppointments { get { return allMyAppointments; } }
+        public List<Appointment> PatientAppointments
+        {
+            get { return currentAppointments; }
+            set { currentAppointments = value; }
+        } 
 
         public Patient(string email, Helper helper)
         {
             this.email = email;
             this.helper = helper;
-            this.allMyAppointments = helper.refreshPatientAppointments();
+            helper.refreshPatientAppointments(this);
         }
 
         // methods
         public void patientMeni()
         {
-            // meni
+            // the menu
             string choice;
             Console.WriteLine("\n\tMENI");
             Console.Write("------------------");
@@ -42,7 +48,7 @@ namespace Hospital.PatientImplementation
                 Console.Write(">> ");
                 choice = Console.ReadLine();
 
-                // my choice
+                // patient choice
                 if (choice.Equals("1"))
                     this.readOwnAppointments();
                 else if (choice.Equals("2"))
@@ -52,50 +58,45 @@ namespace Hospital.PatientImplementation
                 else if (choice.Equals("4"))
                     this.deleteAppointment();
             } while (choice != "5");
-
-            
         }
 
         private void readOwnAppointments()
         {
-            if (this.allMyAppointments.Count == 0)
-            {
-                Console.WriteLine("\nJos uvek nemate zakazan pregled!");
+            if (!helper.hasPatientAppointment(this))
                 return;
-            }
                 
-            int i = 1;
+            int i = 0;
             Console.WriteLine("\n\tPREGLEDI");
             Console.Write("--------------------------\n");
-            foreach (Appointment appointment in this.allMyAppointments)
+            
+            foreach (Appointment appointment in this.currentAppointments)
             {
-                // check if the appointment is scheduled and has not yet passed
-                if ((appointment.GetAppointmentState == Appointment.AppointmentState.Created ||
-                    appointment.GetAppointmentState == Appointment.AppointmentState.Modified) &&
-                    appointment.DateAppointment > DateTime.Now)
-                {
-                    Console.WriteLine(i + ". " + appointment.ToString());
-                    i++;
-                }
-
+                i++;
+                Console.WriteLine(i + ". " + appointment.ToString());
             }
+
             Console.WriteLine();
         }
 
         private void deleteAppointment() 
         {
+            // first check if patient has appointments for delete
+            if (!helper.hasPatientAppointment(this))
+                return;
+
             // pick appointment for delete
-            this.readOwnAppointments();
-            string numberAppointment;
+            List<Appointment> appointmentsForDelete = helper.findAppointmentsForDeleteAndUpdate(this, "delete");
+            string inputNumberAppointment;
+            int numberAppointment;
             do
             {
                 Console.WriteLine("Unesite broj pregleda za brisanje");
                 Console.Write(">> ");
-                numberAppointment = Console.ReadLine();
-            } while (Int32.Parse(numberAppointment) > this.allMyAppointments.Count && numberAppointment.Equals("0") 
-            && numberAppointment.Contains("-"));
+                inputNumberAppointment = Console.ReadLine();
+            } while (!int.TryParse(inputNumberAppointment, out numberAppointment) || numberAppointment < 1 
+            || numberAppointment > appointmentsForDelete.Count);
 
-            Appointment appointmentForDelete = this.allMyAppointments[Int32.Parse(numberAppointment) - 1];
+            Appointment appointmentForDelete = appointmentsForDelete[numberAppointment-1];
 
             string filePath = @"..\..\Data\appointments.csv";
             string[] lines = File.ReadAllLines(filePath);
@@ -108,7 +109,7 @@ namespace Hospital.PatientImplementation
 
                     string deletionDate = DateTime.Now.Month + "/" + DateTime.Now.Day + "/" + DateTime.Now.Year;
 
-                    if ((DateTime.Now - appointmentForDelete.DateAppointment).TotalDays <= 2)
+                    if ((appointmentForDelete.DateExamination - DateTime.Now).TotalDays <= 2)
                     {
                         lines[i] = id + "," + fields[1] + "," + fields[2] + "," + deletionDate + "," + fields[4] + "," + fields[5] 
                             + "," + fields[6] + "," + (int)Appointment.AppointmentState.DeleteRequest;
@@ -116,7 +117,7 @@ namespace Hospital.PatientImplementation
                     }
                     else
                     {
-                        lines[i] = id + "," + fields[1] + "," + fields[2] + "," + deletionDate + "," + fields[4] + "," + fields[5] 
+                        lines[i] = id + "," + fields[1] + "," + fields[2] + "," + deletionDate + "," + fields[4] + "," + fields[5]
                             + "," + fields[6] + "," + (int)Appointment.AppointmentState.Deleted;
                         Console.WriteLine("Uspesno ste obrisali pregled!");
                     }
@@ -127,26 +128,34 @@ namespace Hospital.PatientImplementation
             File.WriteAllLines(filePath, lines);
 
             //refresh data
-            this.allMyAppointments = helper.refreshPatientAppointments();
+            helper.refreshPatientAppointments(this);
 
-            // check number of changed deleted and created appointments
+            // append new action in action file
+            helper.appendToActionFile(this.email, "brisanje");
+
+            // check number of changed, deleted and created appointments
             this.antiTrolMechanism();
         }
 
         private void updateAppointment()
         {
-            // pick appointment for delete
-            this.readOwnAppointments();
-            string numberAppointment;
+            // first check if patient has appointments for update
+            if (!helper.hasPatientAppointment(this))
+                return;
+
+            // pick appointment for update
+            List<Appointment> appointmentsForUpdate = helper.findAppointmentsForDeleteAndUpdate(this, "update");
+            string inputNumberAppointment;
+            int numberAppointment;
             do
             {
                 Console.WriteLine("Unesite broj pregleda za izmenu");
                 Console.Write(">> ");
-                numberAppointment = Console.ReadLine();
-            } while (Int32.Parse(numberAppointment) > this.allMyAppointments.Count && numberAppointment.Equals("0") && 
-            numberAppointment.Contains("-"));
+                inputNumberAppointment = Console.ReadLine();
+            } while (!int.TryParse(inputNumberAppointment, out numberAppointment) || numberAppointment < 1
+            || numberAppointment > appointmentsForUpdate.Count);
 
-            Appointment appointmentForUpdate = this.allMyAppointments[Int32.Parse(numberAppointment) - 1];
+            Appointment appointmentForUpdate = appointmentsForUpdate[numberAppointment - 1];
 
             // update
             string doctorEmail;
@@ -155,6 +164,7 @@ namespace Hospital.PatientImplementation
 
             do
             {
+                // input new values
                 Console.Write("\nUnesite email doktora: ");
                 doctorEmail = Console.ReadLine();
                 Console.Write("Unesite datum (MM/dd/yyyy): ");
@@ -163,7 +173,7 @@ namespace Hospital.PatientImplementation
                 newStartTime = Console.ReadLine();
             } while (!helper.isValidInput(doctorEmail, newDate, newStartTime));
 
-            if (helper.isAppointmentFree(doctorEmail, newDate, newStartTime))
+            if (helper.isAppointmentFree(this.email, doctorEmail, newDate, newStartTime))
             {
                 // read from file
                 string filePath = @"..\..\Data\appointments.csv";
@@ -179,7 +189,7 @@ namespace Hospital.PatientImplementation
                         DateTime startTime = DateTime.Parse(newStartTime);
                         DateTime newEndTime = startTime.AddMinutes(15);
 
-                        if ((DateTime.Now - appointmentForUpdate.DateAppointment).TotalDays <= 2)
+                        if ((appointmentForUpdate.DateExamination - DateTime.Now).TotalDays <= 2)
                         {
                             lines[i] = id + "," + fields[1] + "," + doctorEmail + "," + modificationDate + "," + newDate + "," +
                                 newStartTime + "," + newEndTime.Hour + ":" + newEndTime.Minute + "," + 
@@ -200,9 +210,12 @@ namespace Hospital.PatientImplementation
                 File.WriteAllLines(filePath, lines);
 
                 //refresh data
-                this.allMyAppointments = helper.refreshPatientAppointments();
+                helper.refreshPatientAppointments(this);
 
-                // check number of changed deleted and created appointments
+                // append new action in action file
+                helper.appendToActionFile(this.email, "izmena");
+
+                // check number of changed, deleted and created appointments
                 this.antiTrolMechanism();
             }
 
@@ -216,6 +229,7 @@ namespace Hospital.PatientImplementation
 
             do
             {
+                // input values to create an new appointment
                 Console.Write("\nUnesite email doktora: ");
                 doctorEmail = Console.ReadLine();
                 Console.Write("Unesite datum (MM/dd/yyyy): ");
@@ -224,7 +238,7 @@ namespace Hospital.PatientImplementation
                 newStartTime = Console.ReadLine();
             } while (!helper.isValidInput(doctorEmail, newDate, newStartTime));
 
-            if (helper.isAppointmentFree(doctorEmail, newDate, newStartTime))
+            if (helper.isAppointmentFree(this.email, doctorEmail, newDate, newStartTime))
             {
                 int id = helper.getNewAppointmentId();
                 string schedulingDate = DateTime.Now.Month + "/" + DateTime.Now.Day + "/" + DateTime.Now.Year;
@@ -239,9 +253,12 @@ namespace Hospital.PatientImplementation
                 File.AppendAllText(filePath, newAppointment);
 
                 // refresh data
-                this.allMyAppointments = helper.refreshPatientAppointments();
+                helper.refreshPatientAppointments(this);
 
-                // check number of changed deleted and created appointments
+                // append new action in action file
+                helper.appendToActionFile(this.email, "kreiranje");
+
+                // check number of changed, deleted and created appointments
                 this.antiTrolMechanism();
             }
         }
@@ -252,15 +269,15 @@ namespace Hospital.PatientImplementation
             int deleted = 0;
             int created = 0;
 
-            foreach (Appointment appointment in allMyAppointments) {
-                if ((DateTime.Now - appointment.DateAppointment).TotalDays <= 30) {
-                    if (appointment.GetAppointmentState == Appointment.AppointmentState.Created)
-                        created += 1;
-                    else if (appointment.GetAppointmentState == Appointment.AppointmentState.Modified)
-                        changed += 1;
-                    else if (appointment.GetAppointmentState == Appointment.AppointmentState.Deleted)
-                        deleted += 1;
-                }
+            List<UserAction> myCurrentActions = helper.loadMyCurrentActions(this.email);
+
+            foreach (UserAction action in myCurrentActions) {
+                if (action.GetActionState == UserAction.ActionState.Created)
+                    created += 1;
+                else if (action.GetActionState == UserAction.ActionState.Modified)
+                    changed += 1;
+                else if (action.GetActionState == UserAction.ActionState.Deleted)
+                    deleted += 1;
             }
 
             if (changed > 4)
@@ -271,6 +288,7 @@ namespace Hospital.PatientImplementation
                 Console.WriteLine("\nU proteklih 30 dana previse puta ste kreirali termin.\nPristup aplikaciji Vam je sada blokiran!");
             else
                 return;
+          
             helper.blockAccessApplication(this.email);
             System.Environment.Exit(0); //exit from application
         }
