@@ -14,7 +14,7 @@ using System.IO;
 
 namespace Hospital.PatientImplementation
 {
-    class HelperClass
+    class Helper
     {
         AppointmentService appointmentService = new AppointmentService();  // loading all appointments
         List<Appointment> allAppointments;
@@ -24,7 +24,7 @@ namespace Hospital.PatientImplementation
         // getters
         public List<Appointment> Appointments { get { return allAppointments; } }
 
-        public HelperClass(User user, List<User> allUsers)
+        public Helper(User user, List<User> allUsers)
         {
             this.currentRegisteredUser = user;
             this.allUsers = allUsers;
