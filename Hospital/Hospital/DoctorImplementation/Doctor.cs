@@ -15,6 +15,8 @@ namespace Hospital.DoctorImplementation
     {
         AppointmentService appointmentService = new AppointmentService();  // loading all appointments
         UserService userService = new UserService();
+        HealthRecordService healthRecordService = new HealthRecordService();
+        List<HealthRecord> healthRecords;
         Helper helper;
         List<Appointment> allMyAppointments;
         User currentRegisteredDoctor;
@@ -24,6 +26,7 @@ namespace Hospital.DoctorImplementation
             this.currentRegisteredDoctor = currentRegisteredDoctor;
             this.helper = helper;
             allMyAppointments = appointmentService.GetDoctorAppointment(currentRegisteredDoctor);
+            healthRecords = healthRecordService.GetHealthRecords;
 
         }
         public void doctorMenu()
@@ -73,7 +76,11 @@ namespace Hospital.DoctorImplementation
                 }
                 else if (choice.Equals("6"))
                     Console.WriteLine("6. Izvodjenje pregleda");
-            } while (choice != "7");
+                else if (choice.Equals("7"))
+                {
+                    this.logOut();
+                }
+            } while (true);
         }
 
         private void examiningOwnSchedule()
@@ -83,10 +90,13 @@ namespace Hospital.DoctorImplementation
             {
                 Console.WriteLine("Unesite željeni datum: ");
                 dateAppointment = Console.ReadLine();
-            } while (!appointmentService.isDateFormValid(dateAppointment));
+            } while (!appointmentService.IsDateFormValid(dateAppointment));
 
             this.readOwnAppointmentSpecificDate(DateTime.ParseExact(dateAppointment, "MM/dd/yyyy", CultureInfo.InvariantCulture));
+
         }
+
+
 
 
         private void readOwnAppointmentSpecificDate(DateTime dateSchedule)
@@ -94,11 +104,11 @@ namespace Hospital.DoctorImplementation
             DateTime dateForNextThreeDays = dateSchedule.AddDays(3);
             List<Appointment> appointmentsOfParticularDay = new List<Appointment>();
             Console.WriteLine("Raspored za datum od " + dateSchedule.Month + "/" + dateSchedule.Day + "/" + dateSchedule.Year + " do " + dateForNextThreeDays.Month + "/" + dateForNextThreeDays.Day + "/" + dateForNextThreeDays.Year);
-            foreach (Appointment appointment in this.allMyAppointments)
+            foreach (Appointment appointmentOwn in this.allMyAppointments)
             {
-                if (appointment.DoctorEmail.Equals(currentRegisteredDoctor.Email) && (appointment.DateAppointment >= dateSchedule)&&(appointment.DateAppointment <= dateForNextThreeDays))
+                if (appointmentOwn.DoctorEmail.Equals(currentRegisteredDoctor.Email) && (appointmentOwn.DateAppointment >= dateSchedule)&&(appointmentOwn.DateAppointment <= dateForNextThreeDays))
                 {
-                    appointmentsOfParticularDay.Add(appointment);
+                    appointmentsOfParticularDay.Add(appointmentOwn);
                 }
                 
             }
@@ -111,16 +121,53 @@ namespace Hospital.DoctorImplementation
             {
                 int serialNumberAppointment = 1;
                 Console.WriteLine(String.Format("|{0,5}|{1,10}|{2,10}|{3,10}|{4,10}|{5,10}|{6,10}", "Br.", "Pacijent", "Datum", "Pocetak", "Kraj", "Soba", "Vrsta termina"));
-                foreach (Appointment appointment in  appointmentsOfParticularDay)
+                foreach (Appointment appointmentOwn in  appointmentsOfParticularDay)
                 {
                    
-                    Console.WriteLine(appointment.ToStringDisplayForDoctor(serialNumberAppointment));
+                    Console.WriteLine(appointmentOwn.ToStringDisplayForDoctor(serialNumberAppointment));
                     serialNumberAppointment += 1;
                
                 }
                 Console.WriteLine();
 
             }
+            string choice;
+            Appointment appointmentOfSelectedPatient;
+            string serialNumberOfMedicalRecord;
+            do
+            {
+                
+                Console.WriteLine("Da li želite da pristupite zdravstvenom kartonu od nekog pacijenta? \n1) DA\n2) NE\nUnesite 1 ili 2.");
+                choice = Console.ReadLine();
+                if (choice.Equals("1"))
+                {
+                    do
+                    {
+                        do
+                        {
+                            Console.WriteLine("Unesite redni broj pacijenta čiji zdravstveni karton želite da pogledate: ");
+                            serialNumberOfMedicalRecord = Console.ReadLine();
+                            
+                        } while (!appointmentService.IsIntegerValid(serialNumberOfMedicalRecord));
+                    } while (Int32.Parse(serialNumberOfMedicalRecord) > appointmentsOfParticularDay.Count);
+                    appointmentOfSelectedPatient = appointmentsOfParticularDay[Int32.Parse(serialNumberOfMedicalRecord) - 1];
+                    foreach (HealthRecord healthRecord in this.healthRecords)
+                    {
+                        if (healthRecord.EmailPatient.Equals(appointmentOfSelectedPatient.PatientEmail))
+                        {
+                            Console.WriteLine(healthRecord.ToString());
+
+                        }
+                    }
+                    Console.WriteLine();
+                }
+                else if (choice.Equals("2"))
+                {
+                    return;
+                }
+            } while (!choice.Equals("1") && !choice.Equals("2"));
+            
+
 
 
         }
@@ -150,7 +197,7 @@ namespace Hospital.DoctorImplementation
 
             }
             Console.WriteLine();
-
+            
         }
 
         private void createOwnAppointment()
@@ -184,27 +231,27 @@ namespace Hospital.DoctorImplementation
                     {
                         Console.WriteLine("Unesite email pacijenta: ");
                         patientEmail = Console.ReadLine();
-                    } while (!appointmentService.isPatientEmailValid(patientEmail));
+                    } while (!appointmentService.IsPatientEmailValid(patientEmail));
                     do
                     {
                         Console.WriteLine("Unesite datum (MM/dd/yyyy): ");
                         newDate = Console.ReadLine();
-                    } while (!appointmentService.isDateFormValid(newDate));
+                    } while (!appointmentService.IsDateFormValid(newDate));
                     do
                     {
                         Console.WriteLine("Unesite vreme pocetka pregleda/operacije (HH:mm): ");
                         newStartTime = Console.ReadLine();
-                    } while (!appointmentService.isTimeFormValid(newStartTime));
+                    } while (!appointmentService.IsTimeFormValid(newStartTime));
                     do
                     {
                         Console.WriteLine("Unesite broj sobe: ");
                         newRoomNumber = Console.ReadLine();
-                    } while (!appointmentService.isRoomNumberValid(newRoomNumber));
+                    } while (!appointmentService.IsRoomNumberValid(newRoomNumber));
                     dateOfAppointment = DateTime.ParseExact(newDate, "MM/dd/yyyy", CultureInfo.InvariantCulture);
                     startTime = DateTime.ParseExact(newStartTime, "HH:mm", CultureInfo.InvariantCulture);
                     newEndTime = startTime.AddMinutes(15);
                     roomNumber = Int32.Parse(newRoomNumber);
-                } while (!appointmentService.isAppointmentFreeForDoctor(currentRegisteredDoctor.Email,patientEmail, dateOfAppointment, startTime, newEndTime, roomNumber));
+                } while (!appointmentService.IsAppointmentFreeForDoctor(currentRegisteredDoctor.Email,patientEmail, dateOfAppointment, startTime, newEndTime, roomNumber));
 
 
             }
@@ -217,33 +264,33 @@ namespace Hospital.DoctorImplementation
                     {
                         Console.WriteLine("Unesite email pacijenta: ");
                         patientEmail = Console.ReadLine();
-                    } while (!appointmentService.isPatientEmailValid(patientEmail));
+                    } while (!appointmentService.IsPatientEmailValid(patientEmail));
                     do
                     {
                         Console.WriteLine("Unesite datum (MM/dd/yyyy): ");
                         newDate = Console.ReadLine();
-                    } while (!appointmentService.isDateFormValid(newDate));
+                    } while (!appointmentService.IsDateFormValid(newDate));
                     do
                     {
                         Console.WriteLine("Unesite vreme pocetka pregleda/operacije (HH:mm): ");
                         newStartTime = Console.ReadLine();
-                    } while (!appointmentService.isTimeFormValid(newStartTime));
+                    } while (!appointmentService.IsTimeFormValid(newStartTime));
                     do
                     {
                         Console.WriteLine("Koliko će trajati operacija (u minutima): ");
                         newDurationOperation = Console.ReadLine();
 
-                    }while(!appointmentService.isIntegerValid(newDurationOperation));
+                    }while(!appointmentService.IsIntegerValid(newDurationOperation));
                     do
                     {
                         Console.WriteLine("Unesite broj sobe: ");
                         newRoomNumber = Console.ReadLine();
-                    } while (!appointmentService.isRoomNumberValid(newRoomNumber));
+                    } while (!appointmentService.IsRoomNumberValid(newRoomNumber));
                     dateOfAppointment = DateTime.ParseExact(newDate, "MM/dd/yyyy", CultureInfo.InvariantCulture);
                     startTime = DateTime.ParseExact(newStartTime, "HH:mm", CultureInfo.InvariantCulture);
                     newEndTime = startTime.AddMinutes(Int32.Parse(newDurationOperation));
                     roomNumber = Int32.Parse(newRoomNumber);
-                } while (!appointmentService.isAppointmentFreeForDoctor(currentRegisteredDoctor.Email, patientEmail, dateOfAppointment, startTime, newEndTime, roomNumber));
+                } while (!appointmentService.IsAppointmentFreeForDoctor(currentRegisteredDoctor.Email, patientEmail, dateOfAppointment, startTime, newEndTime, roomNumber));
             }
             else
             {
@@ -286,13 +333,13 @@ namespace Hospital.DoctorImplementation
                 {
                     Console.WriteLine("Unesite redni broj koji želite da obrišete: ");
                     numberAppointment = Console.ReadLine();
-                } while (!appointmentService.isIntegerValid(numberAppointment));
+                } while (!appointmentService.IsIntegerValid(numberAppointment));
             } while (Int32.Parse(numberAppointment) > this.allMyAppointments.Count);
 
             Appointment appointmentForDelete = this.allMyAppointments[Int32.Parse(numberAppointment) - 1];
             this.allMyAppointments.Remove(appointmentForDelete);
             appointmentService.Appointments.Remove(appointmentForDelete);
-            appointmentService.deleteAppointment(appointmentForDelete);
+            appointmentService.DeleteAppointment(appointmentForDelete);
 
         }
 
@@ -320,7 +367,7 @@ namespace Hospital.DoctorImplementation
                 {
                     Console.WriteLine("Unesite redni broj koji želite da promenite: ");
                     numberAppointment = Console.ReadLine();
-                } while (!appointmentService.isIntegerValid(numberAppointment));
+                } while (!appointmentService.IsIntegerValid(numberAppointment));
             } while (Int32.Parse(numberAppointment) > this.allMyAppointments.Count);
             Appointment appointmentForUpdate = this.allMyAppointments[Int32.Parse(numberAppointment) - 1];
             if (appointmentForUpdate.GetTypeOfTerm == Appointment.TypeOfTerm.Examination)
@@ -332,27 +379,27 @@ namespace Hospital.DoctorImplementation
                     {
                         Console.WriteLine("Unesite email pacijenta: ");
                         patientEmail = Console.ReadLine();
-                    } while (!appointmentService.isPatientEmailValid(patientEmail));
+                    } while (!appointmentService.IsPatientEmailValid(patientEmail));
                     do
                     {
                         Console.WriteLine("Unesite datum (MM/dd/yyyy): ");
                         newDate = Console.ReadLine();
-                    } while (!appointmentService.isDateFormValid(newDate));
+                    } while (!appointmentService.IsDateFormValid(newDate));
                     do
                     {
                         Console.WriteLine("Unesite vreme pocetka pregleda/operacije (HH:mm): ");
                         newStartTime = Console.ReadLine();
-                    } while (!appointmentService.isTimeFormValid(newStartTime));
+                    } while (!appointmentService.IsTimeFormValid(newStartTime));
                     do
                     {
                         Console.WriteLine("Unesite broj sobe: ");
                         newRoomNumber = Console.ReadLine();
-                    } while (!appointmentService.isRoomNumberValid(newRoomNumber));
+                    } while (!appointmentService.IsRoomNumberValid(newRoomNumber));
                     dateOfAppointment = DateTime.ParseExact(newDate, "MM/dd/yyyy", CultureInfo.InvariantCulture);
                     startTime = DateTime.ParseExact(newStartTime, "HH:mm", CultureInfo.InvariantCulture);
                     newEndTime = startTime.AddMinutes(15);
                     roomNumber = Int32.Parse(newRoomNumber);
-                } while (!appointmentService.isAppointmentFreeForDoctor(currentRegisteredDoctor.Email, patientEmail, dateOfAppointment, startTime, newEndTime, roomNumber));
+                } while (!appointmentService.IsAppointmentFreeForDoctor(currentRegisteredDoctor.Email, patientEmail, dateOfAppointment, startTime, newEndTime, roomNumber));
 
             }
             else
@@ -364,33 +411,33 @@ namespace Hospital.DoctorImplementation
                     {
                         Console.WriteLine("Unesite email pacijenta: ");
                         patientEmail = Console.ReadLine();
-                    } while (!appointmentService.isPatientEmailValid(patientEmail));
+                    } while (!appointmentService.IsPatientEmailValid(patientEmail));
                     do
                     {
                         Console.WriteLine("Unesite datum (MM/dd/yyyy): ");
                         newDate = Console.ReadLine();
-                    } while (!appointmentService.isDateFormValid(newDate));
+                    } while (!appointmentService.IsDateFormValid(newDate));
                     do
                     {
                         Console.WriteLine("Unesite vreme pocetka pregleda/operacije (HH:mm): ");
                         newStartTime = Console.ReadLine();
-                    } while (!appointmentService.isTimeFormValid(newStartTime));
+                    } while (!appointmentService.IsTimeFormValid(newStartTime));
                     do
                     {
                         Console.WriteLine("Koliko će trajati operacija (u minutima): ");
                         newDurationOperation = Console.ReadLine();
 
-                    } while (!appointmentService.isIntegerValid(newDurationOperation));
+                    } while (!appointmentService.IsIntegerValid(newDurationOperation));
                     do
                     {
                         Console.WriteLine("Unesite broj sobe: ");
                         newRoomNumber = Console.ReadLine();
-                    } while (!appointmentService.isRoomNumberValid(newRoomNumber));
+                    } while (!appointmentService.IsRoomNumberValid(newRoomNumber));
                     dateOfAppointment = DateTime.ParseExact(newDate, "MM/dd/yyyy", CultureInfo.InvariantCulture);
                     startTime = DateTime.ParseExact(newStartTime, "HH:mm", CultureInfo.InvariantCulture);
                     newEndTime = startTime.AddMinutes(Int32.Parse(newDurationOperation));
                     roomNumber = Int32.Parse(newRoomNumber);
-                } while (!appointmentService.isAppointmentFreeForDoctor(currentRegisteredDoctor.Email, patientEmail, dateOfAppointment, startTime, newEndTime, roomNumber));
+                } while (!appointmentService.IsAppointmentFreeForDoctor(currentRegisteredDoctor.Email, patientEmail, dateOfAppointment, startTime, newEndTime, roomNumber));
 
             }
             appointmentService.Appointments.Remove(appointmentForUpdate);
@@ -398,10 +445,15 @@ namespace Hospital.DoctorImplementation
             Appointment newAppointment = new Appointment(appointmentForUpdate.AppointmentId, patientEmail, currentRegisteredDoctor.Email, dateOfAppointment, startTime, newEndTime, Appointment.AppointmentState.Updated, roomNumber, appointmentForUpdate.GetTypeOfTerm);
             appointmentService.Appointments.Add(newAppointment);
             this.allMyAppointments.Add(newAppointment);
-            appointmentService.updateAppointment(appointmentForUpdate);
+            appointmentService.UpdateAppointment(appointmentForUpdate);
 
 
 
+        }
+        private void logOut()
+        {
+            Login loging = new Login();
+            loging.logIn();
         }
     }
 }
