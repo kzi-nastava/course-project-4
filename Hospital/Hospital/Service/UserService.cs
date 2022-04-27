@@ -50,5 +50,7 @@ namespace Hospital.Service
             userRepository = new UserRepository();
             users = userRepository.Load();
         }
+
+        
     }
 }
