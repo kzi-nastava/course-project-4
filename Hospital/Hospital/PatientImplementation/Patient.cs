@@ -95,8 +95,6 @@ namespace Hospital.PatientImplementation
             } while (!int.TryParse(inputNumberAppointment, out numberAppointment) || numberAppointment < 1 
             || numberAppointment > appointmentsForDelete.Count);
 
-            Console.WriteLine("proslo ");
-
             Appointment appointmentForDelete = appointmentsForDelete[numberAppointment-1];
 
             string filePath = @"..\..\Data\appointments.csv";
@@ -174,7 +172,7 @@ namespace Hospital.PatientImplementation
                 newStartTime = Console.ReadLine();
             } while (!helper.isValidInput(doctorEmail, newDate, newStartTime));
 
-            if (helper.isAppointmentFree(doctorEmail, newDate, newStartTime))
+            if (helper.isAppointmentFree(this.email, doctorEmail, newDate, newStartTime))
             {
                 // read from file
                 string filePath = @"..\..\Data\appointments.csv";
@@ -239,7 +237,7 @@ namespace Hospital.PatientImplementation
                 newStartTime = Console.ReadLine();
             } while (!helper.isValidInput(doctorEmail, newDate, newStartTime));
 
-            if (helper.isAppointmentFree(doctorEmail, newDate, newStartTime))
+            if (helper.isAppointmentFree(this.email, doctorEmail, newDate, newStartTime))
             {
                 int id = helper.getNewAppointmentId();
                 string schedulingDate = DateTime.Now.Month + "/" + DateTime.Now.Day + "/" + DateTime.Now.Year;
