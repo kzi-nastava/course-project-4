@@ -35,7 +35,7 @@ namespace Hospital.Model
         public string Password { get { return password; } }
         public string Name { get { return name; } }
         public string Surname { get { return surname; } }
-        public State UserState { get { return state; } }
+        public State UserState { get { return state; } set{ this.state = value; } }
 
         public User(Role role, string email, string password, string name, string surname, State state)
         {
