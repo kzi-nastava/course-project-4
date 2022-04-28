@@ -53,7 +53,7 @@ namespace Hospital.Model
             Console.WriteLine("Uspesno ste se ulogovali!");
             Console.WriteLine($"\nDobrodosli {this.registeredUser.Email}");
 
-            Helper helper = new Helper(this.registeredUser, userService.Users);
+            PatientService helper = new PatientService(this.registeredUser, userService.Users);
             if (this.registeredUser.UserRole == User.Role.Patient)
             { 
                 // patient

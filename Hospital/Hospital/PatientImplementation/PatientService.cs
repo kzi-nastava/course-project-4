@@ -14,7 +14,7 @@ using System.IO;
 
 namespace Hospital.PatientImplementation
 {
-    class Helper
+    class PatientService
     {
         AppointmentService appointmentService = new AppointmentService();  // loading all appointments
         List<Appointment> allAppointments;
@@ -24,7 +24,7 @@ namespace Hospital.PatientImplementation
         // getters
         public List<Appointment> Appointments { get { return allAppointments; } }
 
-        public Helper(User user, List<User> allUsers)
+        public PatientService(User user, List<User> allUsers)
         {
             this.currentRegisteredUser = user;
             this.allUsers = allUsers;
@@ -66,7 +66,8 @@ namespace Hospital.PatientImplementation
             foreach (Appointment appointment in currentlyRegisteredPatient.PatientAppointments) 
             {
                 if (appointment.GetAppointmentState != Appointment.AppointmentState.UpdateRequest &&
-                    appointment.GetAppointmentState != Appointment.AppointmentState.DeleteRequest)
+                    appointment.GetAppointmentState != Appointment.AppointmentState.DeleteRequest && 
+                    appointment.GetTypeOfTerm != Appointment.TypeOfTerm.Operation)
                 {
                     appointmentsForChange.Add(appointment);
                     appointmentOrdinalNumber++;
