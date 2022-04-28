@@ -13,11 +13,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Setup .NET 6.0
+    - name: Setup .NET 5.0
       uses: actions/setup-dotnet@v2
       with:
-        dotnet-version: 6.0.x
+        dotnet-version: 5.0.x
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore Hospital/Hospital
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build --no-restore Hospital/Hospital
