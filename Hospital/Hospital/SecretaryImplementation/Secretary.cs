@@ -55,7 +55,7 @@ namespace Hospital.SecretaryImplementation
 				}
 				else if (choice == "3")
 				{
-
+					ChangePatientAccount();
 				}
 				else if (choice == "4")
 				{
@@ -147,6 +147,7 @@ namespace Hospital.SecretaryImplementation
 				return;
 			}
 			ShowPatients(activePatients);
+			Console.WriteLine("x. Odustani");
 
 			Console.WriteLine("--------------------------------------");
 			string patientIndexInput;
@@ -156,6 +157,10 @@ namespace Hospital.SecretaryImplementation
 				Console.WriteLine("Unesite redni broj pacijenta ciji nalog zelite da blokirate");
 				Console.Write(">>");
 				patientIndexInput = Console.ReadLine();
+				if(patientIndexInput == "x")
+				{
+					return;
+				}
 			}
 			while (!int.TryParse(patientIndexInput, out patientIndex) || patientIndex < 1 || patientIndex > activePatients.Count);
 
@@ -178,6 +183,7 @@ namespace Hospital.SecretaryImplementation
 			}
 			ShowPatients(blockedPatients);
 			Console.WriteLine("--------------------------------------");
+			Console.WriteLine("x. Odustani");
 			string patientIndexInput;
 			int patientIndex;
 			do
@@ -185,6 +191,10 @@ namespace Hospital.SecretaryImplementation
 				Console.WriteLine("Unesite redni broj pacijenta ciji nalog zelite da odblokirate");
 				Console.Write(">>");
 				patientIndexInput = Console.ReadLine();
+				if(patientIndexInput == "x")
+				{
+					return;
+				}
 			} 
 			while (!int.TryParse(patientIndexInput, out patientIndex) || patientIndex < 1 || patientIndex > blockedPatients.Count);
 
@@ -227,6 +237,53 @@ namespace Hospital.SecretaryImplementation
 
 			this.healthRecordService.CreateHealthRecord(newPatient);
 			Console.WriteLine("\nNalog za pacijenta " + name + " " + surname + " je uspesno kreiran.");
+		}
+
+		private void ChangePatientAccount()
+		{
+			if (patients.Count == 0)
+			{
+				Console.WriteLine("\nTrenutno nema postojecih naloga za izmenu.");
+				return;
+			}
+			ShowPatients(patients);
+			Console.WriteLine("x. Odustani");
+			Console.WriteLine("--------------------------------------");
+			string patientIndexInput;
+			int patientIndex;
+			do
+			{
+				Console.WriteLine("Unesite redni broj pacijenta ciji nalog zelite da izmenite.");
+				Console.Write(">>");
+				patientIndexInput = Console.ReadLine();
+				if (patientIndexInput == "x")
+				{
+					return;
+				}
+			} while (!int.TryParse(patientIndexInput, out patientIndex) || patientIndex < 1 || patientIndex > this.patients.Count);
+
+			User patient = patients[patientIndex - 1];
+			Console.WriteLine("\nStari podaci\n---------------------------------------------");
+			Console.WriteLine("Ime: " + patient.Name);
+			Console.WriteLine("Prezime: " + patient.Surname);
+			Console.WriteLine("Email: " + patient.Email);
+			Console.WriteLine("Lozinka: " + patient.Password);
+			Console.WriteLine("---------------------------------------------\n\nNovi podaci");
+			Console.Write("Ime: ");
+			var newName = Console.ReadLine();
+			Console.Write("Prezime: ");
+			var newSurname = Console.ReadLine();
+			Console.Write("Lozinka: ");
+			var newPassword = Console.ReadLine();
+
+			patient.Name = newName;
+			patient.Surname = newSurname;
+			patient.Password = newPassword;
+
+			userService.UpdateUserInfo(patient);
+
+			Console.WriteLine("\nNalog pacijenta je uspesno izmenjen.");
+
 		}
 
 		private void LogOut()

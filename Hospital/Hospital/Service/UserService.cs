@@ -63,7 +63,7 @@ namespace Hospital.Service
             File.WriteAllLines(filePath, lines.ToArray());
         }
 
-        public void BlockOrUnblockUser(User forUpdate, Boolean blocking)
+        public void BlockOrUnblockUser(User forUpdate, bool blocking)
 		{
             foreach(User user in users)
 			{
@@ -85,6 +85,19 @@ namespace Hospital.Service
 
             UpdateUserFile();
 
+		}
+
+        public void UpdateUserInfo(User forUpdate)
+		{
+            for(int i = 0; i < users.Count; i++)
+			{
+                User user = Users[i];
+                if (user.Email == forUpdate.Email){
+                    users[i] = forUpdate;
+                    break;
+				}
+			}
+            UpdateUserFile();
 		}
 
         public UserService()
