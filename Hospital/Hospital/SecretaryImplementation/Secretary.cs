@@ -12,10 +12,11 @@ namespace Hospital.SecretaryImplementation
 	class Secretary
 	{
 		private List<User> patients;
-		private UserService service;
+		private UserService userService;
+		private HealthRecordService healthRecordService = new HealthRecordService();
 		public Secretary(UserService service)
 		{
-			this.service = service;
+			this.userService = service;
 			this.patients = FilterPatients(service.Users);
 		}
 
@@ -38,7 +39,7 @@ namespace Hospital.SecretaryImplementation
 				var choice = Console.ReadLine();
 				if (choice == "1")
 				{
-
+					CreatePatientAccount();
 				}
 				else if (choice == "2")
 				{
@@ -160,8 +161,8 @@ namespace Hospital.SecretaryImplementation
 
 			User patient = activePatients[patientIndex-1];
 
-			service.BlockOrUnblockUser(patient, true);
-			this.patients = FilterPatients(service.Users);
+			userService.BlockOrUnblockUser(patient, true);
+			this.patients = FilterPatients(userService.Users);
 
 			Console.WriteLine("\nPacijent " + patient.Name + " " + patient.Surname + " je uspesno blokiran.\n");
 		}
@@ -188,11 +189,44 @@ namespace Hospital.SecretaryImplementation
 			while (!int.TryParse(patientIndexInput, out patientIndex) || patientIndex < 1 || patientIndex > blockedPatients.Count);
 
 			User patient = blockedPatients[patientIndex - 1];
-			service.BlockOrUnblockUser(patient, false);
-			this.patients = FilterPatients(service.Users);
+			userService.BlockOrUnblockUser(patient, false);
+			this.patients = FilterPatients(userService.Users);
 
 			Console.WriteLine("\nPacijent " + patient.Name + " " + patient.Surname + " je uspesno odblokiran.\n");
 
+		}
+
+		public void CreatePatientAccount()
+		{
+			//TODO: create health record
+
+			Console.WriteLine("-------------------------------------");
+			Console.WriteLine("Unesite podatke o pacijentu");
+			Console.Write("Email: ");
+			var email = Console.ReadLine();
+			bool emailDuplicate = this.userService.IsEmailValid(email);
+			while (emailDuplicate)
+			{
+				Console.WriteLine("Vec postoji nalog sa ovom email adresom.");
+				Console.Write("Email: ");
+				email = Console.ReadLine();
+				emailDuplicate = this.userService.IsEmailValid(email);
+			}
+			Console.Write("Password: ");
+			var password = Console.ReadLine();
+			Console.Write("Ime: ");
+			var name = Console.ReadLine();
+			Console.Write("Prezime: ");
+			var surname = Console.ReadLine();
+
+			User newPatient = new User(User.Role.Patient, email, password, name, surname, User.State.Active);
+			this.userService.Users.Add(newPatient);
+			this.patients.Add(newPatient);
+
+			this.userService.UpdateUserFile();
+
+			this.healthRecordService.CreateHealthRecord(newPatient);
+			Console.WriteLine("\nNalog za pacijenta " + name + " " + surname + " je uspesno kreiran.");
 		}
 
 		private void LogOut()
