@@ -60,10 +60,21 @@ namespace Hospital.Model
 
         public override string ToString()
         {
-            return "Doktor: " + this.doctorEmail + 
+            string appointment = "Doktor: " + this.doctorEmail +
                 " Datum: " + this.dateAppointment.Month + "/" + this.dateAppointment.Day + "/" + this.dateAppointment.Year +
                 " Pocetak: " + this.startTime.Hour + ":" + this.startTime.Minute +
                 " Kraj: " + this.endTime.Hour + ":" + this.endTime.Minute;
+            if (this.GetTypeOfTerm == Appointment.TypeOfTerm.Operation)
+                appointment += " Tip: operacija";
+            else
+            {
+                appointment += " Tip: pregled";
+                if (this.GetAppointmentState == AppointmentState.UpdateRequest)
+                    appointment += " Stanje: poslato sekretaru za izmenu";
+                else if(this.GetAppointmentState == AppointmentState.DeleteRequest)
+                    appointment += " Stanje: poslato sekretaru za brisanje";
+            }
+            return appointment;
         }
         public string ToStringDisplayForDoctor(int serialNumber)
         {
