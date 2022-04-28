@@ -15,7 +15,7 @@ namespace Hospital.Model
         UserService userService = new UserService();
         User registeredUser;
 
-        public void LogIn()
+        public void logIn()
         {
             Console.WriteLine("\nPrijava na sistem");
             Console.WriteLine("------------------");

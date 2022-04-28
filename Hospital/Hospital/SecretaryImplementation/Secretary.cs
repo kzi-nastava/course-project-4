@@ -198,7 +198,7 @@ namespace Hospital.SecretaryImplementation
 		private void LogOut()
 		{
 			Login loging = new Login();
-			loging.LogIn();
+			loging.logIn();
 		}
 
 	}
