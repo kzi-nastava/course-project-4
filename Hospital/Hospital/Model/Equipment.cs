@@ -8,7 +8,7 @@ namespace Hospital.Model
 {
     public class Equipment
     {
-        public enum TypeOfEquipment
+        public enum Type
         {
             ExaminationEquipment = 1,
             OperationEquipment = 2,
@@ -16,44 +16,44 @@ namespace Hospital.Model
             HallwayEquipment = 4
         }
 
-        private string id;
-        private string name;
-        private TypeOfEquipment type;
-        private int quantity;
-        private string roomId;
+        private string _id;
+        private string _name;
+        private Type _type;
+        private int _quantity;
+        private string _roomId;
 
-        public string Id { get { return id; } }
-        public string Name { get { return name; } }
-        public TypeOfEquipment Type { get { return type; } }
-        public int Quantity { get { return quantity; } }
-        public string RoomId { get { return roomId; } }
+        public string Id { get { return _id; } }
+        public string Name { get { return _name; } }
+        public Type EquipmentType { get { return _type; } }
+        public int Quantity { get { return _quantity; } }
+        public string RoomId { get { return _roomId; } }
 
-        public string TypeStr
+        public string TypeDescription
         {
             get
             {
-                switch (type)
+                switch (_type)
                 {
-                    case TypeOfEquipment.ExaminationEquipment:
+                    case Type.ExaminationEquipment:
                         return "Oprema za preglede";
-                    case TypeOfEquipment.OperationEquipment:
+                    case Type.OperationEquipment:
                         return "Oprema za operacije";
-                    case TypeOfEquipment.Furniture:
+                    case Type.Furniture:
                         return "Sobni namestaj";
-                    case TypeOfEquipment.HallwayEquipment:
+                    case Type.HallwayEquipment:
                     default:
                         return "Oprema za hodnike";
                 }
             }
         }
 
-        public Equipment(string id, string name, TypeOfEquipment type, int quantity, string roomId)
+        public Equipment(string id, string name, Type type, int quantity, string roomId)
         {
-            this.id = id;
-            this.name = name;
-            this.type = type;
-            this.quantity = quantity;
-            this.roomId = roomId;
+            this._id = id;
+            this._name = name;
+            this._type = type;
+            this._quantity = quantity;
+            this._roomId = roomId;
         }
     }
 }

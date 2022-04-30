@@ -8,7 +8,7 @@ namespace Hospital.Model
 {
     public class Room
     {
-        public enum TypeOfRoom
+        public enum Type
         {
             OperationRoom = 1,
             ExaminationRoom = 2,
@@ -17,40 +17,40 @@ namespace Hospital.Model
             Warehouse = 5
         }
 
-        private string id;
-        private string name;
-        private TypeOfRoom type;
+        private string _id;
+        private string _name;
+        private Type _type;
 
-        public string Id { get { return id; } }
-        public string Name { get { return name; } }
-        public TypeOfRoom Type { get { return type; } }
+        public string Id { get { return _id; } }
+        public string Name { get { return _name; } }
+        public Type RoomType { get { return _type; } }
 
-        public string TypeStr 
+        public string TypeDescription 
         { 
             get 
             { 
-                switch(type)
+                switch(_type)
                 {
-                    case TypeOfRoom.OperationRoom:
+                    case Type.OperationRoom:
                         return "Operaciona sala";
-                    case TypeOfRoom.ExaminationRoom:
+                    case Type.ExaminationRoom:
                         return "Sala za preglede";
-                    case TypeOfRoom.RestRoom:
+                    case Type.RestRoom:
                         return "Soba za odmor";
-                    case TypeOfRoom.Warehouse:
+                    case Type.Warehouse:
                         return "Magacin";
-                    case TypeOfRoom.Other:
+                    case Type.Other:
                     default:
                         return "Druga soba";
                 }
             } 
         }
 
-        public Room(string id, string name, TypeOfRoom type)
+        public Room(string id, string name, Type type)
         {
-            this.id = id;
-            this.name = name;
-            this.type = type;
+            this._id = id;
+            this._name = name;
+            this._type = type;
         }
     }
 }

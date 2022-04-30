@@ -203,7 +203,7 @@ namespace Hospital.PatientImplementation
         public Room FindFreeRoom(DateTime newDate, DateTime newStartTime)
         {
             RoomService roomService = new RoomService();
-            List<Room> freeRooms = roomService.Rooms;  // at the beginning all the rooms are free
+            List<Room> freeRooms = roomService.AllRooms;  // at the beginning all the rooms are free
 
             foreach (Appointment appointment in this._allAppointments)
             {

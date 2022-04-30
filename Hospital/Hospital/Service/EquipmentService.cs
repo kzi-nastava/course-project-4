@@ -10,22 +10,22 @@ namespace Hospital.Service
 {
     public class EquipmentService
     {
-        private EquipmentRepository equipmentRepository;
-        private RoomService roomService;
-        private List<Equipment> allEquipment;
+        private EquipmentRepository _equipmentRepository;
+        private RoomService _roomService;
+        private List<Equipment> _allEquipment;
 
-        public List<Equipment> AllEquipment { get { return allEquipment; } }
+        public List<Equipment> AllEquipment { get { return _allEquipment; } }
 
         public EquipmentService(RoomService roomService)
         {
-            this.roomService = roomService;
-            equipmentRepository = new EquipmentRepository();
-            allEquipment = equipmentRepository.Load();
+            this._roomService = roomService;
+            _equipmentRepository = new EquipmentRepository();
+            _allEquipment = _equipmentRepository.Load();
         }
 
         public Equipment GetEquipmentById(string id)
         {
-            foreach (Equipment equipment in allEquipment)
+            foreach (Equipment equipment in _allEquipment)
             {
                 if (equipment.Id.Equals(id))
                     return equipment;
@@ -33,24 +33,24 @@ namespace Hospital.Service
             return null;
         }
 
-        public bool DoesIdExist(string id)
+        public bool IdExist(string id)
         {
             return GetEquipmentById(id) != null;
         }
 
-        public bool CreateEquipment(string id, string name, Equipment.TypeOfEquipment type, int quantity, string roomId)
+        public bool CreateEquipment(string id, string name, Equipment.Type type, int quantity, string roomId)
         {
-            if (DoesIdExist(id))
+            if (IdExist(id))
                 return false;
             Equipment equipment = new Equipment(id, name, type, quantity, roomId);
-            allEquipment.Add(equipment);
-            equipmentRepository.Save(allEquipment);
+            _allEquipment.Add(equipment);
+            _equipmentRepository.Save(_allEquipment);
             return true;
         }
 
-        public bool UpdateEquipment(string id, string name, Equipment.TypeOfEquipment type, int quantity, string roomId)
+        public bool UpdateEquipment(string id, string name, Equipment.Type type, int quantity, string roomId)
         {
-            if (!DoesIdExist(id))
+            if (!IdExist(id))
                 return false;
             DeleteEquipment(id);
             CreateEquipment(id, name, type, quantity, roomId);
@@ -59,11 +59,11 @@ namespace Hospital.Service
 
         public bool DeleteEquipment(string id)
         {
-            if (!DoesIdExist(id))
+            if (!IdExist(id))
                 return false;
             Equipment equipment = GetEquipmentById(id);
-            allEquipment.Remove(equipment);
-            equipmentRepository.Save(allEquipment);
+            _allEquipment.Remove(equipment);
+            _equipmentRepository.Save(_allEquipment);
             return true;
         }
 
@@ -71,22 +71,22 @@ namespace Hospital.Service
         {
             List<Equipment> answer = new List<Equipment>();
             query = query.ToLower();
-            foreach (Equipment equipment in allEquipment)
+            foreach (Equipment equipment in _allEquipment)
             {
                 if (equipment.Name.ToLower().Contains(query) || equipment.Id.ToLower().Contains(query)
-                    || equipment.TypeStr.ToLower().Contains(query))
+                    || equipment.TypeDescription.ToLower().Contains(query))
                     answer.Add(equipment);
             }
             return answer;
         }
 
-        public List<Equipment> FilterByRoomType(Room.TypeOfRoom roomType)
+        public List<Equipment> FilterByRoomType(Room.Type roomType)
         {
             List<Equipment> answer = new List<Equipment>();
-            foreach (Equipment equipment in allEquipment)
+            foreach (Equipment equipment in _allEquipment)
             {
-                Room room = roomService.GetRoomById(equipment.RoomId);
-                if (room.Type == roomType)
+                Room room = _roomService.GetRoomById(equipment.RoomId);
+                if (room.RoomType == roomType)
                     answer.Add(equipment);
             }
             return answer;
@@ -95,7 +95,7 @@ namespace Hospital.Service
         public List<Equipment> FilterByQuantity(int lowerBound, int upperBound) // If bound is set to -1 it is ignored
         {
             List<Equipment> answer = new List<Equipment>();
-            foreach (Equipment equipment in allEquipment)
+            foreach (Equipment equipment in _allEquipment)
             {
                 if (lowerBound != -1 && lowerBound > equipment.Quantity)
                     continue;
@@ -106,12 +106,12 @@ namespace Hospital.Service
             return answer;
         }
 
-        public List<Equipment> FilterByEquipmentType(Equipment.TypeOfEquipment equipmentType)
+        public List<Equipment> FilterByEquipmentType(Equipment.Type equipmentType)
         {
             List<Equipment> answer = new List<Equipment>();
-            foreach (Equipment equipment in allEquipment)
+            foreach (Equipment equipment in _allEquipment)
             {
-                if (equipment.Type == equipmentType)
+                if (equipment.EquipmentType == equipmentType)
                     answer.Add(equipment);
             }
             return answer;

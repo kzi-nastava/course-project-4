@@ -12,17 +12,17 @@ namespace Hospital.ManagerImplementation
 {
     public class Manager
     {
-        private User currentRegisteredManager;
-        private RoomService roomService;
-        private EquipmentService equipmentService;
-        private EquipmentMovingService equipmentMovingService;
+        private User _currentRegisteredManager;
+        private RoomService _roomService;
+        private EquipmentService _equipmentService;
+        private EquipmentMovingService _equipmentMovingService;
 
         public Manager(User currentRegisteredManager)
         {
-            this.currentRegisteredManager = currentRegisteredManager;
-            roomService = new RoomService();
-            equipmentService = new EquipmentService(roomService);
-            equipmentMovingService = new EquipmentMovingService(equipmentService, roomService);
+            this._currentRegisteredManager = currentRegisteredManager;
+            _roomService = new RoomService();
+            _equipmentService = new EquipmentService(_roomService);
+            _equipmentMovingService = new EquipmentMovingService(_equipmentService, _roomService);
         }
 
         public void ManagerMenu() 
@@ -72,7 +72,7 @@ namespace Hospital.ManagerImplementation
 
             Console.Write("Unesite broj sobe: ");
             string id = Console.ReadLine();
-            while (roomService.DoesIdExist(id))
+            while (_roomService.IdExists(id))
             {
                 Console.Write("Broj sobe je zauzet. Odaberite drugi broj: ");
                 id = Console.ReadLine();
@@ -92,7 +92,7 @@ namespace Hospital.ManagerImplementation
             Console.WriteLine("3. Soba za odmor");
             Console.WriteLine("4. Druga prostorija");
 
-            Room.TypeOfRoom type = Room.TypeOfRoom.Other;
+            Room.Type type = Room.Type.Other;
             while (true)
             {
                 Console.Write(">> ");
@@ -100,13 +100,13 @@ namespace Hospital.ManagerImplementation
 
                 bool shouldBreak = true;
                 if (choice.Equals("1"))
-                    type = Room.TypeOfRoom.OperationRoom;
+                    type = Room.Type.OperationRoom;
                 else if (choice.Equals("2"))
-                    type = Room.TypeOfRoom.ExaminationRoom;
+                    type = Room.Type.ExaminationRoom;
                 else if (choice.Equals("3"))
-                    type = Room.TypeOfRoom.RestRoom;
+                    type = Room.Type.RestRoom;
                 else if (choice.Equals("4"))
-                    type = Room.TypeOfRoom.Other;
+                    type = Room.Type.Other;
                 else
                     shouldBreak = false;
 
@@ -114,15 +114,15 @@ namespace Hospital.ManagerImplementation
                     break;
             }
 
-            roomService.CreateRoom(id, name, type);
+            _roomService.CreateRoom(id, name, type);
         }
 
         private void ListRooms()
         {
-            List<Room> allRooms = roomService.Rooms;
+            List<Room> allRooms = _roomService.AllRooms;
             foreach (Room room in allRooms)
             {
-                Console.WriteLine("Broj sobe: " + room.Id + ", naziv sobe: " + room.Name + ", tip sobe: " + room.TypeStr);
+                Console.WriteLine("Broj sobe: " + room.Id + ", naziv sobe: " + room.Name + ", tip sobe: " + room.TypeDescription);
             }
         }
 
@@ -133,7 +133,7 @@ namespace Hospital.ManagerImplementation
 
             Console.Write("Unesite broj sobe: ");
             string id = Console.ReadLine();
-            while (!roomService.DoesIdExist(id))
+            while (!_roomService.IdExists(id))
             {
                 Console.Write("Broj ne postoji. Unesite broj sobe: ");
                 id = Console.ReadLine();
@@ -153,7 +153,7 @@ namespace Hospital.ManagerImplementation
             Console.WriteLine("3. Soba za odmor");
             Console.WriteLine("4. Druga prostorija");
 
-            Room.TypeOfRoom type = Room.TypeOfRoom.Other;
+            Room.Type type = Room.Type.Other;
             while (true)
             {
                 Console.Write(">> ");
@@ -161,13 +161,13 @@ namespace Hospital.ManagerImplementation
 
                 bool shouldBreak = true;
                 if (choice.Equals("1"))
-                    type = Room.TypeOfRoom.OperationRoom;
+                    type = Room.Type.OperationRoom;
                 else if (choice.Equals("2"))
-                    type = Room.TypeOfRoom.ExaminationRoom;
+                    type = Room.Type.ExaminationRoom;
                 else if (choice.Equals("3"))
-                    type = Room.TypeOfRoom.RestRoom;
+                    type = Room.Type.RestRoom;
                 else if (choice.Equals("4"))
-                    type = Room.TypeOfRoom.Other;
+                    type = Room.Type.Other;
                 else
                     shouldBreak = false;
 
@@ -175,28 +175,28 @@ namespace Hospital.ManagerImplementation
                     break;
             }
 
-            roomService.UpdateRoom(id, name, type);
+            _roomService.UpdateRoom(id, name, type);
         }
 
         private void DeleteRoom()
         {
             Console.Write("Unesite broj sobe: ");
             string id = Console.ReadLine();
-            while (!roomService.DoesIdExist(id))
+            while (!_roomService.IdExists(id))
             {
                 Console.Write("Broj ne postoji. Unesite broj sobe: ");
                 id = Console.ReadLine();
             }
 
-            roomService.DeleteRoom(id);
+            _roomService.DeleteRoom(id);
         }
 
-        private void PrintEquipment(List<Equipment> equipmentList)
+        private void PrintEquipment(List<Equipment> equipmentToPrint)
         {
-            foreach (Equipment equipment in equipmentList)
+            foreach (Equipment equipment in equipmentToPrint)
             {
                 Console.WriteLine("Identifikator: " + equipment.Id + ", naziv: " + equipment.Name + ", tip opreme: "
-                    + equipment.TypeStr + ", kolicina: " + equipment.Quantity + ", broj sobe: " + equipment.RoomId);
+                    + equipment.TypeDescription + ", kolicina: " + equipment.Quantity + ", broj sobe: " + equipment.RoomId);
             }
         }
 
@@ -205,7 +205,7 @@ namespace Hospital.ManagerImplementation
             Console.Write("Unesite karaktere pretrage: ");
             string query = Console.ReadLine();
 
-            List<Equipment> foundEquipment = equipmentService.Search(query);
+            List<Equipment> foundEquipment = _equipmentService.Search(query);
             PrintEquipment(foundEquipment);
         }
 
@@ -245,7 +245,7 @@ namespace Hospital.ManagerImplementation
             Console.WriteLine("4. Druga soba");
             Console.WriteLine("5. Magacin");
 
-            Room.TypeOfRoom roomType = Room.TypeOfRoom.Other;
+            Room.Type roomType = Room.Type.Other;
             while (true)
             {
                 Console.Write(">> ");
@@ -253,15 +253,15 @@ namespace Hospital.ManagerImplementation
 
                 bool shouldBreak = true;
                 if (choice.Equals("1"))
-                    roomType = Room.TypeOfRoom.OperationRoom;
+                    roomType = Room.Type.OperationRoom;
                 else if (choice.Equals("2"))
-                    roomType = Room.TypeOfRoom.ExaminationRoom;
+                    roomType = Room.Type.ExaminationRoom;
                 else if (choice.Equals("3"))
-                    roomType = Room.TypeOfRoom.RestRoom;
+                    roomType = Room.Type.RestRoom;
                 else if (choice.Equals("4"))
-                    roomType = Room.TypeOfRoom.Other;
+                    roomType = Room.Type.Other;
                 else if (choice.Equals("5"))
-                    roomType = Room.TypeOfRoom.Warehouse;
+                    roomType = Room.Type.Warehouse;
                 else
                     shouldBreak = false;
 
@@ -269,7 +269,7 @@ namespace Hospital.ManagerImplementation
                     break;
             }
 
-            List<Equipment> foundEquipment = equipmentService.FilterByRoomType(roomType);
+            List<Equipment> foundEquipment = _equipmentService.FilterByRoomType(roomType);
             PrintEquipment(foundEquipment);
         }
 
@@ -310,7 +310,7 @@ namespace Hospital.ManagerImplementation
                     break;
             }
 
-            List<Equipment> foundEquipment = equipmentService.FilterByQuantity(lowerBound, upperBound);
+            List<Equipment> foundEquipment = _equipmentService.FilterByQuantity(lowerBound, upperBound);
             PrintEquipment(foundEquipment);
         }
 
@@ -322,7 +322,7 @@ namespace Hospital.ManagerImplementation
             Console.WriteLine("3. Sobni namestaj");
             Console.WriteLine("4. Oprema za hodnike");
             
-            Equipment.TypeOfEquipment equipmentType = Equipment.TypeOfEquipment.ExaminationEquipment;
+            Equipment.Type equipmentType = Equipment.Type.ExaminationEquipment;
             while (true)
             {
                 Console.Write(">> ");
@@ -330,13 +330,13 @@ namespace Hospital.ManagerImplementation
 
                 bool shouldBreak = true;
                 if (choice.Equals("1"))
-                    equipmentType = Equipment.TypeOfEquipment.ExaminationEquipment;
+                    equipmentType = Equipment.Type.ExaminationEquipment;
                 else if (choice.Equals("2"))
-                    equipmentType = Equipment.TypeOfEquipment.OperationEquipment;
+                    equipmentType = Equipment.Type.OperationEquipment;
                 else if (choice.Equals("3"))
-                    equipmentType = Equipment.TypeOfEquipment.Furniture;
+                    equipmentType = Equipment.Type.Furniture;
                 else if (choice.Equals("4"))
-                    equipmentType = Equipment.TypeOfEquipment.HallwayEquipment;
+                    equipmentType = Equipment.Type.HallwayEquipment;
                 else
                     shouldBreak = false;
 
@@ -344,7 +344,7 @@ namespace Hospital.ManagerImplementation
                     break;
             }
 
-            List<Equipment> foundEquipment = equipmentService.FilterByEquipmentType(equipmentType);
+            List<Equipment> foundEquipment = _equipmentService.FilterByEquipmentType(equipmentType);
             PrintEquipment(foundEquipment);
         }
 
@@ -354,7 +354,7 @@ namespace Hospital.ManagerImplementation
 
             Console.Write("Unesite identifikator: ");
             string id = Console.ReadLine();
-            while (equipmentMovingService.DoesIdExist(id)) 
+            while (_equipmentMovingService.IdExists(id)) 
             {
                 Console.Write("Identifikator vec postoji. Ponovite unos: ");
                 id = Console.ReadLine();
@@ -362,10 +362,10 @@ namespace Hospital.ManagerImplementation
 
             Console.Write("Unesite identifikator opreme: ");
             string equipmentId = Console.ReadLine();
-            while (!equipmentService.DoesIdExist(equipmentId) || 
-                equipmentMovingService.ActiveEquipmentMovingExist(equipmentId))
+            while (!_equipmentService.IdExist(equipmentId) || 
+                _equipmentMovingService.ActiveMovingExists(equipmentId))
             {
-                if (!equipmentService.DoesIdExist(equipmentId))
+                if (!_equipmentService.IdExist(equipmentId))
                     Console.Write("Identifikator ne postoji. Ponovite unos: ");
                 else
                     Console.Write("Pomeranje odabrane opreme je vec zakazano. Ponovite unos: ");
@@ -384,12 +384,12 @@ namespace Hospital.ManagerImplementation
                     Console.Write("Vreme nije ispravno. Ponovite unos: ");
             } while (!isTimeValid);
 
-            Equipment equipment = equipmentService.GetEquipmentById(equipmentId);
+            Equipment equipment = _equipmentService.GetEquipmentById(equipmentId);
             string sourceRoomId = equipment.RoomId;
 
-            Console.WriteLine("Unesite broj sobe u koju se oprema pomera: ");
+            Console.Write("Unesite broj sobe u koju se oprema pomera: ");
             string destinationRoomId = Console.ReadLine();
-            while (!roomService.DoesIdExist(destinationRoomId) || destinationRoomId.Equals(sourceRoomId))
+            while (!_roomService.IdExists(destinationRoomId) || destinationRoomId.Equals(sourceRoomId))
             {
                 if (destinationRoomId.Equals(sourceRoomId))
                     Console.Write("Nije moguce pomeriti opremu u istu sobu. Ponovite unos: ");
@@ -398,12 +398,12 @@ namespace Hospital.ManagerImplementation
                 destinationRoomId = Console.ReadLine();
             }
 
-            equipmentMovingService.CreateEquipmentMoving(id, equipmentId, scheduledTime, sourceRoomId, destinationRoomId);
+            _equipmentMovingService.CreateEquipmentMoving(id, equipmentId, scheduledTime, sourceRoomId, destinationRoomId);
         }
 
         private void MoveEquipment()
         {
-            equipmentMovingService.MoveEquipment();
+            _equipmentMovingService.MoveEquipment();
         }
 
         private void LogOut()

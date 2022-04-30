@@ -12,13 +12,13 @@ namespace Hospital.Repository
 {
     public class EquipmentMovingRepository
     {
-        private static string filePath = @"..\..\Data\equipmentMovings.csv";
+        private static string s_filePath = @"..\..\Data\equipmentMovings.csv";
 
         public List<EquipmentMoving> Load()
         {
             List<EquipmentMoving> equipmentMovings = new List<EquipmentMoving>();
 
-            using (TextFieldParser parser = new TextFieldParser(filePath))
+            using (TextFieldParser parser = new TextFieldParser(s_filePath))
             {
                 parser.TextFieldType = FieldType.Delimited;
                 parser.SetDelimiters(",");
@@ -51,10 +51,10 @@ namespace Hospital.Repository
                 EquipmentMoving equipmentMoving = equipmentMovings[i];
                 lines[i] = equipmentMoving.Id + "," + equipmentMoving.EquipmentId + "," 
                     + equipmentMoving.ScheduledTime.ToString("MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture) + ","
-                    + equipmentMoving.SourceRoomId + "," + equipmentMoving.DestinationRoomId + "," + equipmentMoving.Active;
+                    + equipmentMoving.SourceRoomId + "," + equipmentMoving.DestinationRoomId + "," + equipmentMoving.IsActive;
             }
 
-            File.WriteAllLines(filePath, lines);
+            File.WriteAllLines(s_filePath, lines);
         }
     }
 }

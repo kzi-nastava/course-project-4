@@ -10,20 +10,20 @@ namespace Hospital.Service
 {
     public class RoomService
     {
-        private RoomRepository roomRepository;
-        private List<Room> rooms;
+        private RoomRepository _roomRepository;
+        private List<Room> _allRooms;
 
-        public List<Room> Rooms { get { return rooms; } }
+        public List<Room> AllRooms { get { return _allRooms; } }
         
         public RoomService()
         {
-            roomRepository = new RoomRepository();
-            rooms = roomRepository.Load();
+            _roomRepository = new RoomRepository();
+            _allRooms = _roomRepository.Load();
         }
 
         public Room GetRoomById(string id)
         {
-            foreach (Room room in rooms)
+            foreach (Room room in _allRooms)
             {
                 if (room.Id == id)
                     return room;
@@ -31,24 +31,24 @@ namespace Hospital.Service
             return null;
         }
 
-        public bool DoesIdExist(string id)
+        public bool IdExists(string id)
         {
             return GetRoomById(id) != null;
         }
 
-        public bool CreateRoom(string id, string name, Room.TypeOfRoom type)
+        public bool CreateRoom(string id, string name, Room.Type type)
         {
-            if (DoesIdExist(id))
+            if (IdExists(id))
                 return false;
             Room room = new Room(id, name, type);
-            rooms.Add(room);
-            roomRepository.Save(rooms);
+            _allRooms.Add(room);
+            _roomRepository.Save(_allRooms);
             return true;
         }
 
-        public bool UpdateRoom(string id, string name, Room.TypeOfRoom type)
+        public bool UpdateRoom(string id, string name, Room.Type type)
         {
-            if (!DoesIdExist(id))
+            if (!IdExists(id))
                 return false;
             DeleteRoom(id);
             CreateRoom(id, name, type);
@@ -57,10 +57,10 @@ namespace Hospital.Service
 
         public bool DeleteRoom(string id)
         {
-            if (!DoesIdExist(id))
+            if (!IdExists(id))
                 return false;
-            rooms.Remove(GetRoomById(id));
-            roomRepository.Save(rooms);
+            _allRooms.Remove(GetRoomById(id));
+            _roomRepository.Save(_allRooms);
             return true;
         }
     }

@@ -8,29 +8,29 @@ namespace Hospital.Model
 {
     public class EquipmentMoving
     {
-        private string id;
-        private string equipmentId;
-        private DateTime scheduledTime;
-        private string sourceRoomId;
-        private string destinationRoomId;
-        private bool active;
+        private string _id;
+        private string _equipmentId;
+        private DateTime _scheduledTime;
+        private string _sourceRoomId;
+        private string _destinationRoomId;
+        private bool _active;
 
-        public string Id { get { return id; } }
-        public string EquipmentId { get { return equipmentId; } }
-        public DateTime ScheduledTime { get { return scheduledTime; } }
-        public string SourceRoomId { get { return sourceRoomId; } }
-        public string DestinationRoomId { get { return destinationRoomId; } }
-        public bool Active { get { return active; } set { active = value; } }
+        public string Id { get { return _id; } }
+        public string EquipmentId { get { return _equipmentId; } }
+        public DateTime ScheduledTime { get { return _scheduledTime; } }
+        public string SourceRoomId { get { return _sourceRoomId; } }
+        public string DestinationRoomId { get { return _destinationRoomId; } }
+        public bool IsActive { get { return _active; } set { _active = value; } }
 
         public EquipmentMoving(string id, string equipmentId, DateTime scheduledTime,
             string sourceRoomId, string destinationRoomId, bool active)
         {
-            this.id = id;
-            this.equipmentId = equipmentId;
-            this.scheduledTime = scheduledTime;
-            this.sourceRoomId = sourceRoomId;
-            this.destinationRoomId = destinationRoomId;
-            this.active = active;
+            this._id = id;
+            this._equipmentId = equipmentId;
+            this._scheduledTime = scheduledTime;
+            this._sourceRoomId = sourceRoomId;
+            this._destinationRoomId = destinationRoomId;
+            this._active = active;
         }
     }
 }

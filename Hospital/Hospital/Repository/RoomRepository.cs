@@ -11,13 +11,13 @@ namespace Hospital.Repository
 {
     public class RoomRepository
     {
-        private static string filePath = @"..\..\Data\rooms.csv";
+        private static string s_filePath = @"..\..\Data\rooms.csv";
 
         public List<Room> Load()
         {
             List<Room> allRooms = new List<Room>();
 
-            using (TextFieldParser parser = new TextFieldParser(filePath))
+            using (TextFieldParser parser = new TextFieldParser(s_filePath))
             {
                 parser.TextFieldType = FieldType.Delimited;
                 parser.SetDelimiters(",");
@@ -27,7 +27,7 @@ namespace Hospital.Repository
 
                     string id = fields[0];
                     string name = fields[1];
-                    Room.TypeOfRoom type = (Room.TypeOfRoom)int.Parse(fields[2]);
+                    Room.Type type = (Room.Type)int.Parse(fields[2]);
                     
                     Room room = new Room(id, name, type);
                     allRooms.Add(room);
@@ -44,10 +44,10 @@ namespace Hospital.Repository
             for (int i = 0; i < lines.Length; i++)
             {
                 Room room = allRooms[i];
-                lines[i] = room.Id + "," + room.Name + "," + ((int)room.Type).ToString();
+                lines[i] = room.Id + "," + room.Name + "," + ((int)room.RoomType).ToString();
             }
             
-            File.WriteAllLines(filePath, lines);
+            File.WriteAllLines(s_filePath, lines);
         }
     }
 }
