@@ -41,7 +41,7 @@ namespace Hospital.Service
 				{
 					line = request.AppointmentId+","+request.PatientEmail+","+request.DoctorEmail+","+request.DateAppointment.ToString("MM/dd/yyyy")+
 						","+request.StartTime.ToString("HH:mm")+","+request.EndTime.ToString("HH:mm") + ","+(int)request.AppointmentState+","
-						+request.RoomNumber+","+(int)request.TypeOfTerm;
+						+request.RoomNumber+","+(int)request.TypeOfTerm + "," + "false";
 					lines.Add(line);
 				}
 				File.WriteAllLines(filePath, lines.ToArray());

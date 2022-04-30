@@ -196,7 +196,7 @@ namespace Hospital.PatientImplementation
                             appointmentForUpdate.AppointmentState = Appointment.State.UpdateRequest;
 							newAppointment = new Appointment(id, this._email, doctorEmail, appointmentDate,
                             appointmentStartTime, appointmentEndTime, Appointment.State.UpdateRequest, Int32.Parse(fields[7]),
-                            Appointment.Type.Examination);
+                            Appointment.Type.Examination, false);
                           
                             _patientService.RequestService.Requests.Add(newAppointment);
                             _patientService.RequestService.UpdateFile();
@@ -256,7 +256,7 @@ namespace Hospital.PatientImplementation
                 //  created appointment
                 Appointment newAppointment = new Appointment(id, this._email, doctorEmail, appointmentDate, 
                     appointmentStartTime, appointmentEndTime, Appointment.State.Created, roomId, 
-                    Appointment.Type.Examination);
+                    Appointment.Type.Examination,false);
 
                 Console.WriteLine("Uspesno ste kreirali nov pregled!");
 

@@ -75,14 +75,24 @@ namespace Hospital.DoctorImplementation
                     this.examiningOwnSchedule();
                 }
                 else if (choice.Equals("6"))
+                    {
                     Console.WriteLine("6. Izvodjenje pregleda");
+                    this.PerformingAppointment();
+
+                }
                 else if (choice.Equals("7"))
                 {
                     this.logOut();
                 }
             } while (true);
         }
+        private void PerformingAppointment()
+        {
+           
 
+
+
+        }
         private void examiningOwnSchedule()
         {
             string dateAppointment;
@@ -296,9 +306,9 @@ namespace Hospital.DoctorImplementation
             }
 
             int id = helper.GetNewAppointmentId();
-            Appointment appointment = new Appointment(id.ToString(), patientEmail, currentRegisteredDoctor.Email, dateOfAppointment, startTime, newEndTime, Appointment.State.Created, roomNumber, (Appointment.Type)int.Parse(typeOfTerm));
+            Appointment appointment = new Appointment(id.ToString(), patientEmail, currentRegisteredDoctor.Email, dateOfAppointment, startTime, newEndTime, Appointment.State.Created, roomNumber, (Appointment.Type)int.Parse(typeOfTerm),false);
             string newAppointment = "\n" + id + "," + patientEmail + "," + currentRegisteredDoctor.Email + ","  + newDate + "," +
-                newStartTime + "," + newEndTime.Hour + ":" + newEndTime.Minute + "," + (int)Appointment.State.Created + "," + newRoomNumber + "," + typeOfTerm;
+                newStartTime + "," + newEndTime.Hour + ":" + newEndTime.Minute + "," + (int)Appointment.State.Created + "," + newRoomNumber + "," + typeOfTerm + ",false";
 
             // append new appointment in file
             string filePath = @"..\..\Data\_appointments.csv";
@@ -439,7 +449,7 @@ namespace Hospital.DoctorImplementation
             }
             appointmentService.Appointments.Remove(appointmentForUpdate);
             this.allMyAppointments.Remove(appointmentForUpdate);
-            Appointment newAppointment = new Appointment(appointmentForUpdate.AppointmentId, patientEmail, currentRegisteredDoctor.Email, dateOfAppointment, startTime, newEndTime, Appointment.State.Updated, roomNumber, appointmentForUpdate.TypeOfTerm);
+            Appointment newAppointment = new Appointment(appointmentForUpdate.AppointmentId, patientEmail, currentRegisteredDoctor.Email, dateOfAppointment, startTime, newEndTime, Appointment.State.Updated, roomNumber, appointmentForUpdate.TypeOfTerm,false);
             appointmentService.Appointments.Add(newAppointment);
             this.allMyAppointments.Add(newAppointment);
             appointmentService.UpdateAppointment(appointmentForUpdate);

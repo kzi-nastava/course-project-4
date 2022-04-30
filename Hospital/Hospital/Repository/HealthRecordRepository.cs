@@ -27,10 +27,9 @@ namespace Hospital.Repository
                     string previousIllnesses = fields[4];
                     string allergen = fields[5];
                     string bloodType = fields[6];
-                    string anamnesis = fields[7];
-                    string referralToDoctor = fields[8];
+       
 
-                    HealthRecord newMedicalRecord = new HealthRecord(id, emailPatient, patientHeight, patientWeight, previousIllnesses, allergen, bloodType, anamnesis, referralToDoctor);
+                    HealthRecord newMedicalRecord = new HealthRecord(id, emailPatient, patientHeight, patientWeight, previousIllnesses, allergen, bloodType);
                     allMedicalRecords.Add(newMedicalRecord);
 
     }

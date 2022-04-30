@@ -49,7 +49,7 @@ namespace Hospital.Service
         {
             List<HealthRecord> healthRecords = this.HealthRecords;
             int id = healthRecords.Count + 1;
-            HealthRecord newHealthRecord = new HealthRecord(id.ToString(), patient.Email, 0, 0, "0", "0", "0", "0", "0");
+            HealthRecord newHealthRecord = new HealthRecord(id.ToString(), patient.Email, 0, 0, "0", "0", "0");
             this.HealthRecords.Add(newHealthRecord);
             this.UpdateHealthRecordFile();
 
