@@ -11,14 +11,14 @@ namespace Hospital.Service
 {
     public class UserService
     {
-        private UserRepository userRepository;
-        private List<User> users;
+        private UserRepository _userRepository;
+        private List<User> _users;
 
-        public List<User> Users { get { return this.users; } }
+        public List<User> Users { get { return this._users; } }
 
         public bool IsEmailValid(string email)
         {
-            foreach (User user in users)
+            foreach (User user in _users)
             {
                 if (user.Email == email)
                     return true;
@@ -28,7 +28,7 @@ namespace Hospital.Service
 
         public bool IsUserBlocked(string email)
         {
-            foreach (User user in users)
+            foreach (User user in _users)
             {
                 if (user.Email == email && user.UserState != User.State.Active)
                     return true;
@@ -38,7 +38,7 @@ namespace Hospital.Service
 
         public User TryLogin(string email, string password)
         {
-            foreach (User user in users)
+            foreach (User user in _users)
             {
                 if ((user.Email == email) && (user.Password == password))
                     return user;
@@ -48,12 +48,12 @@ namespace Hospital.Service
 
         public void UpdateUserFile()
 		{
-            string filePath = @"..\..\Data\users.csv";
+            string filePath = @"..\..\Data\_users.csv";
 
             List<string> lines = new List<String>();
 
             string line;
-            foreach (User user in users)
+            foreach (User user in _users)
             {
                 int role = (int)user.UserRole;
                 int state = (int)user.UserState;
@@ -65,7 +65,7 @@ namespace Hospital.Service
 
         public void BlockOrUnblockUser(User forUpdate, bool blocking)
 		{
-            foreach(User user in users)
+            foreach(User user in _users)
 			{
                 if(user.Email == forUpdate.Email)
 				{
@@ -82,18 +82,16 @@ namespace Hospital.Service
                     
 				}
 			}
-
             UpdateUserFile();
-
 		}
 
         public void UpdateUserInfo(User forUpdate)
 		{
-            for(int i = 0; i < users.Count; i++)
+            for(int i = 0; i < _users.Count; i++)
 			{
                 User user = Users[i];
                 if (user.Email == forUpdate.Email){
-                    users[i] = forUpdate;
+                    _users[i] = forUpdate;
                     break;
 				}
 			}
@@ -102,10 +100,8 @@ namespace Hospital.Service
 
         public UserService()
         {
-            userRepository = new UserRepository();
-            users = userRepository.Load();
+            _userRepository = new UserRepository();
+            _users = _userRepository.Load();
         }
-
-        
     }
 }
