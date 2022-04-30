@@ -32,13 +32,12 @@ namespace Hospital.Model
         private int _roomNumber;
         private Type _typeOfTerm;
 
-
         public string AppointmentId { get { return _id; } }
         public string PatientEmail { get { return _patientEmail; } }
-        public string DoctorEmail { get { return _doctorEmail; } }
-        public DateTime DateAppointment { get { return _dateAppointment; } }
-        public DateTime StartTime { get { return _startTime; } }
-        public DateTime EndTime { get { return _endTime; } }
+        public string DoctorEmail { get { return _doctorEmail; } set { this.doctorEmail = value; } }
+        public DateTime DateAppointment { get { return _dateAppointment; } set { dateAppointment = value; } }
+        public DateTime StartTime { get { return _startTime; } set { startTime = value; } }
+        public DateTime EndTime { get { return _endTime; } set { endTime = value; } }
         public State AppointmentState { get { return _appointmentState; } set { _appointmentState = value; } }
         public int RoomNumber { get { return _roomNumber; } }
         public Type TypeOfTerm { get { return _typeOfTerm;} } 
@@ -86,7 +85,5 @@ namespace Hospital.Model
             return String.Format("|{0,5}|{1,10}|{2,10}|{3,10}|{4,10}|{5,10}|{6,10}", serialNumber, this._patientEmail, this._dateAppointment.Month + "/" + this._dateAppointment.Day + "/" + this._dateAppointment.Year, this._startTime.Hour + ":" + this._startTime.Minute, this._endTime.Hour + ":" + this._endTime.Minute, this._roomNumber, this.TypeOfTerm); 
               
         }
-
-
     }
 }

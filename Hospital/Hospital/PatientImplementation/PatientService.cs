@@ -15,6 +15,7 @@ namespace Hospital.PatientImplementation
 {
     class PatientService
     {
+        RequestService requestService;
         AppointmentService _appointmentService = new AppointmentService();  // loading all _appointments
         List<Appointment> _allAppointments;
         List<User> _allUsers;
@@ -23,8 +24,11 @@ namespace Hospital.PatientImplementation
         // getters
         public List<Appointment> Appointments { get { return _allAppointments; } }
 
+        public RequestService RequestService { get { return requestService; } }
+
         public PatientService(User user, List<User> allUsers)
         {
+            requestService = new RequestService(appointmentService);
             this._currentRegisteredUser = user;
             this._allUsers = allUsers;
             _allAppointments = _appointmentService.AppointmentRepository.Load();

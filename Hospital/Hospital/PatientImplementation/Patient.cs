@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Hospital.Model;
 using System.IO;
 using System.Globalization;
+using Hospital.Service;
 
 namespace Hospital.PatientImplementation
 {
@@ -108,7 +109,10 @@ namespace Hospital.PatientImplementation
                 if (id.Equals(appointmentForDelete.AppointmentId)) {
 
                     if ((appointmentForDelete.DateAppointment - DateTime.Now).TotalDays <= 2)
-                    {
+                    {                        
+                        patientService.RequestService.Requests.Add(appointmentForDelete);
+                        patientService.RequestService.UpdateFile();
+
                         appointmentForDelete.AppointmentState = Appointment.State.DeleteRequest;
                         Console.WriteLine("Zahtev za brisanje je poslat sekretaru!");
                     }
@@ -190,9 +194,13 @@ namespace Hospital.PatientImplementation
 
                         if ((appointmentForUpdate.DateAppointment - DateTime.Now).TotalDays <= 2)
                         {
-                            newAppointment = new Appointment(id, this._email, doctorEmail, appointmentDate,
+                            appointmentForUpdate.AppointmentStateProp = Appointment.AppointmentState.UpdateRequest;
+							              newAppointment = new Appointment(id, this._email, doctorEmail, appointmentDate,
                     appointmentStartTime, appointmentEndTime, Appointment.State.UpdateRequest, Int32.Parse(fields[7]),
                     Appointment.Type.Examination);
+                          
+                            patientService.RequestService.Requests.Add(newAppointment);
+                            patientService.RequestService.UpdateFile();
                             Console.WriteLine("Zahtev za izmenu je poslat sekretaru!");
                         }
                         else
@@ -202,7 +210,7 @@ namespace Hospital.PatientImplementation
                     Appointment.Type.Examination);
                             Console.WriteLine("Uspesno ste izvrsili izmenu pregleda!");
                         }
-                        lines[i] = newAppointment.ToString();
+                        lines[i] = appointmentForUpdate.ToString();
                     }
                 }
 

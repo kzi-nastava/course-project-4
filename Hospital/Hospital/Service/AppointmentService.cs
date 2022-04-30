@@ -172,5 +172,24 @@ namespace Hospital.Service
             // saving changes
             File.WriteAllLines(filePath, lines);
         }
+
+        public void UpdateFile()
+		{
+            string filePath = @"..\..\Data\appointments.csv";
+            List<string> lines = new List<String>();
+
+            string line;
+            foreach (Appointment appointment in appointments)
+            {
+                line = appointment.AppointmentId + "," + appointment.PatientEmail + "," + appointment.DoctorEmail + "," + appointment.DateAppointment.ToString("MM/dd/yyyy") +
+                    "," + appointment.StartTime.ToString("HH:mm") + "," + appointment.EndTime.ToString("HH:mm") + "," +
+                    (int)appointment.AppointmentStateProp + "," + appointment.RoomNumber + "," + (int)appointment.GetTypeOfTerm;
+                lines.Add(line);
+            }
+            File.WriteAllLines(filePath, lines.ToArray());
+        }
+
     }
+
+ 
 }

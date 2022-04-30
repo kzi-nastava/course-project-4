@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -36,6 +36,19 @@ namespace Hospital.Service
             return false;
         }
 
+        public string GetUserFullName(string email)
+		{
+            string fullName = "";
+            foreach(User user in users)
+			{
+                if(user.Email == email)
+				{
+                    fullName = user.Name + " " + user.Surname;
+				}
+			}
+            return fullName;
+		}
+
         public User TryLogin(string email, string password)
         {
             foreach (User user in _users)
@@ -46,7 +59,7 @@ namespace Hospital.Service
             return null;
         }
 
-        public void UpdateUserFile()
+        public void UpdateFile()
 		{
             string filePath = @"..\..\Data\_users.csv";
 
@@ -82,7 +95,8 @@ namespace Hospital.Service
                     
 				}
 			}
-            UpdateUserFile();
+
+            UpdateFile();
 		}
 
         public void UpdateUserInfo(User forUpdate)
@@ -95,7 +109,7 @@ namespace Hospital.Service
                     break;
 				}
 			}
-            UpdateUserFile();
+            UpdateFile();
 		}
 
         public UserService()

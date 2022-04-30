@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Hospital.Model;
+using Hospital.Repository;
 using Hospital.Service;
 
 namespace Hospital.SecretaryImplementation
@@ -13,11 +14,17 @@ namespace Hospital.SecretaryImplementation
 	{
 		private List<User> patients;
 		private UserService userService;
-		private HealthRecordService healthRecordService = new HealthRecordService();
+		private HealthRecordService healthRecordService;
+		private AppointmentService appointmentService;
+		private RequestService requestService;
+
 		public Secretary(UserService service)
 		{
 			this.userService = service;
 			this.patients = FilterPatients(service.Users);
+			this.healthRecordService = new HealthRecordService();
+			this.appointmentService = new AppointmentService();
+			this.requestService = new RequestService(appointmentService);
 		}
 
 		public void SecretaryMenu()
@@ -76,6 +83,10 @@ namespace Hospital.SecretaryImplementation
 					{
 						Console.WriteLine("Trenutno nema blokiranih pacijenata.");
 					}
+				}
+				else if(choice == "7")
+				{
+					AnswerRequest();
 				}
 				else if (choice == "x")
 				{
@@ -233,7 +244,8 @@ namespace Hospital.SecretaryImplementation
 			this.userService.Users.Add(newPatient);
 			this.patients.Add(newPatient);
 
-			this.userService.UpdateUserFile();
+			this.userService.UpdateFile();
+
 
 			this.healthRecordService.CreateHealthRecord(newPatient);
 			Console.WriteLine("\nNalog za pacijenta " + name + " " + surname + " je uspesno kreiran.");
@@ -284,6 +296,66 @@ namespace Hospital.SecretaryImplementation
 
 			Console.WriteLine("\nNalog pacijenta je uspesno izmenjen.");
 
+		}
+
+		private void AnswerRequest()
+		{
+			List<Appointment> requests = requestService.Requests;
+			if(requests.Count == 0)
+			{
+				Console.WriteLine("Trenutno nema zahteva za obradu. ");
+				return;
+			}
+			for(int i = 0; i < requests.Count; i++)
+			{
+				Appointment request = requests[i];
+				switch (request.AppointmentStateProp)
+				{
+					case (Appointment.AppointmentState.UpdateRequest):
+						Appointment oldValuesAppointment = requestService.findInitialAppointment(request.AppointmentId);
+						Console.Write("{0}. {1}, {2}->{3}, {4}->{5}, {6}->{7}, ", i + 1, userService.GetUserFullName(oldValuesAppointment.PatientEmail),
+							oldValuesAppointment.DateAppointment.ToString("MM/dd/yyyy"), request.DateAppointment.ToString("MM/dd/yyyy"),
+							oldValuesAppointment.StartTime.ToString("HH:mm"), request.StartTime.ToString("HH:mm"),
+							oldValuesAppointment.EndTime.ToString("HH:mm"), request.EndTime.ToString("HH:mm"));
+						Console.Write("Izmena termina");
+						break;
+					case (Appointment.AppointmentState.DeleteRequest):
+						Console.Write("{0}. {1}, {2}, {3}, {4}, ", i+1,userService.GetUserFullName(request.PatientEmail), request.DateAppointment.ToString("MM/dd/yyyy"),
+							request.StartTime.ToString("HH:mm"), request.EndTime.ToString("HH:mm"));
+						Console.Write("Brisanje termina");
+						break;
+				}
+			}
+			Console.WriteLine("\nx. Odustani");
+			Console.WriteLine("--------------------------------------------");
+			string requestIndexInput;
+			int requestIndex;
+			do
+			{
+				Console.WriteLine("Unesite broj zahteva koji zelite da obradite");
+				Console.Write(">>");
+				requestIndexInput = Console.ReadLine();
+				if (requestIndexInput == "x")
+				{
+					return;
+				}
+			} while (!int.TryParse(requestIndexInput, out requestIndex) || requestIndex < 1 || requestIndex > requests.Count);
+
+			Appointment activeRequest = requests[requestIndex - 1];
+			string actionIndexInput;
+			int actionIndex;
+			do
+			{
+				Console.WriteLine("\nIzaberite akciju koju zelite da izvrsite: ");
+				Console.WriteLine("1. Prihvati zahtev");
+				Console.WriteLine("2. Odbij zahtev");
+				Console.Write(">>");
+				actionIndexInput = Console.ReadLine();
+			}
+			while (!int.TryParse(actionIndexInput, out actionIndex) || actionIndex < 1 || actionIndex > 2);
+
+			requestService.ProcessRequest(activeRequest, actionIndex);
+			Console.WriteLine("\nZahtev je uspesno obradjen");
 		}
 
 		private void LogOut()

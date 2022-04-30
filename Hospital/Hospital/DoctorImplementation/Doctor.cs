@@ -192,9 +192,6 @@ namespace Hospital.DoctorImplementation
                     Console.WriteLine(appointment.ToStringDisplayForDoctor(serialNumberAppointment));
                     serialNumberAppointment += 1;
                 }
-                
-
-
             }
             Console.WriteLine();
             
