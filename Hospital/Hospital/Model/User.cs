@@ -32,9 +32,9 @@ namespace Hospital.Model
 
         public Role UserRole { get { return role; } }
         public string Email { get { return email; } }
-        public string Password { get { return password; } }
-        public string Name { get { return name; } }
-        public string Surname { get { return surname; } }
+        public string Password { get { return password; }  set { this.password = value; } }
+        public string Name { get { return name; } set { this.name = value; } }
+        public string Surname { get { return surname; } set { this.surname = value; } }
         public State UserState { get { return state; } set{ this.state = value; } }
 
         public User(Role role, string email, string password, string name, string surname, State state)

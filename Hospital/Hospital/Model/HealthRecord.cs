@@ -24,7 +24,7 @@ namespace Hospital.Model
         private string referralToDoctor;
 
 
-        public string IdMedicalRecord { get { return idHealthRecord; } }
+        public string IdHealthRecord { get { return idHealthRecord; } }
 
         public string EmailPatient { get { return emailPatient; } }
         public int PatientHeight { get { return patientHeight; } }
@@ -63,6 +63,13 @@ namespace Hospital.Model
                 "Anamneza: " + this.anamnesis + "\n" +
                 "Uput: " + this.referralToDoctor;
         }
+
+        public string ToStringForFile()
+		{
+            return this.idHealthRecord + "*" + this.emailPatient + "*" + this.patientHeight + "*" +
+                this.patientWeight + "*" + this.previousIllnesses + "*" + this.allergen + "*" + this.bloodType + "*" + this.anamnesis +
+                "*" + this.referralToDoctor;
+		}
 
     }
 }

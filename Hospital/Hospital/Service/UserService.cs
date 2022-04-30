@@ -46,7 +46,24 @@ namespace Hospital.Service
             return null;
         }
 
-        public void BlockOrUnblockUser(User forUpdate, Boolean blocking)
+        public void UpdateUserFile()
+		{
+            string filePath = @"..\..\Data\users.csv";
+
+            List<string> lines = new List<String>();
+
+            string line;
+            foreach (User user in users)
+            {
+                int role = (int)user.UserRole;
+                int state = (int)user.UserState;
+                line = role.ToString() + "," + user.Email + "," + user.Password + "," + user.Name + "," + user.Surname + "," + state.ToString();
+                lines.Add(line);
+            }
+            File.WriteAllLines(filePath, lines.ToArray());
+        }
+
+        public void BlockOrUnblockUser(User forUpdate, bool blocking)
 		{
             foreach(User user in users)
 			{
@@ -66,20 +83,21 @@ namespace Hospital.Service
 				}
 			}
 
-            string filePath = @"..\..\Data\users.csv";
+            UpdateUserFile();
 
-            List<string> lines = new List<String>();
+		}
 
-            string line;
-            foreach(User user in users)
+        public void UpdateUserInfo(User forUpdate)
+		{
+            for(int i = 0; i < users.Count; i++)
 			{
-                int role = (int)user.UserRole;
-                int state = (int)user.UserState;
-                line = role.ToString() + "," + user.Email + "," + user.Password + "," + user.Name + "," + user.Surname + "," +state.ToString();
-                lines.Add(line);
+                User user = Users[i];
+                if (user.Email == forUpdate.Email){
+                    users[i] = forUpdate;
+                    break;
+				}
 			}
-            File.WriteAllLines(filePath, lines.ToArray());
-
+            UpdateUserFile();
 		}
 
         public UserService()

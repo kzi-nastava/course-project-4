@@ -26,7 +26,7 @@ namespace Hospital.DoctorImplementation
             this.currentRegisteredDoctor = currentRegisteredDoctor;
             this.helper = helper;
             allMyAppointments = appointmentService.GetDoctorAppointment(currentRegisteredDoctor);
-            healthRecords = healthRecordService.GetHealthRecords;
+            healthRecords = healthRecordService.HealthRecords;
 
         }
         public void doctorMenu()
@@ -453,7 +453,7 @@ namespace Hospital.DoctorImplementation
         private void logOut()
         {
             Login loging = new Login();
-            loging.logIn();
+            loging.LogIn();
         }
     }
 }
