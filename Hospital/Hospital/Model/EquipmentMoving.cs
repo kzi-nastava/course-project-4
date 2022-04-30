@@ -20,7 +20,7 @@ namespace Hospital.Model
         public DateTime ScheduledTime { get { return scheduledTime; } }
         public string SourceRoomId { get { return sourceRoomId; } }
         public string DestinationRoomId { get { return destinationRoomId; } }
-        public bool Active { get { return active; } }
+        public bool Active { get { return active; } set { active = value; } }
 
         public EquipmentMoving(string id, string equipmentId, DateTime scheduledTime,
             string sourceRoomId, string destinationRoomId, bool active)

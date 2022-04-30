@@ -57,6 +57,7 @@
     <Compile Include="Repository\RoomRepository.cs" />
     <Compile Include="Repository\UserRepository.cs" />
     <Compile Include="SecretaryImplementation\Secretary.cs" />
+    <Compile Include="Service\EquipmentMovingService.cs" />
     <Compile Include="Service\UserActionService.cs" />
     <Compile Include="Service\AppointmentService.cs" />
     <Compile Include="Service\EquipmentService.cs" />

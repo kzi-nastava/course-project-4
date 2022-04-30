@@ -23,6 +23,50 @@ namespace Hospital.Service
             allEquipment = equipmentRepository.Load();
         }
 
+        public Equipment GetEquipmentById(string id)
+        {
+            foreach (Equipment equipment in allEquipment)
+            {
+                if (equipment.Id.Equals(id))
+                    return equipment;
+            }
+            return null;
+        }
+
+        public bool DoesIdExist(string id)
+        {
+            return GetEquipmentById(id) != null;
+        }
+
+        public bool CreateEquipment(string id, string name, Equipment.TypeOfEquipment type, int quantity, string roomId)
+        {
+            if (DoesIdExist(id))
+                return false;
+            Equipment equipment = new Equipment(id, name, type, quantity, roomId);
+            allEquipment.Add(equipment);
+            equipmentRepository.Save(allEquipment);
+            return true;
+        }
+
+        public bool UpdateEquipment(string id, string name, Equipment.TypeOfEquipment type, int quantity, string roomId)
+        {
+            if (!DoesIdExist(id))
+                return false;
+            DeleteEquipment(id);
+            CreateEquipment(id, name, type, quantity, roomId);
+            return true;
+        }
+
+        public bool DeleteEquipment(string id)
+        {
+            if (!DoesIdExist(id))
+                return false;
+            Equipment equipment = GetEquipmentById(id);
+            allEquipment.Remove(equipment);
+            equipmentRepository.Save(allEquipment);
+            return true;
+        }
+
         public List<Equipment> Search(string query)
         {
             List<Equipment> answer = new List<Equipment>();

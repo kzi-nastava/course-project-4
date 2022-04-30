@@ -14,12 +14,14 @@ namespace Hospital.ManagerImplementation
         private User currentRegisteredManager;
         private RoomService roomService;
         private EquipmentService equipmentService;
+        private EquipmentMovingService equipmentMovingService;
 
         public Manager(User currentRegisteredManager)
         {
             this.currentRegisteredManager = currentRegisteredManager;
             roomService = new RoomService();
             equipmentService = new EquipmentService(roomService);
+            equipmentMovingService = new EquipmentMovingService(equipmentService);
         }
 
         public void ManagerMenu() 
