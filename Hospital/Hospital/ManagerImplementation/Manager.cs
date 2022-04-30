@@ -409,7 +409,7 @@ namespace Hospital.ManagerImplementation
         private void LogOut()
         {
             Login loging = new Login();
-            loging.logIn();
+            loging.LogIn();
         }
     }
 }

@@ -9,32 +9,32 @@ namespace Hospital.Model
 {
     class UserAction
     {
-        public enum ActionState
+        public enum State
         {
             Created = 1,
             Modified = 2,
             Deleted = 3
         }
 
-        string patientEmail;
-        DateTime actionDate;
-        ActionState actionState;
+        string _patientEmail;
+        DateTime _actionDate;
+        State _actionState;
 
-        public string PatientEmail { get { return patientEmail; } }
-        public DateTime ActionDate { get { return actionDate; } }
-        public ActionState GetActionState { get { return actionState; } }
+        public string PatientEmail { get { return _patientEmail; } }
+        public DateTime ActionDate { get { return _actionDate; } }
+        public State ActionState { get { return _actionState; } }
 
-        public UserAction(string patientEmail, DateTime actionDate, ActionState state)
+        public UserAction(string patientEmail, DateTime actionDate, State state)
         {
-            this.patientEmail = patientEmail;
-            this.actionDate = actionDate;
-            this.actionState = state;
+            this._patientEmail = patientEmail;
+            this._actionDate = actionDate;
+            this._actionState = state;
         }
 
         public override string ToString()
         {
-            return "\n" + this.patientEmail + "," + (int)this.actionState + 
-                "," + this.actionDate.ToString("MM/dd/yyyy");
+            return "\n" + this._patientEmail + "," + (int)this._actionState + 
+                "," + this._actionDate.ToString("MM/dd/yyyy");
         }
     }
 }

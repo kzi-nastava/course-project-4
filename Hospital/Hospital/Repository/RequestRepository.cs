@@ -9,13 +9,13 @@ using Microsoft.VisualBasic.FileIO;
 
 namespace Hospital.Repository
 {
-    class AppointmentRepository
-    {
+	class RequestRepository
+	{
         public List<Appointment> Load()
         {
-            List<Appointment> allApointments = new List<Appointment>();
+            List<Appointment> allRequests = new List<Appointment>();
 
-            using (TextFieldParser parser = new TextFieldParser(@"..\..\Data\appointments.csv"))
+            using (TextFieldParser parser = new TextFieldParser(@"..\..\Data\requests.csv"))
             {
                 parser.TextFieldType = FieldType.Delimited;
                 parser.SetDelimiters(",");
@@ -28,17 +28,17 @@ namespace Hospital.Repository
                     DateTime dateAppointment = DateTime.ParseExact(fields[3], "MM/dd/yyyy", CultureInfo.InvariantCulture);
                     DateTime startExamination = DateTime.ParseExact(fields[4], "HH:mm", CultureInfo.InvariantCulture);
                     DateTime endExamination = DateTime.ParseExact(fields[5], "HH:mm", CultureInfo.InvariantCulture);
-                    Appointment.State state = (Appointment.State)int.Parse(fields[6]);
+                    Appointment.AppointmentState state = (Appointment.AppointmentState)int.Parse(fields[6]);
                     int roomNumber = Int32.Parse(fields[7]);
-                    Appointment.Type term = (Appointment.Type)int.Parse(fields[8]);
+                    Appointment.TypeOfTerm term = (Appointment.TypeOfTerm)int.Parse(fields[8]);
 
-                    Appointment appointment = new Appointment(id, patientEmail, doctorEmail, dateAppointment, 
+                    Appointment appointment = new Appointment(id, patientEmail, doctorEmail, dateAppointment,
                         startExamination, endExamination, state, roomNumber, term);
-                    allApointments.Add(appointment);
+                    allRequests.Add(appointment);
                 }
             }
 
-            return allApointments;
+            return allRequests;
         }
     }
 }
