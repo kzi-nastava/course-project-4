@@ -12,22 +12,22 @@ namespace Hospital.PatientImplementation
 {
     class Patient
     {
-        string email;
-        PatientService patientService;
-        List<Appointment> currentAppointments; 
+        string _email;
+        PatientService _patientService;
+        List<Appointment> _currentAppointments; 
 
-        public string Email { get { return email; } }
+        public string Email { get { return _email; } }
         public List<Appointment> PatientAppointments
         {
-            get { return currentAppointments; }
-            set { currentAppointments = value; }
+            get { return _currentAppointments; }
+            set { _currentAppointments = value; }
         } 
 
         public Patient(string email, PatientService patientService)
         {
-            this.email = email;
-            this.patientService = patientService;
-            patientService.refreshPatientAppointments(this);
+            this._email = email;
+            this._patientService = patientService;
+            patientService.RefreshPatientAppointments(this);
         }
 
         // methods
@@ -49,43 +49,43 @@ namespace Hospital.PatientImplementation
 
                 // patient choice
                 if (choice.Equals("1"))
-                    this.readOwnAppointments();
+                    this.ReadOwnAppointments();
                 else if (choice.Equals("2"))
-                    this.createAppointment();
+                    this.CreateAppointment();
                 else if (choice.Equals("3"))
-                    this.updateAppointment();
+                    this.UpdateAppointment();
                 else if (choice.Equals("4"))
-                    this.deleteAppointment();
+                    this.DeleteAppointment();
                 else if (choice.Equals("5"))
-                    this.logOut();
+                    this.LogOut();
             } while (true);
         }
 
-        private void readOwnAppointments()
+        private void ReadOwnAppointments()
         {
-            if (!patientService.hasPatientAppointment(this))
+            if (!_patientService.HasPatientAppointmen(this))
                 return;
                 
             int serialNumber = 0;
 
-            patientService.tableHeader();
+            _patientService.TableHeader();
             
-            foreach (Appointment appointment in this.currentAppointments)
+            foreach (Appointment appointment in this._currentAppointments)
             {
                 serialNumber++;
-                Console.WriteLine(serialNumber + ". " + appointment.displayOfPatientAppointment());
+                Console.WriteLine(serialNumber + ". " + appointment.DisplayOfPatientAppointment());
             }
             Console.WriteLine();
         }
 
-        private void deleteAppointment() 
+        private void DeleteAppointment() 
         {
-            // first check if patient has appointments for delete
-            if (!patientService.hasPatientAppointment(this))
+            // first check if patient has _appointments for delete
+            if (!_patientService.HasPatientAppointmen(this))
                 return;
 
             // pick appointment for delete
-            List<Appointment> appointmentsForDelete = patientService.findAppointmentsForDeleteAndUpdate(this);
+            List<Appointment> appointmentsForDelete = _patientService.FindAppointmentsForDeleteAndUpdate(this);
             string inputNumberAppointment;
             int numberAppointment;
             do
@@ -109,17 +109,17 @@ namespace Hospital.PatientImplementation
                 if (id.Equals(appointmentForDelete.AppointmentId)) {
 
                     if ((appointmentForDelete.DateAppointment - DateTime.Now).TotalDays <= 2)
-                    {
-                        appointmentForDelete.AppointmentStateProp = Appointment.AppointmentState.DeleteRequest;
-                        
+                    {                        
                         patientService.RequestService.Requests.Add(appointmentForDelete);
                         patientService.RequestService.UpdateFile();
+
+                        appointmentForDelete.AppointmentState = Appointment.State.DeleteRequest;
                         Console.WriteLine("Zahtev za brisanje je poslat sekretaru!");
                     }
                     else
                     {
                         // logical deletion
-                        appointmentForDelete.AppointmentStateProp = Appointment.AppointmentState.Deleted;
+                        appointmentForDelete.AppointmentState = Appointment.State.Deleted;
                         Console.WriteLine("Uspesno ste obrisali pregled!");
                     }
                     lines[i] = appointmentForDelete.ToString();
@@ -130,23 +130,23 @@ namespace Hospital.PatientImplementation
             File.WriteAllLines(filePath, lines);
 
             //refresh data
-            patientService.refreshPatientAppointments(this);
+            _patientService.RefreshPatientAppointments(this);
 
             // append new action in action file
-            patientService.appendToActionFile(this.email, "delete");
+            _patientService.AppendToActionFile(this._email, "delete");
 
-            // check number of changed, deleted and created appointments
-            this.antiTrolMechanism();
+            // check number of changed, deleted and created _appointments
+            this.AntiTrolMechanism();
         }
 
-        private void updateAppointment()
+        private void UpdateAppointment()
         {
-            // first check if patient has appointments for update
-            if (!patientService.hasPatientAppointment(this))
+            // first check if patient has _appointments for update
+            if (!_patientService.HasPatientAppointmen(this))
                 return;
 
             // pick appointment for update
-            List<Appointment> appointmentsForUpdate = patientService.findAppointmentsForDeleteAndUpdate(this);
+            List<Appointment> appointmentsForUpdate = _patientService.FindAppointmentsForDeleteAndUpdate(this);
             string inputNumberAppointment;
             int numberAppointment;
             do
@@ -173,9 +173,9 @@ namespace Hospital.PatientImplementation
                 newDate = Console.ReadLine();
                 Console.Write("Unesite vreme pocetka pregleda (HH:mm): ");
                 newStartTime = Console.ReadLine();
-            } while (!patientService.isValidInput(doctorEmail, newDate, newStartTime));
+            } while (!_patientService.IsValidInput(doctorEmail, newDate, newStartTime));
 
-            if (patientService.isAppointmentFree(appointmentForUpdate.AppointmentId, this.email, doctorEmail, newDate, newStartTime))
+            if (_patientService.IsAppointmentFree(appointmentForUpdate.AppointmentId, this._email, doctorEmail, newDate, newStartTime))
             {
                 // read from file
                 string filePath = @"..\..\Data\appointments.csv";
@@ -195,24 +195,22 @@ namespace Hospital.PatientImplementation
                         if ((appointmentForUpdate.DateAppointment - DateTime.Now).TotalDays <= 2)
                         {
                             appointmentForUpdate.AppointmentStateProp = Appointment.AppointmentState.UpdateRequest;
-							newAppointment = new Appointment(id, this.email, doctorEmail, appointmentDate,
-							appointmentStartTime, appointmentEndTime, Appointment.AppointmentState.UpdateRequest, Int32.Parse(fields[7]),
-							Appointment.TypeOfTerm.Examination);
-                            lines[i] = appointmentForUpdate.ToString();
-
+							              newAppointment = new Appointment(id, this._email, doctorEmail, appointmentDate,
+                    appointmentStartTime, appointmentEndTime, Appointment.State.UpdateRequest, Int32.Parse(fields[7]),
+                    Appointment.Type.Examination);
+                          
                             patientService.RequestService.Requests.Add(newAppointment);
                             patientService.RequestService.UpdateFile();
                             Console.WriteLine("Zahtev za izmenu je poslat sekretaru!");
                         }
                         else
                         {
-                            newAppointment = new Appointment(id, this.email, doctorEmail, appointmentDate,
-                            appointmentStartTime, appointmentEndTime, Appointment.AppointmentState.Updated, Int32.Parse(fields[7]),
-                            Appointment.TypeOfTerm.Examination);
+                            newAppointment = new Appointment(id, this._email, doctorEmail, appointmentDate,
+                    appointmentStartTime, appointmentEndTime, Appointment.State.Updated, Int32.Parse(fields[7]),
+                    Appointment.Type.Examination);
                             Console.WriteLine("Uspesno ste izvrsili izmenu pregleda!");
-                            lines[i] = newAppointment.ToString();
                         }
-                        
+                        lines[i] = appointmentForUpdate.ToString();
                     }
                 }
 
@@ -220,18 +218,18 @@ namespace Hospital.PatientImplementation
                 File.WriteAllLines(filePath, lines);
 
                 //refresh data
-                patientService.refreshPatientAppointments(this);
+                _patientService.RefreshPatientAppointments(this);
 
                 // append new action in action file
-                patientService.appendToActionFile(this.email, "update");
+                _patientService.AppendToActionFile(this._email, "update");
 
-                // check number of changed, deleted and created appointments
-                this.antiTrolMechanism();
+                // check number of changed, deleted and created _appointments
+                this.AntiTrolMechanism();
             }
 
         }
 
-        private void createAppointment()
+        private void CreateAppointment()
         {
             string doctorEmail;
             string newDate;
@@ -246,22 +244,22 @@ namespace Hospital.PatientImplementation
                 newDate = Console.ReadLine();
                 Console.Write("Unesite vreme pocetka pregleda (HH:mm): ");
                 newStartTime = Console.ReadLine();
-            } while (!patientService.isValidInput(doctorEmail, newDate, newStartTime));
+            } while (!_patientService.IsValidInput(doctorEmail, newDate, newStartTime));
 
-            if (patientService.isAppointmentFree("0", this.email, doctorEmail, newDate, newStartTime))
+            if (_patientService.IsAppointmentFree("0", this._email, doctorEmail, newDate, newStartTime))
             {
-                string id = patientService.getNewAppointmentId().ToString();
+                string id = _patientService.GetNewAppointmentId().ToString();
                 DateTime appointmentDate = DateTime.ParseExact(newDate, "MM/dd/yyyy", CultureInfo.InvariantCulture);
                 DateTime appointmentStartTime = DateTime.ParseExact(newStartTime, "HH:mm", CultureInfo.InvariantCulture);
                 DateTime appointmentEndTime = appointmentStartTime.AddMinutes(15);
 
-                Room freeRoom = patientService.findFreeRoom(this, appointmentDate, appointmentStartTime);
+                Room freeRoom = _patientService.FindFreeRoom(this, appointmentDate, appointmentStartTime);
                 int roomId = Int32.Parse(freeRoom.Id);
 
                 //  created appointment
-                Appointment newAppointment = new Appointment(id, this.email, doctorEmail, appointmentDate, 
-                    appointmentStartTime, appointmentEndTime, Appointment.AppointmentState.Created, roomId, 
-                    Appointment.TypeOfTerm.Examination);
+                Appointment newAppointment = new Appointment(id, this._email, doctorEmail, appointmentDate, 
+                    appointmentStartTime, appointmentEndTime, Appointment.State.Created, roomId, 
+                    Appointment.Type.Examination);
 
                 Console.WriteLine("Uspesno ste kreirali nov pregled!");
 
@@ -270,30 +268,30 @@ namespace Hospital.PatientImplementation
                 File.AppendAllText(filePath, "\n"+newAppointment.ToString());
 
                 // refresh data
-                patientService.refreshPatientAppointments(this);
+                _patientService.RefreshPatientAppointments(this);
 
                 // append new action in action file
-                patientService.appendToActionFile(this.email, "create");
+                _patientService.AppendToActionFile(this._email, "create");
 
-                // check number of changed, deleted and created appointments
-                this.antiTrolMechanism();
+                // check number of changed, deleted and created _appointments
+                this.AntiTrolMechanism();
             }
         }
 
-        private void antiTrolMechanism()
+        private void AntiTrolMechanism()
         {
             int changed = 0;
             int deleted = 0;
             int created = 0;
 
-            List<UserAction> myCurrentActions = patientService.loadMyCurrentActions(this.email);
+            List<UserAction> myCurrentActions = _patientService.LoadMyCurrentActions(this._email);
 
             foreach (UserAction action in myCurrentActions) {
-                if (action.GetActionState == UserAction.ActionState.Created)
+                if (action.ActionState == UserAction.State.Created)
                     created += 1;
-                else if (action.GetActionState == UserAction.ActionState.Modified)
+                else if (action.ActionState == UserAction.State.Modified)
                     changed += 1;
-                else if (action.GetActionState == UserAction.ActionState.Deleted)
+                else if (action.ActionState == UserAction.State.Deleted)
                     deleted += 1;
             }
 
@@ -306,11 +304,11 @@ namespace Hospital.PatientImplementation
             else
                 return;
           
-            patientService.blockAccessApplication(this.email);
-            this.logOut(); //log out from account
+            _patientService.BlockAccessApplication(this._email);
+            this.LogOut(); //log out from account
         }
 
-        private void logOut()
+        private void LogOut()
         {
             Login loging = new Login();
             loging.LogIn();

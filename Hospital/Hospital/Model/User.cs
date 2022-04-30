@@ -23,28 +23,28 @@ namespace Hospital.Model
             Active = 3
         }
 
-        private Role role;
-        private string email;
-        private string password;
-        private string name;
-        private string surname;
-        private State state;
+        private Role _role;
+        private string _email;
+        private string _password;
+        private string _name;
+        private string _surname;
+        private State _state;
 
-        public Role UserRole { get { return role; } }
-        public string Email { get { return email; } }
-        public string Password { get { return password; }  set { this.password = value; } }
-        public string Name { get { return name; } set { this.name = value; } }
-        public string Surname { get { return surname; } set { this.surname = value; } }
-        public State UserState { get { return state; } set{ this.state = value; } }
+        public Role UserRole { get { return _role; } }
+        public string Email { get { return _email; } }
+        public string Password { get { return _password; }  set { this._password = value; } }
+        public string Name { get { return _name; } set { this._name = value; } }
+        public string Surname { get { return _surname; } set { this._surname = value; } }
+        public State UserState { get { return _state; } set{ this._state = value; } }
 
         public User(Role role, string email, string password, string name, string surname, State state)
         {
-            this.role = role;
-            this.email = email;
-            this.password = password;
-            this.name = name;
-            this.surname = surname;
-            this.state = state;
+            this._role = role;
+            this._email = email;
+            this._password = password;
+            this._name = name;
+            this._surname = surname;
+            this._state = state;
         }
 
        

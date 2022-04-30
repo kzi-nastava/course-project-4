@@ -24,15 +24,13 @@ namespace Hospital.Repository
                     string[] fields = parser.ReadFields();
 
                     string patientEmail = fields[0];
-                    UserAction.ActionState state = (UserAction.ActionState)int.Parse(fields[1]);
+                    UserAction.State state = (UserAction.State)int.Parse(fields[1]);
                     DateTime actionDate = DateTime.ParseExact(fields[2], "MM/dd/yyyy", CultureInfo.InvariantCulture);
-
 
                     UserAction action = new UserAction(patientEmail, actionDate, state);
                     allActions.Add(action);
                 }
             }
-
             return allActions;
         }
     }

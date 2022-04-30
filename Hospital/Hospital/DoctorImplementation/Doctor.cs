@@ -13,7 +13,7 @@ namespace Hospital.DoctorImplementation
 {
     class Doctor
     {
-        AppointmentService appointmentService = new AppointmentService();  // loading all appointments
+        AppointmentService appointmentService = new AppointmentService();  // loading all _appointments
         UserService userService = new UserService();
         PatientService helper;
         HealthRecordService healthRecordService = new HealthRecordService();
@@ -185,16 +185,13 @@ namespace Hospital.DoctorImplementation
             Console.WriteLine(String.Format("|{0,5}|{1,10}|{2,10}|{3,10}|{4,10}|{5,10}|{6,10}", "Br.","Pacijent", "Datum", "Pocetak", "Kraj", "Soba", "Vrsta termina"));
             foreach (Appointment appointment in this.allMyAppointments)
             {
-                if ((appointment.AppointmentStateProp == Appointment.AppointmentState.Created ||
-                    appointment.AppointmentStateProp == Appointment.AppointmentState.Updated) &&
+                if ((appointment.AppointmentState == Appointment.State.Created ||
+                    appointment.AppointmentState == Appointment.State.Updated) &&
                     appointment.DateAppointment > DateTime.Now)
                 {
                     Console.WriteLine(appointment.ToStringDisplayForDoctor(serialNumberAppointment));
                     serialNumberAppointment += 1;
                 }
-                
-
-
             }
             Console.WriteLine();
             
@@ -298,17 +295,17 @@ namespace Hospital.DoctorImplementation
                 return;
             }
 
-            int id = helper.getNewAppointmentId();
-            Appointment appointment = new Appointment(id.ToString(), patientEmail, currentRegisteredDoctor.Email, dateOfAppointment, startTime, newEndTime, Appointment.AppointmentState.Created, roomNumber, (Appointment.TypeOfTerm)int.Parse(typeOfTerm));
+            int id = helper.GetNewAppointmentId();
+            Appointment appointment = new Appointment(id.ToString(), patientEmail, currentRegisteredDoctor.Email, dateOfAppointment, startTime, newEndTime, Appointment.State.Created, roomNumber, (Appointment.Type)int.Parse(typeOfTerm));
             string newAppointment = "\n" + id + "," + patientEmail + "," + currentRegisteredDoctor.Email + ","  + newDate + "," +
-                newStartTime + "," + newEndTime.Hour + ":" + newEndTime.Minute + "," + (int)Appointment.AppointmentState.Created + "," + newRoomNumber + "," + typeOfTerm;
+                newStartTime + "," + newEndTime.Hour + ":" + newEndTime.Minute + "," + (int)Appointment.State.Created + "," + newRoomNumber + "," + typeOfTerm;
 
             // append new appointment in file
-            string filePath = @"..\..\Data\appointments.csv";
+            string filePath = @"..\..\Data\_appointments.csv";
             File.AppendAllText(filePath, newAppointment);
             Console.WriteLine("Uspešno ste zakazali termin.");
 
-            // add to appointments
+            // add to _appointments
             appointmentService.Appointments.Add(appointment);
             allMyAppointments.Add(appointment);
             
@@ -370,7 +367,7 @@ namespace Hospital.DoctorImplementation
                 } while (!appointmentService.IsIntegerValid(numberAppointment));
             } while (Int32.Parse(numberAppointment) > this.allMyAppointments.Count);
             Appointment appointmentForUpdate = this.allMyAppointments[Int32.Parse(numberAppointment) - 1];
-            if (appointmentForUpdate.GetTypeOfTerm == Appointment.TypeOfTerm.Examination)
+            if (appointmentForUpdate.TypeOfTerm == Appointment.Type.Examination)
             {
                 do
                 {
@@ -442,7 +439,7 @@ namespace Hospital.DoctorImplementation
             }
             appointmentService.Appointments.Remove(appointmentForUpdate);
             this.allMyAppointments.Remove(appointmentForUpdate);
-            Appointment newAppointment = new Appointment(appointmentForUpdate.AppointmentId, patientEmail, currentRegisteredDoctor.Email, dateOfAppointment, startTime, newEndTime, Appointment.AppointmentState.Updated, roomNumber, appointmentForUpdate.GetTypeOfTerm);
+            Appointment newAppointment = new Appointment(appointmentForUpdate.AppointmentId, patientEmail, currentRegisteredDoctor.Email, dateOfAppointment, startTime, newEndTime, Appointment.State.Updated, roomNumber, appointmentForUpdate.TypeOfTerm);
             appointmentService.Appointments.Add(newAppointment);
             this.allMyAppointments.Add(newAppointment);
             appointmentService.UpdateAppointment(appointmentForUpdate);

@@ -1,6 +1,5 @@
 ﻿// HEADER
-/*In HelperClass there are functions that enable the implementation of the patient's functionalities*/
-
+/*In PatientService there are functions that enable the implementation of the patient's functionalities*/
 
 using System;
 using System.Collections.Generic;
@@ -16,35 +15,35 @@ namespace Hospital.PatientImplementation
 {
     class PatientService
     {
-        AppointmentService appointmentService = new AppointmentService();  // loading all appointments
         RequestService requestService;
-        List<Appointment> allAppointments;
-        List<User> allUsers;
-        User currentRegisteredUser;
+        AppointmentService _appointmentService = new AppointmentService();  // loading all _appointments
+        List<Appointment> _allAppointments;
+        List<User> _allUsers;
+        User _currentRegisteredUser;
 
         // getters
-        public List<Appointment> Appointments { get { return allAppointments; } }
+        public List<Appointment> Appointments { get { return _allAppointments; } }
 
         public RequestService RequestService { get { return requestService; } }
 
         public PatientService(User user, List<User> allUsers)
         {
-            this.currentRegisteredUser = user;
-            this.allUsers = allUsers;
-            allAppointments = appointmentService.AppointmentRepository.Load();
             requestService = new RequestService(appointmentService);
+            this._currentRegisteredUser = user;
+            this._allUsers = allUsers;
+            _allAppointments = _appointmentService.AppointmentRepository.Load();
         }
 
-        public void refreshPatientAppointments(Patient currentlyRegisteredPatient) 
+        public void RefreshPatientAppointments(Patient currentRegisteredPatient) 
         {
-             this.allAppointments = appointmentService.AppointmentRepository.Load();
+             this._allAppointments = _appointmentService.AppointmentRepository.Load();
 
-            // finding all appointments for the registered patient that have not been deleted and has not yet passed
+            // finding all _appointments for the registered patient that have not been deleted and has not yet passed
             List<Appointment> patientCurrentAppointment = new List<Appointment>();
-            foreach (Appointment appointment in allAppointments)
+            foreach (Appointment appointment in _allAppointments)
             {
-                if (appointment.PatientEmail.Equals(currentRegisteredUser.Email) &&
-                    appointment.AppointmentStateProp != Appointment.AppointmentState.Deleted &&
+                if (appointment.PatientEmail.Equals(_currentRegisteredUser.Email) &&
+                    appointment.AppointmentState != Appointment.State.Deleted &&
                     appointment.DateAppointment >= DateTime.Now.Date)
                 {
                     // check if today's appointment has passed
@@ -53,32 +52,32 @@ namespace Hospital.PatientImplementation
                     patientCurrentAppointment.Add(appointment);
                 }
             }
-            currentlyRegisteredPatient.PatientAppointments = patientCurrentAppointment;
+            currentRegisteredPatient.PatientAppointments = patientCurrentAppointment;
         }
 
-        public void tableHeader()
+        public void TableHeader()
         {
             Console.WriteLine();
             Console.WriteLine(String.Format("{0,3}|{1,10}|{2,10}|{3,10}|{4,10}|{5,10}|{6,10}|{7,10}",
                 "Br.", "Doktor", "Datum", "Pocetak", "Kraj", "Soba", "Tip", "Stanje"));
         }
 
-        public List<Appointment> findAppointmentsForDeleteAndUpdate(Patient currentlyRegisteredPatient)
+        public List<Appointment> FindAppointmentsForDeleteAndUpdate(Patient currentlyRegisteredPatient)
         {
             int appointmentOrdinalNumber = 0;
 
-            this.tableHeader();
+            this.TableHeader();
 
             List<Appointment> appointmentsForChange = new List<Appointment>();
             foreach (Appointment appointment in currentlyRegisteredPatient.PatientAppointments) 
             {
-                if (appointment.AppointmentStateProp != Appointment.AppointmentState.UpdateRequest &&
-                    appointment.AppointmentStateProp != Appointment.AppointmentState.DeleteRequest && 
-                    appointment.GetTypeOfTerm != Appointment.TypeOfTerm.Operation)
+                if (appointment.AppointmentState != Appointment.State.UpdateRequest &&
+                    appointment.AppointmentState != Appointment.State.DeleteRequest && 
+                    appointment.TypeOfTerm != Appointment.Type.Operation)
                 {
                     appointmentsForChange.Add(appointment);
                     appointmentOrdinalNumber++;
-                    Console.WriteLine(appointmentOrdinalNumber + ". " + appointment.displayOfPatientAppointment());
+                    Console.WriteLine(appointmentOrdinalNumber + ". " + appointment.DisplayOfPatientAppointment());
                 }
             }
             Console.WriteLine();
@@ -86,7 +85,7 @@ namespace Hospital.PatientImplementation
             return appointmentsForChange;
         }
 
-        public bool hasPatientAppointment(Patient patient)
+        public bool HasPatientAppointmen(Patient patient)
         {
             if (patient.PatientAppointments.Count == 0)
             {
@@ -97,7 +96,7 @@ namespace Hospital.PatientImplementation
                 return true;
         }
 
-        public bool isValidInput(string doctorEmail, string newDateAppointment, string newStartAppointment)
+        public bool IsValidInput(string doctorEmail, string newDateAppointment, string newStartAppointment)
         {
             DateTime checkDate;
             bool validDate = DateTime.TryParseExact(newDateAppointment, "MM/dd/yyyy", DateTimeFormatInfo.InvariantInfo, DateTimeStyles.None, out checkDate);
@@ -120,7 +119,7 @@ namespace Hospital.PatientImplementation
                 return false;
             }
 
-            foreach (User user in allUsers) {
+            foreach (User user in _allUsers) {
                 if (user.Email.Equals(doctorEmail) && user.UserRole == User.Role.Doctor)
                     return true;
             }
@@ -129,12 +128,12 @@ namespace Hospital.PatientImplementation
         }
 
 
-        public bool isAppointmentFree(string id, string patientEmail, string doctorEmail, string newDateExamination, string newStartTime)
+        public bool IsAppointmentFree(string id, string patientEmail, string doctorEmail, string newDateExamination, string newStartTime)
         {
             DateTime dateExamination = DateTime.Parse(newDateExamination);
             DateTime startTime = DateTime.Parse(newStartTime);
 
-            foreach (Appointment appointment in appointmentService.Appointments) {
+            foreach (Appointment appointment in _appointmentService.Appointments) {
                 if (appointment.DoctorEmail.Equals(doctorEmail) && appointment.DateAppointment == dateExamination
                     && appointment.StartTime <= startTime && appointment.EndTime > startTime)
                 {
@@ -151,14 +150,14 @@ namespace Hospital.PatientImplementation
             return true;
         }
 
-        public int getNewAppointmentId() 
+        public int GetNewAppointmentId() 
         {
-            return this.allAppointments.Count + 1;
+            return this._allAppointments.Count + 1;
         }
 
-        public List<UserAction> loadMyCurrentActions(string registeredUserEmail)
+        public List<UserAction> LoadMyCurrentActions(string registeredUserEmail)
         {
-            UserActionService actionService = new UserActionService();  // loading all users actions
+            UserActionService actionService = new UserActionService();  // loading all _users actions
             List<UserAction> myCurrentActions = new List<UserAction>();
 
             foreach (UserAction action in actionService.Actions)
@@ -169,7 +168,7 @@ namespace Hospital.PatientImplementation
             return myCurrentActions;
         }
 
-        public void blockAccessApplication(string registeredUserEmail)
+        public void BlockAccessApplication(string registeredUserEmail)
         {
             // read from file
             string filePath = @"..\..\Data\users.csv";
@@ -186,30 +185,30 @@ namespace Hospital.PatientImplementation
             File.WriteAllLines(filePath, lines);
         }
 
-        public void appendToActionFile(string registeredUserEmail, string typeAction)
+        public void AppendToActionFile(string registeredUserEmail, string typeAction)
         {
             string filePath = @"..\..\Data\actions.csv";
 
             UserAction newAction;
             if (typeAction.Equals("create"))
-                newAction = new UserAction(registeredUserEmail, DateTime.Now, UserAction.ActionState.Created);
+                newAction = new UserAction(registeredUserEmail, DateTime.Now, UserAction.State.Created);
             else if(typeAction.Equals("update"))
-                newAction = new UserAction(registeredUserEmail, DateTime.Now, UserAction.ActionState.Modified);
+                newAction = new UserAction(registeredUserEmail, DateTime.Now, UserAction.State.Modified);
             else
-                newAction = new UserAction(registeredUserEmail, DateTime.Now, UserAction.ActionState.Deleted);
+                newAction = new UserAction(registeredUserEmail, DateTime.Now, UserAction.State.Deleted);
 
             File.AppendAllText(filePath, newAction.ToString());
         }
 
-        public Room findFreeRoom(Patient patient, DateTime newDate, DateTime newStartTime)
+        public Room FindFreeRoom(Patient patient, DateTime newDate, DateTime newStartTime)
         {
             RoomService roomService = new RoomService();
             List<Room> freeRooms = roomService.Rooms;  // at the beginning all the rooms are free
 
-            foreach (Appointment appointment in this.allAppointments)
+            foreach (Appointment appointment in this._allAppointments)
             {
                 if (appointment.DateAppointment == newDate && newStartTime >= appointment.StartTime 
-                    && newStartTime < appointment.EndTime && appointment.GetAppointmentState != Appointment.AppointmentState.Deleted)
+                    && newStartTime < appointment.EndTime && appointment.AppointmentState != Appointment.State.Deleted)
                 {
                     Room occupiedRoom = roomService.GetRoomById(appointment.RoomNumber.ToString());
                     freeRooms.Remove(occupiedRoom);
