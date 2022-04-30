@@ -15,13 +15,13 @@ namespace Hospital.DoctorImplementation
     {
         AppointmentService appointmentService = new AppointmentService();  // loading all appointments
         UserService userService = new UserService();
+        PatientService helper;
         HealthRecordService healthRecordService = new HealthRecordService();
         List<HealthRecord> healthRecords;
-        Helper helper;
         List<Appointment> allMyAppointments;
         User currentRegisteredDoctor;
 
-        public Doctor(User currentRegisteredDoctor, Helper helper)
+        public Doctor(User currentRegisteredDoctor, PatientService helper)
         {
             this.currentRegisteredDoctor = currentRegisteredDoctor;
             this.helper = helper;

@@ -45,7 +45,7 @@
     <Compile Include="DoctorImplementation\Doctor.cs" />
     <Compile Include="Model\Appointment.cs" />
     <Compile Include="Model\User.cs" />
-    <Compile Include="PatientImplementation\Helper.cs" />
+    <Compile Include="PatientImplementation\PatientService.cs" />
     <Compile Include="PatientImplementation\Patient.cs" />
     <Compile Include="Repository\ActionRepository.cs" />
     <Compile Include="Repository\AppointmentRepository.cs" />
