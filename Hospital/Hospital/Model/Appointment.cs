@@ -31,6 +31,7 @@ namespace Hospital.Model
         private State _appointmentState;
         private int _roomNumber;
         private Type _typeOfTerm;
+        bool _appointmentPerformed;
 
         public string AppointmentId { get { return _id; } }
         public string PatientEmail { get { return _patientEmail; } }
@@ -40,10 +41,11 @@ namespace Hospital.Model
         public DateTime EndTime { get { return _endTime; } set { _endTime = value; } }
         public State AppointmentState { get { return _appointmentState; } set { _appointmentState = value; } }
         public int RoomNumber { get { return _roomNumber; } }
-        public Type TypeOfTerm { get { return _typeOfTerm;} } 
+        public Type TypeOfTerm { get { return _typeOfTerm;} }
+        public bool AppointmentPerformed { get { return _appointmentPerformed; } }
 
         public Appointment(string id, string patientEmail, string doctorEmail,
-        DateTime dateAppointment, DateTime start, DateTime end, State state, int roomNumber, Type term)
+        DateTime dateAppointment, DateTime start, DateTime end, State state, int roomNumber, Type term, bool appointment)
         {
             this._id = id;
             this._patientEmail = patientEmail;
@@ -54,6 +56,7 @@ namespace Hospital.Model
             this._appointmentState = state;
             this._roomNumber = roomNumber;
             this._typeOfTerm = term;
+            this._appointmentPerformed = appointment;
         }
 
         public override string ToString()
@@ -61,7 +64,7 @@ namespace Hospital.Model
             return this._id + "," + this._patientEmail + "," + this._doctorEmail + "," + 
                 this.DateAppointment.ToString("MM/dd/yyyy") + "," + this._startTime.ToString("HH:mm") + "," + 
                 this._endTime.ToString("HH:mm") + "," + (int)this.AppointmentState
-                + "," + this._roomNumber + "," + (int)this.TypeOfTerm;
+                + "," + this._roomNumber + "," + (int)this.TypeOfTerm + "," + "false";
         }
 
         public string DisplayOfPatientAppointment()

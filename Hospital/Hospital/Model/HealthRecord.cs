@@ -8,11 +8,7 @@ namespace Hospital.Model
 {
     class HealthRecord
     {
-        public enum TypeOfAppointment
-        {
-            Examined = 1,
-            Operated = 2
-        }
+        
         private string idHealthRecord;
         private string emailPatient;
         private int patientHeight;
@@ -20,9 +16,7 @@ namespace Hospital.Model
         private string previousIllnesses;
         private string allergen;
         private string bloodType;
-        private string anamnesis;
-        private string referralToDoctor;
-
+        
 
         public string IdHealthRecord { get { return idHealthRecord; } }
 
@@ -33,13 +27,10 @@ namespace Hospital.Model
         public string Allergen { get { return allergen; } }
 
         public string BloodType { get { return bloodType; } }
-        public string Anamnesis { get { return anamnesis; } }
-
-
-        public string ReferralToDoctor { get { return referralToDoctor; } }
+        
 
         public HealthRecord(string idHealthRecord, string emailPatient, int patientHeight, double patientWeight, string previousIllnesses,string allergen,
-            string bloodType, string anamnesis, string referralToDoctor)
+            string bloodType)
         {
             this.idHealthRecord = idHealthRecord;
             this.emailPatient = emailPatient;
@@ -48,8 +39,7 @@ namespace Hospital.Model
             this.previousIllnesses = previousIllnesses;
             this.allergen = allergen;
             this.bloodType = bloodType;
-            this.anamnesis = anamnesis;
-            this.referralToDoctor = referralToDoctor;
+         
         }
 
         public override string ToString()
@@ -59,16 +49,14 @@ namespace Hospital.Model
                 "Visina: " + this.patientHeight + "\n" +
                 "Težina: " + this.patientWeight + "\n" +
                 "Alergena: " + this.allergen + "\n" +
-                "Krvna grupa: " + this.bloodType + "\n" +
-                "Anamneza: " + this.anamnesis + "\n" +
-                "Uput: " + this.referralToDoctor;
+                "Krvna grupa: " + this.bloodType + "\n";
+              
         }
 
         public string ToStringForFile()
 		{
             return this.idHealthRecord + "*" + this.emailPatient + "*" + this.patientHeight + "*" +
-                this.patientWeight + "*" + this.previousIllnesses + "*" + this.allergen + "*" + this.bloodType + "*" + this.anamnesis +
-                "*" + this.referralToDoctor;
+                this.patientWeight + "*" + this.previousIllnesses + "*" + this.allergen + "*" + this.bloodType;
 		}
 
     }
