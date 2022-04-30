@@ -289,7 +289,7 @@ namespace Hospital.SecretaryImplementation
 		private void LogOut()
 		{
 			Login loging = new Login();
-			loging.logIn();
+			loging.LogIn();
 		}
 
 	}

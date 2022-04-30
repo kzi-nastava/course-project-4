@@ -13,10 +13,10 @@ namespace Hospital.Model
 {
     class Login
     {
-        UserService userService = new UserService();
-        User registeredUser;
+        UserService _userService = new UserService();
+        User _registeredUser;
 
-        public void logIn()
+        public void LogIn()
         {
             Console.WriteLine("\nPrijava na sistem");
             Console.WriteLine("------------------");
@@ -26,11 +26,11 @@ namespace Hospital.Model
                 Console.Write("Unesite email: ");
                 string email = Console.ReadLine();
 
-                if (!userService.IsEmailValid(email))
+                if (!_userService.IsEmailValid(email))
                 {
                     Console.WriteLine("Email nije validan!");
                 }
-                else if (userService.IsUserBlocked(email))
+                else if (_userService.IsUserBlocked(email))
                 {
                     Console.WriteLine("Korisnik je blokiran. Prijava nije moguca!");
                 }
@@ -39,8 +39,8 @@ namespace Hospital.Model
                     Console.Write("Unesite lozinku: ");
                     string password = Console.ReadLine();
 
-                    this.registeredUser = userService.TryLogin(email, password);
-                    if (this.registeredUser == null)
+                    this._registeredUser = _userService.TryLogin(email, password);
+                    if (this._registeredUser == null)
                     {
                         Console.WriteLine("Pogresna lozinka!");
                     }
@@ -53,31 +53,31 @@ namespace Hospital.Model
             }
 
             Console.WriteLine("Uspesno ste se ulogovali!");
-            Console.WriteLine($"\nDobrodosli {this.registeredUser.Name + " " + this.registeredUser.Surname}");
+            Console.WriteLine($"\nDobrodosli {this._registeredUser.Name + " " + this._registeredUser.Surname}");
 
-            PatientService helper = new PatientService(this.registeredUser, userService.Users);
-            if (this.registeredUser.UserRole == User.Role.Patient)
+            PatientService helper = new PatientService(this._registeredUser, _userService.Users);
+            if (this._registeredUser.UserRole == User.Role.Patient)
             { 
                 // patient
-                Patient registeredPatient = new Patient(this.registeredUser.Email, helper);
+                Patient registeredPatient = new Patient(this._registeredUser.Email, helper);
                 registeredPatient.patientMenu();
             }
-            else if (this.registeredUser.UserRole == User.Role.Doctor)
+            else if (this._registeredUser.UserRole == User.Role.Doctor)
             {
                 // doctor
-                Doctor registeredDoctor = new Doctor(this.registeredUser, helper);
+                Doctor registeredDoctor = new Doctor(this._registeredUser, helper);
                 registeredDoctor.doctorMenu();
             }
-            else if (this.registeredUser.UserRole == User.Role.Secretary)
+            else if (this._registeredUser.UserRole == User.Role.Secretary)
 			{
                 // secretary
-                Secretary registeredSecretary = new Secretary(this.userService);
+                Secretary registeredSecretary = new Secretary(this._userService);
                 registeredSecretary.SecretaryMenu();
 			}
-            else if (this.registeredUser.UserRole == User.Role.Manager)
+            else if (this._registeredUser.UserRole == User.Role.Manager)
             {
                 // manager
-                Manager registeredManager = new Manager(this.registeredUser);
+                Manager registeredManager = new Manager(this._registeredUser);
                 registeredManager.ManagerMenu();
             }
         }

@@ -12,30 +12,27 @@ namespace Hospital.Service
 {
     class AppointmentService
     {
-        private AppointmentRepository appointmentRepository;
-        private UserRepository userRepository;
-        private List<Appointment> appointments;
-        private List<User> users;
+        private AppointmentRepository _appointmentRepository;
+        private UserRepository _userRepository;
+        private List<Appointment> _appointments;
+        private List<User> _users;
 
-        public AppointmentRepository AppointmentRepository { get { return appointmentRepository; } }
-        public List<Appointment> Appointments { get { return appointments; } }
-
-
-
+        public AppointmentRepository AppointmentRepository { get { return _appointmentRepository; } }
+        public List<Appointment> Appointments { get { return _appointments; } }
         public AppointmentService()
         {
-            appointmentRepository = new AppointmentRepository();
-            userRepository = new UserRepository();
-            appointments = appointmentRepository.Load();
-            users = userRepository.Load();
+            _appointmentRepository = new AppointmentRepository();
+            _userRepository = new UserRepository();
+            _appointments = _appointmentRepository.Load();
+            _users = _userRepository.Load();
         }
 
         public List<Appointment> GetDoctorAppointment(User user)
         {
 
-            //returns all appointments for a particular doctor
+            //returns all _appointments for a particular doctor
             List<Appointment> doctorAppointment = new List<Appointment>();
-            foreach (Appointment appointment in this.appointments)
+            foreach (Appointment appointment in this._appointments)
             {
                 if (appointment.DoctorEmail.Equals(user.Email))
                     doctorAppointment.Add(appointment);
@@ -45,7 +42,7 @@ namespace Hospital.Service
 
         public bool IsAppointmentFreeForDoctor(string doctorEmail,string patientEmail,DateTime newDate,DateTime startTime, DateTime newEndTime, int newRoomNumber)
         {
-            foreach (Appointment appointment in appointments)
+            foreach (Appointment appointment in _appointments)
             {
                 if (appointment.DoctorEmail.Equals(doctorEmail) && appointment.DateAppointment == newDate
                     && ( appointment.StartTime <= startTime || appointment.EndTime > startTime) && appointment.RoomNumber == newRoomNumber)
@@ -63,13 +60,10 @@ namespace Hospital.Service
             return true;
         }
 
- 
-
-
         public bool IsPatientEmailValid(string patientEmail)
         {
 
-            foreach(User user in users)
+            foreach(User user in _users)
             {
                 if((user.Email == patientEmail) && (user.UserRole == User.Role.Patient) && user.UserState == User.State.Active)
                 {
@@ -134,7 +128,7 @@ namespace Hospital.Service
 
         public void DeleteAppointment(Appointment appointment)
         {
-            string filePath = @"..\..\Data\appointments.csv";
+            string filePath = @"..\..\Data\_appointments.csv";
             string[] lines = File.ReadAllLines(filePath);
            
             for (int i = 0; i < lines.Length; i++)
@@ -146,7 +140,7 @@ namespace Hospital.Service
                 {
 
                     lines[i] = id + "," + fields[1] + "," + fields[2] + "," + fields[3] + "," + fields[4] + "," + fields[5]
-                        + "," + (int)Appointment.AppointmentState.Deleted + "," + fields[7] + "," + fields[8];
+                        + "," + (int)Appointment.State.Deleted + "," + fields[7] + "," + fields[8];
                     Console.WriteLine("Uspesno ste obrisali termin!");
                     
                 }
@@ -158,7 +152,7 @@ namespace Hospital.Service
 
         public void UpdateAppointment(Appointment appointmentChange)
         {
-            string filePath = @"..\..\Data\appointments.csv";
+            string filePath = @"..\..\Data\_appointments.csv";
             string[] lines = File.ReadAllLines(filePath);
 
             for (int i = 0; i < lines.Length; i++)
@@ -170,7 +164,7 @@ namespace Hospital.Service
                 {
 
                     lines[i] = id + "," + fields[1] + "," + fields[2] + "," + fields[3] + "," + fields[4] + "," + fields[5]
-                        + "," + (int)Appointment.AppointmentState.Updated + "," + fields[7] + "," + fields[8];
+                        + "," + (int)Appointment.State.Updated + "," + fields[7] + "," + fields[8];
                     Console.WriteLine("Uspesno ste izmenili termin!");
 
                 }
