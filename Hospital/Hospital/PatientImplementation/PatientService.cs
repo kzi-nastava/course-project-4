@@ -40,7 +40,7 @@ namespace Hospital.PatientImplementation
             foreach (Appointment appointment in allAppointments)
             {
                 if (appointment.PatientEmail.Equals(currentRegisteredUser.Email) &&
-                    appointment.GetAppointmentState != Appointment.AppointmentState.Deleted &&
+                    appointment.AppointmentStateProp != Appointment.AppointmentState.Deleted &&
                     appointment.DateAppointment >= DateTime.Now.Date)
                 {
                     // check if today's appointment has passed
@@ -61,8 +61,8 @@ namespace Hospital.PatientImplementation
             List<Appointment> appointmentsForChange = new List<Appointment>();
             foreach (Appointment appointment in currentlyRegisteredPatient.PatientAppointments) 
             {
-                if (appointment.GetAppointmentState != Appointment.AppointmentState.UpdateRequest &&
-                    appointment.GetAppointmentState != Appointment.AppointmentState.DeleteRequest && 
+                if (appointment.AppointmentStateProp != Appointment.AppointmentState.UpdateRequest &&
+                    appointment.AppointmentStateProp != Appointment.AppointmentState.DeleteRequest && 
                     appointment.GetTypeOfTerm != Appointment.TypeOfTerm.Operation)
                 {
                     appointmentsForChange.Add(appointment);

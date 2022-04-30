@@ -59,7 +59,7 @@ namespace Hospital.Service
             return null;
         }
 
-        public void UpdateUserFile()
+        public void UpdateFile()
 		{
             string filePath = @"..\..\Data\users.csv";
 
@@ -96,7 +96,7 @@ namespace Hospital.Service
 				}
 			}
 
-            UpdateUserFile();
+            UpdateFile();
 
 		}
 
@@ -110,7 +110,7 @@ namespace Hospital.Service
                     break;
 				}
 			}
-            UpdateUserFile();
+            UpdateFile();
 		}
 
         public UserService()

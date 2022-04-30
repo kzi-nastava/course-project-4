@@ -177,7 +177,7 @@ namespace Hospital.ManagerImplementation
         private void logOut()
         {
             Login loging = new Login();
-            loging.logIn();
+            loging.LogIn();
         }
     }
 }

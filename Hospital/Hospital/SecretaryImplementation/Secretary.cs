@@ -14,14 +14,17 @@ namespace Hospital.SecretaryImplementation
 	{
 		private List<User> patients;
 		private UserService userService;
-		private HealthRecordService healthRecordService = new HealthRecordService();
-		private AppointmentService appointmentService = new AppointmentService();
-		private RequestRepository requestRepository = new RequestRepository();
+		private HealthRecordService healthRecordService;
+		private AppointmentService appointmentService;
+		private RequestService requestService;
 
 		public Secretary(UserService service)
 		{
 			this.userService = service;
 			this.patients = FilterPatients(service.Users);
+			this.healthRecordService = new HealthRecordService();
+			this.appointmentService = new AppointmentService();
+			this.requestService = new RequestService(appointmentService);
 		}
 
 		public void SecretaryMenu()
@@ -241,7 +244,7 @@ namespace Hospital.SecretaryImplementation
 			this.userService.Users.Add(newPatient);
 			this.patients.Add(newPatient);
 
-			this.userService.UpdateUserFile();
+			this.userService.UpdateFile();
 
 			this.healthRecordService.CreateHealthRecord(newPatient);
 			Console.WriteLine("\nNalog za pacijenta " + name + " " + surname + " je uspesno kreiran.");
@@ -296,12 +299,17 @@ namespace Hospital.SecretaryImplementation
 
 		private void AnswerRequest()
 		{
-			List<Appointment> requests = requestRepository.Load();
+			List<Appointment> requests = requestService.Requests;
+			if(requests.Count == 0)
+			{
+				Console.WriteLine("Trenutno nema zahteva za obradu. ");
+				return;
+			}
 			for(int i = 0; i < requests.Count; i++)
 			{
 				Appointment request = requests[i];
 				Console.Write("{0}. {1}, {2}, ", i + 1, userService.GetUserFullName(request.PatientEmail), request.DateAppointment);
-				switch (request.GetAppointmentState)
+				switch (request.AppointmentStateProp)
 				{
 					case (Appointment.AppointmentState.UpdateRequest):
 						Console.Write("Izmena termina");
@@ -338,13 +346,14 @@ namespace Hospital.SecretaryImplementation
 				actionIndexInput = Console.ReadLine();
 			}
 			while (!int.TryParse(actionIndexInput, out actionIndex) || actionIndex < 1 || actionIndex > 2);
-			
+
+			requestService.ProcessRequest(activeRequest, actionIndex);
 		}
 
 		private void LogOut()
 		{
 			Login loging = new Login();
-			loging.logIn();
+			loging.LogIn();
 		}
 
 	}

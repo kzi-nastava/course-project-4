@@ -39,7 +39,7 @@ namespace Hospital.Model
         public DateTime DateAppointment { get { return dateAppointment; } }
         public DateTime StartTime { get { return startTime; } }
         public DateTime EndTime { get { return endTime; } }
-        public AppointmentState GetAppointmentState { get { return state; } }
+        public AppointmentState AppointmentStateProp { get { return state; } set { this.state = value; } }
 
         public int RoomNumber { get { return roomNumber; } }
         public TypeOfTerm GetTypeOfTerm { get { return term;} }
@@ -66,9 +66,9 @@ namespace Hospital.Model
                 typeOfTerm = "operacija";
             else
             {
-                if (this.GetAppointmentState == AppointmentState.UpdateRequest)
+                if (this.AppointmentStateProp == AppointmentState.UpdateRequest)
                     appointmentState = "Poslato sekretaru na izmenu";
-                else if(this.GetAppointmentState == AppointmentState.DeleteRequest)
+                else if(this.AppointmentStateProp == AppointmentState.DeleteRequest)
                     appointmentState = "Poslato sekretaru na brisanje";
             }
             return String.Format("|{0,10}|{1,10}|{2,10}|{3,10}|{4,10}|{5,10}|{6,10}",

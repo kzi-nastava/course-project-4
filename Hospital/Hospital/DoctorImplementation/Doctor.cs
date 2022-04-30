@@ -185,8 +185,8 @@ namespace Hospital.DoctorImplementation
             Console.WriteLine(String.Format("|{0,5}|{1,10}|{2,10}|{3,10}|{4,10}|{5,10}|{6,10}", "Br.","Pacijent", "Datum", "Pocetak", "Kraj", "Soba", "Vrsta termina"));
             foreach (Appointment appointment in this.allMyAppointments)
             {
-                if ((appointment.GetAppointmentState == Appointment.AppointmentState.Created ||
-                    appointment.GetAppointmentState == Appointment.AppointmentState.Updated) &&
+                if ((appointment.AppointmentStateProp == Appointment.AppointmentState.Created ||
+                    appointment.AppointmentStateProp == Appointment.AppointmentState.Updated) &&
                     appointment.DateAppointment > DateTime.Now)
                 {
                     Console.WriteLine(appointment.ToStringDisplayForDoctor(serialNumberAppointment));

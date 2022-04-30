@@ -293,7 +293,7 @@ namespace Hospital.PatientImplementation
         private void logOut()
         {
             Login loging = new Login();
-            loging.logIn();
+            loging.LogIn();
         }
     }
 }
