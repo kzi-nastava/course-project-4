@@ -38,6 +38,7 @@
   <ItemGroup>
     <Compile Include="App.cs" />
     <Compile Include="ManagerImplementation\Manager.cs" />
+    <Compile Include="Model\Equipment.cs" />
     <Compile Include="Model\Login.cs" />
     <Compile Include="Model\HealthRecord.cs" />
     <Compile Include="Model\Room.cs" />
