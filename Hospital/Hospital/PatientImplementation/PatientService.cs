@@ -28,7 +28,7 @@ namespace Hospital.PatientImplementation
 
         public PatientService(User user, List<User> allUsers)
         {
-            requestService = new RequestService(appointmentService);
+            requestService = new RequestService(_appointmentService);
             this._currentRegisteredUser = user;
             this._allUsers = allUsers;
             _allAppointments = _appointmentService.AppointmentRepository.Load();
@@ -200,7 +200,7 @@ namespace Hospital.PatientImplementation
             File.AppendAllText(filePath, newAction.ToString());
         }
 
-        public Room FindFreeRoom(Patient patient, DateTime newDate, DateTime newStartTime)
+        public Room FindFreeRoom(DateTime newDate, DateTime newStartTime)
         {
             RoomService roomService = new RoomService();
             List<Room> freeRooms = roomService.Rooms;  // at the beginning all the rooms are free

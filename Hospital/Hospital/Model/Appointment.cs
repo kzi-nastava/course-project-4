@@ -34,10 +34,10 @@ namespace Hospital.Model
 
         public string AppointmentId { get { return _id; } }
         public string PatientEmail { get { return _patientEmail; } }
-        public string DoctorEmail { get { return _doctorEmail; } set { this.doctorEmail = value; } }
-        public DateTime DateAppointment { get { return _dateAppointment; } set { dateAppointment = value; } }
-        public DateTime StartTime { get { return _startTime; } set { startTime = value; } }
-        public DateTime EndTime { get { return _endTime; } set { endTime = value; } }
+        public string DoctorEmail { get { return _doctorEmail; } set { this._doctorEmail = value; } }
+        public DateTime DateAppointment { get { return _dateAppointment; } set { _dateAppointment = value; } }
+        public DateTime StartTime { get { return _startTime; } set { _startTime = value; } }
+        public DateTime EndTime { get { return _endTime; } set { _endTime = value; } }
         public State AppointmentState { get { return _appointmentState; } set { _appointmentState = value; } }
         public int RoomNumber { get { return _roomNumber; } }
         public Type TypeOfTerm { get { return _typeOfTerm;} } 

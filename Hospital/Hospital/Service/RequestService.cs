@@ -40,8 +40,8 @@ namespace Hospital.Service
 				foreach (Appointment request in requests)
 				{
 					line = request.AppointmentId+","+request.PatientEmail+","+request.DoctorEmail+","+request.DateAppointment.ToString("MM/dd/yyyy")+
-						","+request.StartTime.ToString("HH:mm")+","+request.EndTime.ToString("HH:mm") + ","+(int)request.AppointmentStateProp+","
-						+request.RoomNumber+","+(int)request.GetTypeOfTerm;
+						","+request.StartTime.ToString("HH:mm")+","+request.EndTime.ToString("HH:mm") + ","+(int)request.AppointmentState+","
+						+request.RoomNumber+","+(int)request.TypeOfTerm;
 					lines.Add(line);
 				}
 				File.WriteAllLines(filePath, lines.ToArray());
@@ -72,7 +72,7 @@ namespace Hospital.Service
 			{
 				if(appointment.AppointmentId == request.AppointmentId)
 				{
-					appointment.AppointmentStateProp = Appointment.AppointmentState.Created;
+					appointment.AppointmentState = Appointment.State.Created;
 					break;
 				}
 					
@@ -90,15 +90,15 @@ namespace Hospital.Service
 			{
 				if(appointment.AppointmentId == request.AppointmentId)
 				{
-					if (request.AppointmentStateProp == Appointment.AppointmentState.DeleteRequest)
-						appointment.AppointmentStateProp = Appointment.AppointmentState.Deleted;
+					if (request.AppointmentState == Appointment.State.DeleteRequest)
+						appointment.AppointmentState = Appointment.State.Deleted;
 					else
 					{
 						appointment.DoctorEmail = request.DoctorEmail;
 						appointment.DateAppointment = request.DateAppointment;
 						appointment.StartTime = request.StartTime;
 						appointment.EndTime = request.EndTime;
-						appointment.AppointmentStateProp = Appointment.AppointmentState.Updated;
+						appointment.AppointmentState = Appointment.State.Updated;
 					}
 						
 						

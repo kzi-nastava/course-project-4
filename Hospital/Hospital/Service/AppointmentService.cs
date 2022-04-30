@@ -179,11 +179,11 @@ namespace Hospital.Service
             List<string> lines = new List<String>();
 
             string line;
-            foreach (Appointment appointment in appointments)
+            foreach (Appointment appointment in _appointments)
             {
                 line = appointment.AppointmentId + "," + appointment.PatientEmail + "," + appointment.DoctorEmail + "," + appointment.DateAppointment.ToString("MM/dd/yyyy") +
                     "," + appointment.StartTime.ToString("HH:mm") + "," + appointment.EndTime.ToString("HH:mm") + "," +
-                    (int)appointment.AppointmentStateProp + "," + appointment.RoomNumber + "," + (int)appointment.GetTypeOfTerm;
+                    (int)appointment.AppointmentState + "," + appointment.RoomNumber + "," + (int)appointment.TypeOfTerm;
                 lines.Add(line);
             }
             File.WriteAllLines(filePath, lines.ToArray());

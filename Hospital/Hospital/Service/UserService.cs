@@ -39,7 +39,7 @@ namespace Hospital.Service
         public string GetUserFullName(string email)
 		{
             string fullName = "";
-            foreach(User user in users)
+            foreach(User user in _users)
 			{
                 if(user.Email == email)
 				{

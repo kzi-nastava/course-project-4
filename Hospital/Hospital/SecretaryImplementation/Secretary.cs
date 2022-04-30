@@ -309,9 +309,9 @@ namespace Hospital.SecretaryImplementation
 			for(int i = 0; i < requests.Count; i++)
 			{
 				Appointment request = requests[i];
-				switch (request.AppointmentStateProp)
+				switch (request.AppointmentState)
 				{
-					case (Appointment.AppointmentState.UpdateRequest):
+					case (Appointment.State.UpdateRequest):
 						Appointment oldValuesAppointment = requestService.findInitialAppointment(request.AppointmentId);
 						Console.Write("{0}. {1}, {2}->{3}, {4}->{5}, {6}->{7}, ", i + 1, userService.GetUserFullName(oldValuesAppointment.PatientEmail),
 							oldValuesAppointment.DateAppointment.ToString("MM/dd/yyyy"), request.DateAppointment.ToString("MM/dd/yyyy"),
@@ -319,7 +319,7 @@ namespace Hospital.SecretaryImplementation
 							oldValuesAppointment.EndTime.ToString("HH:mm"), request.EndTime.ToString("HH:mm"));
 						Console.Write("Izmena termina");
 						break;
-					case (Appointment.AppointmentState.DeleteRequest):
+					case (Appointment.State.DeleteRequest):
 						Console.Write("{0}. {1}, {2}, {3}, {4}, ", i+1,userService.GetUserFullName(request.PatientEmail), request.DateAppointment.ToString("MM/dd/yyyy"),
 							request.StartTime.ToString("HH:mm"), request.EndTime.ToString("HH:mm"));
 						Console.Write("Brisanje termina");

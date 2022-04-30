@@ -109,11 +109,10 @@ namespace Hospital.PatientImplementation
                 if (id.Equals(appointmentForDelete.AppointmentId)) {
 
                     if ((appointmentForDelete.DateAppointment - DateTime.Now).TotalDays <= 2)
-                    {                        
-                        patientService.RequestService.Requests.Add(appointmentForDelete);
-                        patientService.RequestService.UpdateFile();
-
+                    {
                         appointmentForDelete.AppointmentState = Appointment.State.DeleteRequest;
+                        _patientService.RequestService.Requests.Add(appointmentForDelete);
+                        _patientService.RequestService.UpdateFile();
                         Console.WriteLine("Zahtev za brisanje je poslat sekretaru!");
                     }
                     else
@@ -194,20 +193,18 @@ namespace Hospital.PatientImplementation
 
                         if ((appointmentForUpdate.DateAppointment - DateTime.Now).TotalDays <= 2)
                         {
-                            appointmentForUpdate.AppointmentStateProp = Appointment.AppointmentState.UpdateRequest;
-							              newAppointment = new Appointment(id, this._email, doctorEmail, appointmentDate,
-                    appointmentStartTime, appointmentEndTime, Appointment.State.UpdateRequest, Int32.Parse(fields[7]),
-                    Appointment.Type.Examination);
+                            appointmentForUpdate.AppointmentState = Appointment.State.UpdateRequest;
+							newAppointment = new Appointment(id, this._email, doctorEmail, appointmentDate,
+                            appointmentStartTime, appointmentEndTime, Appointment.State.UpdateRequest, Int32.Parse(fields[7]),
+                            Appointment.Type.Examination);
                           
-                            patientService.RequestService.Requests.Add(newAppointment);
-                            patientService.RequestService.UpdateFile();
+                            _patientService.RequestService.Requests.Add(newAppointment);
+                            _patientService.RequestService.UpdateFile();
                             Console.WriteLine("Zahtev za izmenu je poslat sekretaru!");
                         }
                         else
                         {
-                            newAppointment = new Appointment(id, this._email, doctorEmail, appointmentDate,
-                    appointmentStartTime, appointmentEndTime, Appointment.State.Updated, Int32.Parse(fields[7]),
-                    Appointment.Type.Examination);
+                            appointmentForUpdate.AppointmentState = Appointment.State.Updated;
                             Console.WriteLine("Uspesno ste izvrsili izmenu pregleda!");
                         }
                         lines[i] = appointmentForUpdate.ToString();
@@ -253,7 +250,7 @@ namespace Hospital.PatientImplementation
                 DateTime appointmentStartTime = DateTime.ParseExact(newStartTime, "HH:mm", CultureInfo.InvariantCulture);
                 DateTime appointmentEndTime = appointmentStartTime.AddMinutes(15);
 
-                Room freeRoom = _patientService.FindFreeRoom(this, appointmentDate, appointmentStartTime);
+                Room freeRoom = _patientService.FindFreeRoom(appointmentDate, appointmentStartTime);
                 int roomId = Int32.Parse(freeRoom.Id);
 
                 //  created appointment
