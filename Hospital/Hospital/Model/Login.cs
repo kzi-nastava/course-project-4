@@ -55,6 +55,12 @@ namespace Hospital.Model
             Console.WriteLine("Uspesno ste se ulogovali!");
             Console.WriteLine($"\nDobrodosli {this._registeredUser.Name + " " + this._registeredUser.Surname}");
 
+            // Move equipment if scheduled time has passed
+            RoomService roomService = new RoomService();
+            EquipmentService equipmentService = new EquipmentService(roomService);
+            EquipmentMovingService equipmentMovingService = new EquipmentMovingService(equipmentService, roomService);
+            equipmentMovingService.MoveEquipment();
+
             PatientService helper = new PatientService(this._registeredUser, _userService.Users);
             if (this._registeredUser.UserRole == User.Role.Patient)
             { 
