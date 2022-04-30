@@ -8,17 +8,17 @@ using Hospital.Model;
 
 namespace Hospital.Service
 {
-    class ActionService
+    class UserActionService
     {
-        private ActionRepository actionRepository;
+        private UserActionRepository actionRepository;
         private List<UserAction> actions;
 
-        public ActionRepository ActionRepository { get { return actionRepository; } }
+        public UserActionRepository ActionRepository { get { return actionRepository; } }
         public List<UserAction> Actions { get { return actions; } }
 
-        public ActionService()
+        public UserActionService()
         {
-            actionRepository = new ActionRepository();
+            actionRepository = new UserActionRepository();
             actions = actionRepository.Load();
         }
     }
