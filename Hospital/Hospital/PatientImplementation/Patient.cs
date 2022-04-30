@@ -171,7 +171,7 @@ namespace Hospital.PatientImplementation
                 newStartTime = Console.ReadLine();
             } while (!patientService.isValidInput(doctorEmail, newDate, newStartTime));
 
-            if (patientService.isAppointmentFree(this.email, doctorEmail, newDate, newStartTime))
+            if (patientService.isAppointmentFree(appointmentForUpdate.AppointmentId, this.email, doctorEmail, newDate, newStartTime))
             {
                 // read from file
                 string filePath = @"..\..\Data\appointments.csv";
@@ -238,7 +238,7 @@ namespace Hospital.PatientImplementation
                 newStartTime = Console.ReadLine();
             } while (!patientService.isValidInput(doctorEmail, newDate, newStartTime));
 
-            if (patientService.isAppointmentFree(this.email, doctorEmail, newDate, newStartTime))
+            if (patientService.isAppointmentFree("0", this.email, doctorEmail, newDate, newStartTime))
             {
                 string id = patientService.getNewAppointmentId().ToString();
                 DateTime appointmentDate = DateTime.ParseExact(newDate, "MM/dd/yyyy", CultureInfo.InvariantCulture);
