@@ -20,11 +20,13 @@ namespace Hospital.Model
         private string name;
         private TypeOfEquipment type;
         private int quantity;
+        private string roomId;
 
         public string Id { get { return id; } }
         public string Name { get { return name; } }
         public TypeOfEquipment Type { get { return type; } }
         public int Quantity { get { return quantity; } }
+        public string RoomId { get { return roomId; } }
 
         public string TypeStr
         {
@@ -45,12 +47,13 @@ namespace Hospital.Model
             }
         }
 
-        public Equipment(string id, string name, TypeOfEquipment type, int quantity)
+        public Equipment(string id, string name, TypeOfEquipment type, int quantity, string roomId)
         {
             this.id = id;
             this.name = name;
             this.type = type;
             this.quantity = quantity;
+            this.roomId = roomId;
         }
     }
 }
