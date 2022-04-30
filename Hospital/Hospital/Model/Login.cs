@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Hospital.Service;
 using Hospital.PatientImplementation;
 using Hospital.DoctorImplementation;
+using Hospital.SecretaryImplementation;
 
 namespace Hospital.Model
 {
@@ -51,7 +52,7 @@ namespace Hospital.Model
             }
 
             Console.WriteLine("Uspesno ste se ulogovali!");
-            Console.WriteLine($"\nDobrodosli {this.registeredUser.Email}");
+            Console.WriteLine($"\nDobrodosli {this.registeredUser.Name + " " + this.registeredUser.Surname}");
 
             PatientService helper = new PatientService(this.registeredUser, userService.Users);
             if (this.registeredUser.UserRole == User.Role.Patient)
@@ -66,6 +67,11 @@ namespace Hospital.Model
                 Doctor registeredDoctor = new Doctor(this.registeredUser, helper);
                 registeredDoctor.doctorMenu();
             }
+            else if(this.registeredUser.UserRole == User.Role.Secretary)
+			{
+                Secretary registeredSecretary = new Secretary(this.userService);
+                registeredSecretary.SecretaryMenu();
+			}
         }
     }
 }
