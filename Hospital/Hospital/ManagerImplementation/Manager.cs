@@ -37,7 +37,9 @@ namespace Hospital.ManagerImplementation
                 Console.WriteLine("4. Obrisi sobu");
                 Console.WriteLine("5. Pretraga opreme");
                 Console.WriteLine("6. Filtriranje opreme");
-                Console.WriteLine("7. Odjava");
+                Console.WriteLine("7. Zakazi premestanje opreme");
+                Console.WriteLine("8. Pokreni premestanje opreme");
+                Console.WriteLine("9. Odjava");
                 Console.Write(">> ");
                 choice = Console.ReadLine();
 
@@ -54,6 +56,10 @@ namespace Hospital.ManagerImplementation
                 else if (choice.Equals("6"))
                     this.FilterEquipment();
                 else if (choice.Equals("7"))
+                    this.ScheduleEquipmentMoving();
+                else if (choice.Equals("8"))
+                    this.MoveEquipment();
+                else if (choice.Equals("9"))
                     this.LogOut();
             } while (true);
         }
@@ -339,6 +345,16 @@ namespace Hospital.ManagerImplementation
 
             List<Equipment> foundEquipment = equipmentService.FilterByEquipmentType(equipmentType);
             PrintEquipment(foundEquipment);
+        }
+
+        private void ScheduleEquipmentMoving()
+        {
+            // TODO
+        }
+
+        private void MoveEquipment()
+        {
+            equipmentMovingService.MoveEquipment();
         }
 
         private void LogOut()
