@@ -10,42 +10,42 @@ namespace Hospital.Service
 {
     public class EquipmentMovingService
     {
-        private EquipmentMovingRepository equipmentMovingRepository;
-        private EquipmentService equipmentService;
-        private RoomService roomService;
-        private List<EquipmentMoving> allEquipmentMovings;
+        private EquipmentMovingRepository _equipmentMovingRepository;
+        private EquipmentService _equipmentService;
+        private RoomService _roomService;
+        private List<EquipmentMoving> _allEquipmentMovings;
 
-        public List<EquipmentMoving> AllEquipmentMovings { get { return allEquipmentMovings; } }
+        public List<EquipmentMoving> AllEquipmentMovings { get { return _allEquipmentMovings; } }
 
         public EquipmentMovingService(EquipmentService equipmentService, RoomService roomService)
         {
-            equipmentMovingRepository = new EquipmentMovingRepository();
-            allEquipmentMovings = equipmentMovingRepository.Load();
-            this.equipmentService = equipmentService;
-            this.roomService = roomService;
+            _equipmentMovingRepository = new EquipmentMovingRepository();
+            _allEquipmentMovings = _equipmentMovingRepository.Load();
+            this._equipmentService = equipmentService;
+            this._roomService = roomService;
         }
 
         public void MoveEquipment()
         {
-            foreach (EquipmentMoving equipmentMoving in allEquipmentMovings)
+            foreach (EquipmentMoving equipmentMoving in _allEquipmentMovings)
             {
-                if (!equipmentMoving.Active)
+                if (!equipmentMoving.IsActive)
                     continue;
 
                 if (DateTime.Now < equipmentMoving.ScheduledTime)
                     continue;
 
-                Equipment equipment = equipmentService.GetEquipmentById(equipmentMoving.EquipmentId);
-                equipmentService.UpdateEquipment(equipment.Id, equipment.Name, equipment.Type, equipment.Quantity, 
+                Equipment equipment = _equipmentService.GetEquipmentById(equipmentMoving.EquipmentId);
+                _equipmentService.UpdateEquipment(equipment.Id, equipment.Name, equipment.EquipmentType, equipment.Quantity, 
                     equipmentMoving.DestinationRoomId);
-                equipmentMoving.Active = false;
+                equipmentMoving.IsActive = false;
             }
-            equipmentMovingRepository.Save(allEquipmentMovings);
+            _equipmentMovingRepository.Save(_allEquipmentMovings);
         }
 
-        public bool DoesIdExist(string id)
+        public bool IdExists(string id)
         {
-            foreach (EquipmentMoving equipmentMoving in allEquipmentMovings)
+            foreach (EquipmentMoving equipmentMoving in _allEquipmentMovings)
             {
                 if (equipmentMoving.Id.Equals(id))
                     return true;
@@ -53,11 +53,11 @@ namespace Hospital.Service
             return false;
         }
 
-        public bool ActiveEquipmentMovingExist(string equipmentId)
+        public bool ActiveMovingExists(string equipmentId)
         {
-            foreach (EquipmentMoving equipmentMoving in allEquipmentMovings)
+            foreach (EquipmentMoving equipmentMoving in _allEquipmentMovings)
             {
-                if (equipmentMoving.Active && equipmentMoving.EquipmentId.Equals(equipmentId))
+                if (equipmentMoving.IsActive && equipmentMoving.EquipmentId.Equals(equipmentId))
                     return true;
             }
             return false;
@@ -66,14 +66,14 @@ namespace Hospital.Service
         public bool CreateEquipmentMoving(string id, string equipmentId, DateTime scheduledTime,
             string sourceRoomId, string destinationRoomId)
         {
-            if (DoesIdExist(id) || ActiveEquipmentMovingExist(equipmentId) || !equipmentService.DoesIdExist(equipmentId)
-                || !equipmentService.GetEquipmentById(equipmentId).RoomId.Equals(sourceRoomId)
-                || !roomService.DoesIdExist(destinationRoomId))
+            if (IdExists(id) || ActiveMovingExists(equipmentId) || !_equipmentService.IdExist(equipmentId)
+                || !_equipmentService.GetEquipmentById(equipmentId).RoomId.Equals(sourceRoomId)
+                || !_roomService.IdExists(destinationRoomId))
                 return false;
             EquipmentMoving equipmentMoving = new EquipmentMoving(id, equipmentId, scheduledTime,
                 sourceRoomId, destinationRoomId, true);
-            allEquipmentMovings.Add(equipmentMoving);
-            equipmentMovingRepository.Save(allEquipmentMovings);
+            _allEquipmentMovings.Add(equipmentMoving);
+            _equipmentMovingRepository.Save(_allEquipmentMovings);
             return true;
         }
     }
