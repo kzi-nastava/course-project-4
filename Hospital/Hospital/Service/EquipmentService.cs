@@ -29,7 +29,8 @@ namespace Hospital.Service
             query = query.ToLower();
             foreach (Equipment equipment in allEquipment)
             {
-                if (equipment.Name.ToLower().Contains(query) || equipment.Id.ToLower().Contains(query))
+                if (equipment.Name.ToLower().Contains(query) || equipment.Id.ToLower().Contains(query)
+                    || equipment.TypeStr.ToLower().Contains(query))
                     answer.Add(equipment);
             }
             return answer;
