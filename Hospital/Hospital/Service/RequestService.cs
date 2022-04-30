@@ -50,21 +50,17 @@ namespace Hospital.Service
 
 		public void DenyRequest(Appointment request)
 		{
-			//int i;
-			//for(i = 0; i < requests.Count; i++)
-			//{
-			//	if(requests[i].AppointmentId == request.AppointmentId)
-			//	{
-			//		break;
-			//	}
-			//}
 			requests.Remove(request);
 			UpdateFile();
 			List<Appointment> allAppointments = appointmentService.Appointments;
 			foreach(Appointment appointment in allAppointments)
 			{
 				if(appointment.AppointmentId == request.AppointmentId)
+				{
 					appointment.AppointmentStateProp = Appointment.AppointmentState.Created;
+					break;
+				}
+					
 			}
 			appointmentService.UpdateFile();
 			
@@ -72,7 +68,22 @@ namespace Hospital.Service
 
 		public void AcceptRequest(Appointment request)
 		{
+			requests.Remove(request);
+			UpdateFile();
+			List<Appointment> allAppointments = appointmentService.Appointments;
+			foreach(Appointment appointment in allAppointments)
+			{
+				if(appointment.AppointmentId == request.AppointmentId)
+				{
+					if (request.AppointmentStateProp == Appointment.AppointmentState.DeleteRequest)
+						appointment.AppointmentStateProp = Appointment.AppointmentState.Deleted;
+					else
+						appointment.AppointmentStateProp = Appointment.AppointmentState.Updated;
+					break;
+				}
+			}
 
+			appointmentService.UpdateFile();
 		}
 
 		public void ProcessRequest(Appointment request, int choice)

@@ -348,6 +348,7 @@ namespace Hospital.SecretaryImplementation
 			while (!int.TryParse(actionIndexInput, out actionIndex) || actionIndex < 1 || actionIndex > 2);
 
 			requestService.ProcessRequest(activeRequest, actionIndex);
+			Console.WriteLine("\nZahtev je uspesno obradjen");
 		}
 
 		private void LogOut()
