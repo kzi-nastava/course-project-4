@@ -54,5 +54,32 @@ namespace Hospital.Service
             this.UpdateHealthRecordFile();
 
         }
+
+        public void UpdateHealthRecord(HealthRecord healthRecord)
+        {
+            string filePath = @"..\..\Data\healthRecords.csv";
+            string[] lines = File.ReadAllLines(filePath);
+           
+
+            for (int i = 0; i < lines.Length; i++)
+            {
+                string[] fields = lines[i].Split(new[] { '*' });
+                string id = fields[0];
+               
+
+                if (id.Equals(healthRecord.IdHealthRecord))
+                {
+
+                    lines[i] = id + "*" + healthRecord.EmailPatient + "*" + healthRecord.PatientHeight.ToString() + "*" + healthRecord.PatientWeight.ToString() + "*" + healthRecord.PreviousIllnesses + "*" + healthRecord.Allergen
+                        + "*" + healthRecord.BloodType;
+                    Console.WriteLine("Uspesno ste izmenili zdravstveni karton");
+
+
+                }
+            }
+            // saving changes
+            File.WriteAllLines(filePath, lines);
+        }
+
     }
 }

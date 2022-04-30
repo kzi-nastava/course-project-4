@@ -34,7 +34,7 @@ namespace Hospital.Service
             List<Appointment> doctorAppointment = new List<Appointment>();
             foreach (Appointment appointment in this._appointments)
             {
-                if (appointment.DoctorEmail.Equals(user.Email))
+                if (appointment.DoctorEmail.Equals(user.Email) && appointment.AppointmentState != Appointment.State.Deleted)
                     doctorAppointment.Add(appointment);
             }
             return doctorAppointment;
@@ -83,7 +83,7 @@ namespace Hospital.Service
                 Console.WriteLine("Nevalidan unos datuma");
                 return false;
             }
-            else if (checkDate < DateTime.Now)
+            else if (checkDate <= DateTime.Now)
             {
                 Console.WriteLine("Uneli ste datum koji je prosao");
                 return false;
@@ -126,9 +126,23 @@ namespace Hospital.Service
             return isNumeric;
         }
 
-        public void DeleteAppointment(Appointment appointment)
+        public bool IsDoubleValid(string number)
+
         {
-            string filePath = @"..\..\Data\_appointments.csv";
+            if (double.TryParse(number, out double doubleNumber) && !Double.IsNaN(doubleNumber) && !Double.IsInfinity(doubleNumber))
+            {
+                return true;
+
+            }
+            return false;
+
+
+
+        }
+
+        public void DeleteAppointment(Appointment appointmentForDelete)
+        {
+            string filePath = @"..\..\Data\appointments.csv";
             string[] lines = File.ReadAllLines(filePath);
            
             for (int i = 0; i < lines.Length; i++)
@@ -136,23 +150,33 @@ namespace Hospital.Service
                 string[] fields = lines[i].Split(new[] { ',' });
                 string id = fields[0];
 
-                if (id.Equals(appointment.AppointmentId))
+                if (id.Equals(appointmentForDelete.AppointmentId))
                 {
 
                     lines[i] = id + "," + fields[1] + "," + fields[2] + "," + fields[3] + "," + fields[4] + "," + fields[5]
-                        + "," + (int)Appointment.State.Deleted + "," + fields[7] + "," + fields[8];
+                        + "," + (int)Appointment.State.Deleted + "," + fields[7] + "," + fields[8] + "," + fields[9];
                     Console.WriteLine("Uspesno ste obrisali termin!");
                     
                 }
             }
+            
 
             // saving changes
             File.WriteAllLines(filePath, lines);
+
+            //update list with all appointments
+            foreach(Appointment appointment in this._appointments)
+            {
+                if (appointment.AppointmentId.Equals(appointmentForDelete.AppointmentId))
+                {
+                    appointment.AppointmentState = Appointment.State.Deleted;
+                }
+            }
         }
 
         public void UpdateAppointment(Appointment appointmentChange)
         {
-            string filePath = @"..\..\Data\_appointments.csv";
+            string filePath = @"..\..\Data\appointments.csv";
             string[] lines = File.ReadAllLines(filePath);
 
             for (int i = 0; i < lines.Length; i++)
@@ -187,6 +211,30 @@ namespace Hospital.Service
                 lines.Add(line);
             }
             File.WriteAllLines(filePath, lines.ToArray());
+        }
+
+        public void RemakePerformedAppointment(Appointment remakeAppointment)
+        {
+            string filePath = @"..\..\Data\appointments.csv";
+            string[] lines = File.ReadAllLines(filePath);
+
+            for (int i = 0; i < lines.Length; i++)
+            {
+                string[] fields = lines[i].Split(new[] { ',' });
+                string id = fields[0];
+
+                if (id.Equals(remakeAppointment.AppointmentId))
+                {
+
+                    lines[i] = id + "," + fields[1] + "," + fields[2] + "," + fields[3] + "," + fields[4] + "," + fields[5]
+                        + "," + (int)Appointment.State.Updated + "," + fields[7] + "," + fields[8] + ",true";
+
+
+                }
+            }
+            // saving changes
+            File.WriteAllLines(filePath, lines);
+
         }
 
     }

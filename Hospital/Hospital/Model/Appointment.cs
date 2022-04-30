@@ -43,6 +43,10 @@ namespace Hospital.Model
         public int RoomNumber { get { return _roomNumber; } }
         public Type TypeOfTerm { get { return _typeOfTerm;} }
         public bool AppointmentPerformed { get { return _appointmentPerformed; } }
+        public void SetAppointmentPerformed(bool appointmentPerformed)
+        {
+            this._appointmentPerformed = appointmentPerformed;
+        }
 
         public Appointment(string id, string patientEmail, string doctorEmail,
         DateTime dateAppointment, DateTime start, DateTime end, State state, int roomNumber, Type term, bool appointment)
