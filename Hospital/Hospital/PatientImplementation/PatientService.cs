@@ -129,7 +129,7 @@ namespace Hospital.PatientImplementation
         }
 
 
-        public bool isAppointmentFree(string patientEmail, string doctorEmail, string newDateExamination, string newStartTime)
+        public bool isAppointmentFree(string id, string patientEmail, string doctorEmail, string newDateExamination, string newStartTime)
         {
             DateTime dateExamination = DateTime.Parse(newDateExamination);
             DateTime startTime = DateTime.Parse(newStartTime);
@@ -142,7 +142,7 @@ namespace Hospital.PatientImplementation
                     return false;
                 }
                 else if (appointment.PatientEmail.Equals(patientEmail) && appointment.DateAppointment == dateExamination
-                    && appointment.StartTime <= startTime && appointment.EndTime > startTime)
+                    && appointment.StartTime <= startTime && appointment.EndTime > startTime && !appointment.AppointmentId.Equals(id))
                 {
                     Console.WriteLine("Vec imate zakazan pregled u tom terminu!");
                     return false;
@@ -204,11 +204,12 @@ namespace Hospital.PatientImplementation
         public Room findFreeRoom(Patient patient, DateTime newDate, DateTime newStartTime)
         {
             RoomService roomService = new RoomService();
-            List<Room> freeRooms = roomService.Rooms;
+            List<Room> freeRooms = roomService.Rooms;  // at the beginning all the rooms are free
 
-            foreach (Appointment appointment in patient.PatientAppointments)
+            foreach (Appointment appointment in this.allAppointments)
             {
-                if (appointment.DateAppointment == newDate && newStartTime >= appointment.StartTime && newStartTime < appointment.EndTime)
+                if (appointment.DateAppointment == newDate && newStartTime >= appointment.StartTime 
+                    && newStartTime < appointment.EndTime && appointment.GetAppointmentState != Appointment.AppointmentState.Deleted)
                 {
                     Room occupiedRoom = roomService.GetRoomById(appointment.RoomNumber.ToString());
                     freeRooms.Remove(occupiedRoom);

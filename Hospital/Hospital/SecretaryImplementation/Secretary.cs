@@ -246,6 +246,7 @@ namespace Hospital.SecretaryImplementation
 
 			this.userService.UpdateFile();
 
+
 			this.healthRecordService.CreateHealthRecord(newPatient);
 			Console.WriteLine("\nNalog za pacijenta " + name + " " + surname + " je uspesno kreiran.");
 		}
