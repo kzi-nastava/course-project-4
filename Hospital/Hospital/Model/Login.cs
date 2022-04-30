@@ -72,7 +72,7 @@ namespace Hospital.Model
             {
                 // doctor
                 Doctor registeredDoctor = new Doctor(this._registeredUser, helper);
-                registeredDoctor.doctorMenu();
+                registeredDoctor.DoctorMenu();
             }
             else if (this._registeredUser.UserRole == User.Role.Secretary)
 			{

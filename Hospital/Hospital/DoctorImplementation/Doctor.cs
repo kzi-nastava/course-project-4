@@ -29,7 +29,7 @@ namespace Hospital.DoctorImplementation
             healthRecords = healthRecordService.HealthRecords;
 
         }
-        public void doctorMenu()
+        public void DoctorMenu()
         {
             // meni
             string choice;
@@ -52,27 +52,27 @@ namespace Hospital.DoctorImplementation
                 if (choice.Equals("1"))
                 {
                     Console.WriteLine("\n1.Pregledaj sopstvene preglede/operacije");
-                    this.readOwnAppointment();
+                    this.ReadOwnAppointment();
                 }
                 else if (choice.Equals("2"))
                 {
                     Console.WriteLine("\n2.Kreiraj sopstveni pregled/operaciju");
-                    this.createOwnAppointment();
+                    this.CreateOwnAppointment();
                 }
                 else if (choice.Equals("3"))
                 {
                     Console.WriteLine("\n3.Izmeni sopstveni pregled/operaciju");
-                    this.updateOwnAppointment();
+                    this.UpdateOwnAppointment();
                 }
                 else if (choice.Equals("4"))
                 {
                     Console.WriteLine("\n4. Obrisi sopstveni pregled/operaciju");
-                    this.deleteOwnAppointment();
+                    this.DeleteOwnAppointment();
                 }
                 else if (choice.Equals("5"))
                 {
                     Console.WriteLine("5. Ispitivanje sopstvenog rasporeda");
-                    this.examiningOwnSchedule();
+                    this.ExaminingOwnSchedule();
                 }
                 else if (choice.Equals("6"))
                     {
@@ -88,12 +88,146 @@ namespace Hospital.DoctorImplementation
         }
         private void PerformingAppointment()
         {
-           
+            string dateNow = DateTime.Now.ToString("MM/dd/yyyy");
+            DateTime parseDateNow = DateTime.ParseExact(dateNow, "MM/dd/yyyy", CultureInfo.InvariantCulture);
+            List<Appointment> appointmentsForPerformanse = new List<Appointment>();
+            foreach (Appointment appointmentOwn in this.allMyAppointments)
+            {
+                if (appointmentOwn.DoctorEmail.Equals(currentRegisteredDoctor.Email) && (appointmentOwn.DateAppointment == parseDateNow)
+                    && (appointmentOwn.AppointmentState != Appointment.State.Deleted) && (appointmentOwn.AppointmentPerformed == false))
+                {
+                    appointmentsForPerformanse.Add(appointmentOwn);
+                }
 
+            }
+            if (appointmentsForPerformanse.Count == 0)
+            {
+                Console.WriteLine("\nSvi pregledi/operacije su obavljenji!");
+                return;
+            }
+            else
+            {
+                int serialNumberAppointment = 1;
+                Console.WriteLine(String.Format("|{0,5}|{1,10}|{2,10}|{3,10}|{4,10}|{5,10}|{6,10}", "Br.", "Pacijent", "Datum", "Pocetak", "Kraj", "Soba", "Vrsta termina"));
+                foreach (Appointment appointment in appointmentsForPerformanse)
+                {
+                    Console.WriteLine(appointment.ToStringDisplayForDoctor(serialNumberAppointment));
+                    serialNumberAppointment += 1;
+                }
+                Console.WriteLine();
+
+            }
+            string choice;
+            do
+            {
+                do
+                {
+                    Console.WriteLine("Unesite redni broj pacijenta kojeg želite da pregledate: ");
+                    choice = Console.ReadLine();
+
+                } while (!appointmentService.IsIntegerValid(choice));
+            } while (Int32.Parse(choice) > appointmentsForPerformanse.Count);
+            Appointment appointmentOfSelected = appointmentsForPerformanse[Int32.Parse(choice) - 1];
+            appointmentOfSelected.SetAppointmentPerformed(true);
+
+            //displays patient data
+            foreach (User user in userService.Users)
+            {
+                if (user.Email.Equals(appointmentOfSelected.PatientEmail))
+                {
+                    Console.WriteLine("Ime: " + user.Name + "\n" + "Prezime: " + user.Surname + "\n");
+
+                }
+            }
+            //shows the patient's health record
+            foreach (HealthRecord healthRecord in this.healthRecords)
+            {
+                if (healthRecord.EmailPatient.Equals(appointmentOfSelected.PatientEmail))
+                {
+                    
+                    Console.WriteLine(healthRecord.ToString());
+
+                }
+            }
+            Console.WriteLine();
+            string anamnesisInput;
+            Console.WriteLine("Unesite anamnezu: ");
+            anamnesisInput = Console.ReadLine();
+
+            //update appointments.csv file
+            appointmentService.RemakePerformedAppointment(appointmentOfSelected);
+
+            MedicalRecord newMedicalRecord = new MedicalRecord(appointmentOfSelected.AppointmentId, anamnesisInput, " ");
+            string medicalRecordToWriteToFile = "\n" + appointmentOfSelected.AppointmentId + ";" + anamnesisInput + ";" + " ";
+            // append new medical record in file
+            string filePathForMedicalRecords = @"..\..\Data\medicalRecords.csv";
+            File.AppendAllText(filePathForMedicalRecords, medicalRecordToWriteToFile);
+            Console.WriteLine("Uspešno ste uneli anamnezu.");
+
+            //updating health record
+            foreach (HealthRecord healthRecord in this.healthRecords)
+            {
+                if (healthRecord.EmailPatient.Equals(appointmentOfSelected.PatientEmail))
+                {
+                    this.UpdatingSelectedHealthRecord(healthRecord);
+
+                }
+            }
+
+            
+            
 
 
         }
-        private void examiningOwnSchedule()
+
+
+        private void UpdatingSelectedHealthRecord(HealthRecord healthRecordSelected)
+        {
+            string selectionOfUpdates;
+            string patientHeightInput;
+            string patientWeightInput;
+            string previousIllnessesInput;
+            string allergenInput;
+            string bloodTypeInput;
+            do
+            {
+
+                Console.WriteLine("Da li želite da ažurirate zdravstveni karton pacijenta? \n1) DA\n2) NE\nUnesite 1 ili 2.");
+                selectionOfUpdates = Console.ReadLine();
+                if (selectionOfUpdates.Equals("1"))
+                {
+                    do
+                    {
+                        Console.WriteLine("Unesite visinu: ");
+                        patientHeightInput = Console.ReadLine();
+
+                    } while (!appointmentService.IsIntegerValid(patientHeightInput));
+                    do
+                    {
+                        Console.WriteLine("Unesite težinu: ");
+                        patientWeightInput = Console.ReadLine();
+                    } while (!appointmentService.IsDoubleValid(patientWeightInput));
+                    Console.WriteLine("Unesite prethodne bolesti: ");
+                    previousIllnessesInput = Console.ReadLine();
+                    Console.WriteLine("Unesite alergene: ");
+                    allergenInput = Console.ReadLine();
+                    Console.WriteLine("Unesite krvnu grupu: ");
+                    bloodTypeInput = Console.ReadLine();
+                    HealthRecord newHealthRecord = new HealthRecord(healthRecordSelected.IdHealthRecord, healthRecordSelected.EmailPatient, Int32.Parse(patientHeightInput), double.Parse(patientWeightInput), previousIllnessesInput, allergenInput, bloodTypeInput);
+                    healthRecordService.UpdateHealthRecord(newHealthRecord);
+
+                }
+                else if (selectionOfUpdates.Equals("2"))
+                {
+                    return;
+                }
+            } while (!selectionOfUpdates.Equals("1") && !selectionOfUpdates.Equals("2"));
+
+
+        }
+
+
+        private void ExaminingOwnSchedule()
         {
             string dateAppointment;
             do
@@ -102,14 +236,14 @@ namespace Hospital.DoctorImplementation
                 dateAppointment = Console.ReadLine();
             } while (!appointmentService.IsDateFormValid(dateAppointment));
 
-            this.readOwnAppointmentSpecificDate(DateTime.ParseExact(dateAppointment, "MM/dd/yyyy", CultureInfo.InvariantCulture));
+            this.ReadOwnAppointmentSpecificDate(DateTime.ParseExact(dateAppointment, "MM/dd/yyyy", CultureInfo.InvariantCulture));
 
         }
 
 
 
 
-        private void readOwnAppointmentSpecificDate(DateTime dateSchedule)
+        private void ReadOwnAppointmentSpecificDate(DateTime dateSchedule)
         {
             DateTime dateForNextThreeDays = dateSchedule.AddDays(3);
             List<Appointment> appointmentsOfParticularDay = new List<Appointment>();
@@ -182,7 +316,7 @@ namespace Hospital.DoctorImplementation
 
         }
 
-        private void readOwnAppointment()
+        private void ReadOwnAppointment()
         {
             if (this.allMyAppointments.Count == 0)
             {
@@ -207,7 +341,7 @@ namespace Hospital.DoctorImplementation
             
         }
 
-        private void createOwnAppointment()
+        private void CreateOwnAppointment()
         {
             if (this.allMyAppointments.Count == 0)
             {
@@ -306,18 +440,16 @@ namespace Hospital.DoctorImplementation
             }
 
             int id = helper.GetNewAppointmentId();
-            Appointment appointment = new Appointment(id.ToString(), patientEmail, currentRegisteredDoctor.Email, dateOfAppointment, startTime, newEndTime, Appointment.State.Created, roomNumber, (Appointment.Type)int.Parse(typeOfTerm),false);
-            string newAppointment = "\n" + id + "," + patientEmail + "," + currentRegisteredDoctor.Email + ","  + newDate + "," +
-                newStartTime + "," + newEndTime.Hour + ":" + newEndTime.Minute + "," + (int)Appointment.State.Created + "," + newRoomNumber + "," + typeOfTerm + ",false";
-
+            Appointment newAppointment = new Appointment(id.ToString(), patientEmail, currentRegisteredDoctor.Email, dateOfAppointment, startTime, newEndTime, Appointment.State.Created, roomNumber, (Appointment.Type)int.Parse(typeOfTerm),false);
+            
             // append new appointment in file
-            string filePath = @"..\..\Data\_appointments.csv";
-            File.AppendAllText(filePath, newAppointment);
+            string filePath = @"..\..\Data\appointments.csv";
+            File.AppendAllText(filePath,"\n" +  newAppointment.ToString());
             Console.WriteLine("Uspešno ste zakazali termin.");
 
             // add to _appointments
-            appointmentService.Appointments.Add(appointment);
-            allMyAppointments.Add(appointment);
+            appointmentService.Appointments.Add(newAppointment);
+            allMyAppointments.Add(newAppointment);
             
 
 
@@ -325,14 +457,14 @@ namespace Hospital.DoctorImplementation
 
         }
 
-        private void deleteOwnAppointment()
+        private void DeleteOwnAppointment()
         {
             if (this.allMyAppointments.Count == 0)
             {
                 Console.WriteLine("\nJos uvek nemate zakazan termin!");
                 return;
             }
-            this.readOwnAppointment();
+            this.ReadOwnAppointment();
             string numberAppointment;
             do
             {
@@ -344,20 +476,20 @@ namespace Hospital.DoctorImplementation
             } while (Int32.Parse(numberAppointment) > this.allMyAppointments.Count);
 
             Appointment appointmentForDelete = this.allMyAppointments[Int32.Parse(numberAppointment) - 1];
-            this.allMyAppointments.Remove(appointmentForDelete);
-            appointmentService.Appointments.Remove(appointmentForDelete);
+            appointmentForDelete.AppointmentState = Appointment.State.Deleted;
+           
             appointmentService.DeleteAppointment(appointmentForDelete);
 
         }
 
-        private void updateOwnAppointment()
+        private void UpdateOwnAppointment()
         {
             if (this.allMyAppointments.Count == 0)
             {
                 Console.WriteLine("\nJos uvek nemate zakazan termin!");
                 return;
             }
-            this.readOwnAppointment();
+            this.ReadOwnAppointment();
             string numberAppointment;
             string patientEmail;
             string newDate;
