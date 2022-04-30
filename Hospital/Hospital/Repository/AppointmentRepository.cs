@@ -31,9 +31,10 @@ namespace Hospital.Repository
                     Appointment.AppointmentState state = (Appointment.AppointmentState)int.Parse(fields[6]);
                     int roomNumber = Int32.Parse(fields[7]);
                     Appointment.TypeOfTerm term = (Appointment.TypeOfTerm)int.Parse(fields[8]);
+                    bool appointmentPerformed = Convert.ToBoolean(fields[9]);
 
                     Appointment appointment = new Appointment(id, patientEmail, doctorEmail, dateAppointment, 
-                        startExamination, endExamination, state, roomNumber, term);
+                        startExamination, endExamination, state, roomNumber, term, appointmentPerformed);
                     allApointments.Add(appointment);
                 }
             }

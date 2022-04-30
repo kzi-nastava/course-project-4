@@ -10,16 +10,16 @@ namespace Hospital.Service
 {
     class ActionService
     {
-        private ActionRepository actionRepository;
-        private List<UserAction> actions;
+        private ActionRepository _actionRepository;
+        private List<UserAction> _actions;
 
-        public ActionRepository ActionRepository { get { return actionRepository; } }
-        public List<UserAction> Actions { get { return actions; } }
+        public ActionRepository ActionRepository { get { return _actionRepository; } }
+        public List<UserAction> Actions { get { return _actions; } }
 
         public ActionService()
         {
-            actionRepository = new ActionRepository();
-            actions = actionRepository.Load();
+            _actionRepository = new ActionRepository();
+            _actions = _actionRepository.Load();
         }
     }
 }
