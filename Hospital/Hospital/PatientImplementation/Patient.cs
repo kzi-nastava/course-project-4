@@ -72,7 +72,7 @@ namespace Hospital.PatientImplementation
             foreach (Appointment appointment in this.currentAppointments)
             {
                 serialNumber++;
-                Console.WriteLine(serialNumber + ". " + appointment.ToString());
+                Console.WriteLine(serialNumber + ". " + appointment.displayOfPatientAppointment());
             }
             Console.WriteLine();
         }
@@ -109,17 +109,16 @@ namespace Hospital.PatientImplementation
 
                     if ((appointmentForDelete.DateAppointment - DateTime.Now).TotalDays <= 2)
                     {
-                        lines[i] = id + "," + fields[1] + "," + fields[2] + "," + fields[3] + "," + fields[4] 
-                            + "," + fields[5] + "," + (int)Appointment.AppointmentState.DeleteRequest;
+                        appointmentForDelete.setAppointmentState(Appointment.AppointmentState.DeleteRequest);
                         Console.WriteLine("Zahtev za brisanje je poslat sekretaru!");
                     }
                     else
                     {
                         // logical deletion
-                        lines[i] = id + "," + fields[1] + "," + fields[2] + "," + fields[3] + "," + fields[4]
-                            + "," + fields[5] + "," + (int)Appointment.AppointmentState.Deleted;
+                        appointmentForDelete.setAppointmentState(Appointment.AppointmentState.Deleted);
                         Console.WriteLine("Uspesno ste obrisali pregled!");
                     }
+                    lines[i] = appointmentForDelete.ToString();
                 }
             }
 
@@ -184,23 +183,26 @@ namespace Hospital.PatientImplementation
 
                     if (id.Equals(appointmentForUpdate.AppointmentId))
                     {
-                        DateTime startTime = DateTime.ParseExact(newStartTime, "HH:mm", CultureInfo.InvariantCulture);
-                        DateTime newEndTime = startTime.AddMinutes(15);
+                        Appointment newAppointment;
+                        DateTime appointmentDate = DateTime.ParseExact(newDate, "MM/dd/yyyy", CultureInfo.InvariantCulture);
+                        DateTime appointmentStartTime = DateTime.ParseExact(newStartTime, "HH:mm", CultureInfo.InvariantCulture);
+                        DateTime appointmentEndTime = appointmentStartTime.AddMinutes(15);
 
                         if ((appointmentForUpdate.DateAppointment - DateTime.Now).TotalDays <= 2)
                         {
-                            lines[i] = id + "," + fields[1] + "," + doctorEmail + "," + newDate + "," +
-                                newStartTime + "," + newEndTime.ToString("HH:mm") + "," + 
-                                (int)Appointment.AppointmentState.UpdateRequest;
+                            newAppointment = new Appointment(id, this.email, doctorEmail, appointmentDate,
+                    appointmentStartTime, appointmentEndTime, Appointment.AppointmentState.UpdateRequest, Int32.Parse(fields[7]),
+                    Appointment.TypeOfTerm.Examination);
                             Console.WriteLine("Zahtev za izmenu je poslat sekretaru!");
                         }
                         else
                         {
-                            lines[i] = id + "," + fields[1] + "," + doctorEmail + "," + newDate + "," + 
-                                newStartTime + "," + newEndTime.ToString("HH:mm") + "," + 
-                                (int)Appointment.AppointmentState.Updated;
+                            newAppointment = new Appointment(id, this.email, doctorEmail, appointmentDate,
+                    appointmentStartTime, appointmentEndTime, Appointment.AppointmentState.Updated, Int32.Parse(fields[7]),
+                    Appointment.TypeOfTerm.Examination);
                             Console.WriteLine("Uspesno ste izvrsili izmenu pregleda!");
                         }
+                        lines[i] = newAppointment.ToString();
                     }
                 }
 
@@ -238,16 +240,24 @@ namespace Hospital.PatientImplementation
 
             if (patientService.isAppointmentFree(this.email, doctorEmail, newDate, newStartTime))
             {
-                int id = patientService.getNewAppointmentId();
-                DateTime startTime = DateTime.ParseExact(newStartTime, "HH:mm", CultureInfo.InvariantCulture);
-                DateTime newEndTime = startTime.AddMinutes(15);
+                string id = patientService.getNewAppointmentId().ToString();
+                DateTime appointmentDate = DateTime.ParseExact(newDate, "MM/dd/yyyy", CultureInfo.InvariantCulture);
+                DateTime appointmentStartTime = DateTime.ParseExact(newStartTime, "HH:mm", CultureInfo.InvariantCulture);
+                DateTime appointmentEndTime = appointmentStartTime.AddMinutes(15);
 
-                string newAppointment = "\n" + id + "," + this.email + "," + doctorEmail + "," + newDate + "," + 
-                    newStartTime + "," + newEndTime.ToString("HH:mm") + "," + (int)Appointment.AppointmentState.Created;
+                Room freeRoom = patientService.findFreeRoom(this, appointmentDate, appointmentStartTime);
+                int roomId = Int32.Parse(freeRoom.Id);
+
+                //  created appointment
+                Appointment newAppointment = new Appointment(id, this.email, doctorEmail, appointmentDate, 
+                    appointmentStartTime, appointmentEndTime, Appointment.AppointmentState.Created, roomId, 
+                    Appointment.TypeOfTerm.Examination);
+
+                Console.WriteLine("Uspesno ste kreirali nov pregled!");
 
                 // append new appointment in file
                 string filePath = @"..\..\Data\appointments.csv";
-                File.AppendAllText(filePath, newAppointment);
+                File.AppendAllText(filePath, "\n"+newAppointment.ToString());
 
                 // refresh data
                 patientService.refreshPatientAppointments(this);

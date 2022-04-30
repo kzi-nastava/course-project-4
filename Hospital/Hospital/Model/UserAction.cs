@@ -34,7 +34,7 @@ namespace Hospital.Model
         public override string ToString()
         {
             return "\n" + this.patientEmail + "," + (int)this.actionState + 
-                "," + this.actionDate.Month + "/" + this.actionDate.Day + "/" + this.actionDate.Year;
+                "," + this.actionDate.ToString("MM/dd/yyyy");
         }
     }
 }

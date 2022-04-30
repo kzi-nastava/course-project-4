@@ -40,9 +40,13 @@ namespace Hospital.Model
         public DateTime StartTime { get { return startTime; } }
         public DateTime EndTime { get { return endTime; } }
         public AppointmentState AppointmentStateProp { get { return state; } set { this.state = value; } }
-
         public int RoomNumber { get { return roomNumber; } }
         public TypeOfTerm GetTypeOfTerm { get { return term;} }
+
+        public void setAppointmentState(AppointmentState appointmentState) 
+        {
+            state = appointmentState; 
+        } 
 
         public Appointment(string id, string patientEmail, string doctorEmail,
         DateTime dateAppointment, DateTime start, DateTime end, AppointmentState state, int roomNumber, TypeOfTerm term)
@@ -59,6 +63,14 @@ namespace Hospital.Model
         }
 
         public override string ToString()
+        {
+            return this.id + "," + this.patientEmail + "," + this.doctorEmail + "," + 
+                this.DateAppointment.ToString("MM/dd/yyyy") + "," + this.startTime.ToString("HH:mm") + "," + 
+                this.endTime.ToString("HH:mm") + "," + (int)this.GetAppointmentState
+                + "," + this.roomNumber + "," + (int)this.GetTypeOfTerm;
+        }
+
+        public string displayOfPatientAppointment()
         {
             string typeOfTerm = "pregled";
             string appointmentState = "aktivno";

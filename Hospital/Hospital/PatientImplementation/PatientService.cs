@@ -52,6 +52,13 @@ namespace Hospital.PatientImplementation
             currentlyRegisteredPatient.PatientAppointments = patientCurrentAppointment;
         }
 
+        public void tableHeader()
+        {
+            Console.WriteLine();
+            Console.WriteLine(String.Format("{0,3}|{1,10}|{2,10}|{3,10}|{4,10}|{5,10}|{6,10}|{7,10}",
+                "Br.", "Doktor", "Datum", "Pocetak", "Kraj", "Soba", "Tip", "Stanje"));
+        }
+
         public List<Appointment> findAppointmentsForDeleteAndUpdate(Patient currentlyRegisteredPatient)
         {
             int appointmentOrdinalNumber = 0;
@@ -67,7 +74,7 @@ namespace Hospital.PatientImplementation
                 {
                     appointmentsForChange.Add(appointment);
                     appointmentOrdinalNumber++;
-                    Console.WriteLine(appointmentOrdinalNumber + ". " + appointment.ToString());
+                    Console.WriteLine(appointmentOrdinalNumber + ". " + appointment.displayOfPatientAppointment());
                 }
             }
             Console.WriteLine();
@@ -147,7 +154,7 @@ namespace Hospital.PatientImplementation
 
         public List<UserAction> loadMyCurrentActions(string registeredUserEmail)
         {
-            ActionService actionService = new ActionService();  // loading all users actions
+            UserActionService actionService = new UserActionService();  // loading all users actions
             List<UserAction> myCurrentActions = new List<UserAction>();
 
             foreach (UserAction action in actionService.Actions)
@@ -168,7 +175,8 @@ namespace Hospital.PatientImplementation
                 string[] fields = lines[i].Split(new[] { ',' });
                 string userEmailFromFile = fields[1];
                 if (registeredUserEmail.Equals(userEmailFromFile))
-                    lines[i] = fields[0] + "," + fields[1] + "," + fields[2] + "," + (int) User.State.BlockedBySystem;
+                    lines[i] = fields[0] + "," + fields[1] + "," + fields[2] + "," + fields[3] + "," + fields[4]
+                        + "," + (int) User.State.BlockedBySystem;
             }
             // saving changes
             File.WriteAllLines(filePath, lines);
@@ -189,11 +197,27 @@ namespace Hospital.PatientImplementation
             File.AppendAllText(filePath, newAction.ToString());
         }
 
-        public void tableHeader()
+        public Room findFreeRoom(Patient patient, DateTime newDate, DateTime newStartTime)
         {
-            Console.WriteLine();
-            Console.WriteLine(String.Format("{0,3}|{1,10}|{2,10}|{3,10}|{4,10}|{5,10}|{6,10}|{7,10}", 
-                "Br.", "Doktor", "Datum", "Pocetak", "Kraj", "Soba", "Tip", "Stanje"));
+            RoomService roomService = new RoomService();
+            List<Room> freeRooms = roomService.Rooms;
+
+            foreach (Appointment appointment in patient.PatientAppointments)
+            {
+                if (appointment.DateAppointment == newDate && newStartTime >= appointment.StartTime && newStartTime < appointment.EndTime)
+                {
+                    Room occupiedRoom = roomService.GetRoomById(appointment.RoomNumber.ToString());
+                    freeRooms.Remove(occupiedRoom);
+                }
+            }
+
+            if (freeRooms.Count == 0)
+            {
+                Console.WriteLine("\nNe postoji nijedna slobodna soba za unesen termin.");
+                return null;
+            }
+            else
+                return freeRooms[0];
         }
     }
 }
