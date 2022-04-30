@@ -12,7 +12,7 @@ namespace Hospital.Repository
     {
         public List<HealthRecord> Load()
         {
-            List<HealthRecord> allMedicalRecords = new List<HealthRecord>();
+            List<HealthRecord> allHealthRecords = new List<HealthRecord>();
             using (TextFieldParser parser = new TextFieldParser(@"..\..\Data\healthRecords.csv"))
             {
                 parser.TextFieldType = FieldType.Delimited;
@@ -27,15 +27,14 @@ namespace Hospital.Repository
                     string previousIllnesses = fields[4];
                     string allergen = fields[5];
                     string bloodType = fields[6];
-                    string anamnesis = fields[7];
-                    string referralToDoctor = fields[8];
 
-                    HealthRecord newMedicalRecord = new HealthRecord(id, emailPatient, patientHeight, patientWeight, previousIllnesses, allergen, bloodType, anamnesis, referralToDoctor);
-                    allMedicalRecords.Add(newMedicalRecord);
 
-    }
+                    HealthRecord newHealthRecord = new HealthRecord(id, emailPatient, patientHeight, patientWeight, previousIllnesses, allergen, bloodType);
+                    allHealthRecords.Add(newHealthRecord);
+
+                }
             }
-            return allMedicalRecords;
+            return allHealthRecords;
         }
     }
 }
