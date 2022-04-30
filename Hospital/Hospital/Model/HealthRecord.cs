@@ -1,67 +1,49 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Hospital.Model
+﻿namespace Hospital.Model
 {
     class HealthRecord
     {
-        public enum TypeOfAppointment
-        {
-            Examined = 1,
-            Operated = 2
-        }
-        private string idHealthRecord;
-        private string emailPatient;
-        private int patientHeight;
-        private double patientWeight;
-        private string previousIllnesses;
-        private string allergen;
-        private string bloodType;
-        private string anamnesis;
-        private string referralToDoctor;
+       
+        private string _idHealthRecord;
+        private string _emailPatient;
+        private int _patientHeight;
+        private double _patientWeight;
+        private string _previousIllnesses;
+        private string _allergen;
+        private string _bloodType;
+      
 
 
-        public string IdMedicalRecord { get { return idHealthRecord; } }
+        public string IdHealthRecord { get { return _idHealthRecord; } }
 
-        public string EmailPatient { get { return emailPatient; } }
-        public int PatientHeight { get { return patientHeight; } }
-        public double PatientWeight { get { return patientWeight; } }
-        public string PreviousIllnesses { get { return previousIllnesses; } }
-        public string Allergen { get { return allergen; } }
+        public string EmailPatient { get { return _emailPatient; } }
+        public int PatientHeight { get { return _patientHeight; } }
+        public double PatientWeight { get { return _patientWeight; } }
+        public string PreviousIllnesses { get { return _previousIllnesses; } }
+        public string Allergen { get { return _allergen; } }
 
-        public string BloodType { get { return bloodType; } }
-        public string Anamnesis { get { return anamnesis; } }
-
-
-        public string ReferralToDoctor { get { return referralToDoctor; } }
-
+        public string BloodType { get { return _bloodType; } }
+       
         public HealthRecord(string idHealthRecord, string emailPatient, int patientHeight, double patientWeight, string previousIllnesses,string allergen,
-            string bloodType, string anamnesis, string referralToDoctor)
+            string bloodType)
         {
-            this.idHealthRecord = idHealthRecord;
-            this.emailPatient = emailPatient;
-            this.patientHeight = patientHeight;
-            this.patientWeight = patientWeight;
-            this.previousIllnesses = previousIllnesses;
-            this.allergen = allergen;
-            this.bloodType = bloodType;
-            this.anamnesis = anamnesis;
-            this.referralToDoctor = referralToDoctor;
+            this._idHealthRecord = idHealthRecord;
+            this._emailPatient = emailPatient;
+            this._patientHeight = patientHeight;
+            this._patientWeight = patientWeight;
+            this._previousIllnesses = previousIllnesses;
+            this._allergen = allergen;
+            this._bloodType = bloodType;
+           
         }
 
         public override string ToString()
         {
-            return "Id zdravstvenog: " + this.idHealthRecord + "\n" +
-                "Email pacijenta:" + this.emailPatient + "\n" +
-                "Visina: " + this.patientHeight + "\n" +
-                "Težina: " + this.patientWeight + "\n" +
-                "Alergena: " + this.allergen + "\n" +
-                "Krvna grupa: " + this.bloodType + "\n" +
-                "Anamneza: " + this.anamnesis + "\n" +
-                "Uput: " + this.referralToDoctor;
+            return "Id zdravstvenog: " + this._idHealthRecord + "\n" +
+                "Email pacijenta:" + this._emailPatient + "\n" +
+                "Visina: " + this._patientHeight + "\n" +
+                "Težina: " + this._patientWeight + "\n" +
+                "Alergena: " + this._allergen + "\n" +
+                "Krvna grupa: " + this._bloodType;
         }
 
     }
