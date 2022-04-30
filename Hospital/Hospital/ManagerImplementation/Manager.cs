@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,7 +22,7 @@ namespace Hospital.ManagerImplementation
             this.currentRegisteredManager = currentRegisteredManager;
             roomService = new RoomService();
             equipmentService = new EquipmentService(roomService);
-            equipmentMovingService = new EquipmentMovingService(equipmentService);
+            equipmentMovingService = new EquipmentMovingService(equipmentService, roomService);
         }
 
         public void ManagerMenu() 
@@ -349,7 +350,55 @@ namespace Hospital.ManagerImplementation
 
         private void ScheduleEquipmentMoving()
         {
-            // TODO
+            Console.WriteLine("Unesite podatke o pomeranju opreme");
+
+            Console.Write("Unesite identifikator: ");
+            string id = Console.ReadLine();
+            while (equipmentMovingService.DoesIdExist(id)) 
+            {
+                Console.Write("Identifikator vec postoji. Ponovite unos: ");
+                id = Console.ReadLine();
+            }
+
+            Console.Write("Unesite identifikator opreme: ");
+            string equipmentId = Console.ReadLine();
+            while (!equipmentService.DoesIdExist(equipmentId) || 
+                equipmentMovingService.ActiveEquipmentMovingExist(equipmentId))
+            {
+                if (!equipmentService.DoesIdExist(equipmentId))
+                    Console.Write("Identifikator ne postoji. Ponovite unos: ");
+                else
+                    Console.Write("Pomeranje odabrane opreme je vec zakazano. Ponovite unos: ");
+                equipmentId = Console.ReadLine();
+            }
+
+            Console.Write("Unesite vreme pomeranja (u formatu MM/dd/yyyy HH:mm): ");
+            bool isTimeValid = false;
+            DateTime scheduledTime = DateTime.Now;
+            do
+            {
+                string scheduledTimeStr = Console.ReadLine();
+                isTimeValid = DateTime.TryParseExact(scheduledTimeStr, "MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture,
+                    DateTimeStyles.None, out scheduledTime);
+                if (!isTimeValid)
+                    Console.Write("Vreme nije ispravno. Ponovite unos: ");
+            } while (!isTimeValid);
+
+            Equipment equipment = equipmentService.GetEquipmentById(equipmentId);
+            string sourceRoomId = equipment.RoomId;
+
+            Console.WriteLine("Unesite broj sobe u koju se oprema pomera: ");
+            string destinationRoomId = Console.ReadLine();
+            while (!roomService.DoesIdExist(destinationRoomId) || destinationRoomId.Equals(sourceRoomId))
+            {
+                if (destinationRoomId.Equals(sourceRoomId))
+                    Console.Write("Nije moguce pomeriti opremu u istu sobu. Ponovite unos: ");
+                else
+                    Console.Write("Broj sobe ne postoji. Ponovite unos: ");
+                destinationRoomId = Console.ReadLine();
+            }
+
+            equipmentMovingService.CreateEquipmentMoving(id, equipmentId, scheduledTime, sourceRoomId, destinationRoomId);
         }
 
         private void MoveEquipment()

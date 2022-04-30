@@ -14,8 +14,6 @@ namespace Hospital.Model
     class Login
     {
         UserService userService = new UserService();
-        private EquipmentMovingService equipmentMovingService = new EquipmentMovingService(
-            new EquipmentService(new RoomService()));
         User registeredUser;
 
         public void logIn()
@@ -58,6 +56,9 @@ namespace Hospital.Model
             Console.WriteLine($"\nDobrodosli {this.registeredUser.Name + " " + this.registeredUser.Surname}");
 
             // Move equipment if scheduled time has passed
+            RoomService roomService = new RoomService();
+            EquipmentService equipmentService = new EquipmentService(roomService);
+            EquipmentMovingService equipmentMovingService = new EquipmentMovingService(equipmentService, roomService);
             equipmentMovingService.MoveEquipment();
 
             PatientService helper = new PatientService(this.registeredUser, userService.Users);
