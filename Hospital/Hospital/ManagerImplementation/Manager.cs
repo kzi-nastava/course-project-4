@@ -40,23 +40,23 @@ namespace Hospital.ManagerImplementation
                 choice = Console.ReadLine();
 
                 if (choice.Equals("1"))
-                    this.createRoom();
+                    this.CreateRoom();
                 else if (choice.Equals("2"))
-                    this.listRooms();
+                    this.ListRooms();
                 else if (choice.Equals("3"))
-                    this.updateRoom();
+                    this.UpdateRoom();
                 else if (choice.Equals("4"))
-                    this.deleteRoom();
+                    this.DeleteRoom();
                 else if (choice.Equals("5"))
-                    this.searchEquipment();
+                    this.SearchEquipment();
                 else if (choice.Equals("6"))
-                    this.filterEquipment();
+                    this.FilterEquipment();
                 else if (choice.Equals("7"))
-                    this.logOut();
+                    this.LogOut();
             } while (true);
         }
 
-        private void createRoom() 
+        private void CreateRoom() 
         {
             Console.WriteLine("Unesite podatke o sobi");
             Console.WriteLine("------------------");
@@ -108,7 +108,7 @@ namespace Hospital.ManagerImplementation
             roomService.CreateRoom(id, name, type);
         }
 
-        private void listRooms()
+        private void ListRooms()
         {
             List<Room> allRooms = roomService.Rooms;
             foreach (Room room in allRooms)
@@ -117,7 +117,7 @@ namespace Hospital.ManagerImplementation
             }
         }
 
-        private void updateRoom()
+        private void UpdateRoom()
         {
             Console.WriteLine("Unesite podatke o sobi");
             Console.WriteLine("------------------");
@@ -169,7 +169,7 @@ namespace Hospital.ManagerImplementation
             roomService.UpdateRoom(id, name, type);
         }
 
-        private void deleteRoom()
+        private void DeleteRoom()
         {
             Console.Write("Unesite broj sobe: ");
             string id = Console.ReadLine();
@@ -182,7 +182,7 @@ namespace Hospital.ManagerImplementation
             roomService.DeleteRoom(id);
         }
 
-        private void printEquipment(List<Equipment> equipmentList)
+        private void PrintEquipment(List<Equipment> equipmentList)
         {
             foreach (Equipment equipment in equipmentList)
             {
@@ -191,16 +191,16 @@ namespace Hospital.ManagerImplementation
             }
         }
 
-        private void searchEquipment()
+        private void SearchEquipment()
         {
             Console.Write("Unesite karaktere pretrage: ");
             string query = Console.ReadLine();
 
             List<Equipment> foundEquipment = equipmentService.Search(query);
-            printEquipment(foundEquipment);
+            PrintEquipment(foundEquipment);
         }
 
-        private void filterEquipment()
+        private void FilterEquipment()
         {
             Console.WriteLine("Odaberite kriterijum filtriranja");
             Console.WriteLine("1. Tip sobe");
@@ -214,11 +214,11 @@ namespace Hospital.ManagerImplementation
 
                 bool shouldBreak = true;
                 if (choice.Equals("1"))
-                    filterEquipmentByRoomType();
+                    FilterEquipmentByRoomType();
                 else if (choice.Equals("2"))
-                    filterEquipmentByQuantity();
+                    FilterEquipmentByQuantity();
                 else if (choice.Equals("3"))
-                    filterEquipmentByType();
+                    FilterEquipmentByType();
                 else
                     shouldBreak = false;
 
@@ -227,7 +227,7 @@ namespace Hospital.ManagerImplementation
             }
         }
 
-        private void filterEquipmentByRoomType()
+        private void FilterEquipmentByRoomType()
         {
             Console.WriteLine("Odaberite tip sobe");
             Console.WriteLine("1. Operaciona sala");
@@ -261,10 +261,10 @@ namespace Hospital.ManagerImplementation
             }
 
             List<Equipment> foundEquipment = equipmentService.FilterByRoomType(roomType);
-            printEquipment(foundEquipment);
+            PrintEquipment(foundEquipment);
         }
 
-        private void filterEquipmentByQuantity()
+        private void FilterEquipmentByQuantity()
         {
             Console.WriteLine("Odaberite opciju");
             Console.WriteLine("1. Nema na stanju");
@@ -302,10 +302,10 @@ namespace Hospital.ManagerImplementation
             }
 
             List<Equipment> foundEquipment = equipmentService.FilterByQuantity(lowerBound, upperBound);
-            printEquipment(foundEquipment);
+            PrintEquipment(foundEquipment);
         }
 
-        private void filterEquipmentByType()
+        private void FilterEquipmentByType()
         {
             Console.WriteLine("Odaberite tip opreme");
             Console.WriteLine("1. Oprema za preglede");
@@ -336,10 +336,10 @@ namespace Hospital.ManagerImplementation
             }
 
             List<Equipment> foundEquipment = equipmentService.FilterByEquipmentType(equipmentType);
-            printEquipment(foundEquipment);
+            PrintEquipment(foundEquipment);
         }
 
-        private void logOut()
+        private void LogOut()
         {
             Login loging = new Login();
             loging.logIn();
