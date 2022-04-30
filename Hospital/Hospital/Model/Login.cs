@@ -7,6 +7,7 @@ using Hospital.Service;
 using Hospital.PatientImplementation;
 using Hospital.DoctorImplementation;
 using Hospital.SecretaryImplementation;
+using Hospital.ManagerImplementation;
 
 namespace Hospital.Model
 {
@@ -15,7 +16,7 @@ namespace Hospital.Model
         UserService userService = new UserService();
         User registeredUser;
 
-        public void LogIn()
+        public void logIn()
         {
             Console.WriteLine("\nPrijava na sistem");
             Console.WriteLine("------------------");
@@ -54,7 +55,7 @@ namespace Hospital.Model
             Console.WriteLine("Uspesno ste se ulogovali!");
             Console.WriteLine($"\nDobrodosli {this.registeredUser.Name + " " + this.registeredUser.Surname}");
 
-            Helper helper = new Helper(this.registeredUser, userService.Users);
+            PatientService helper = new PatientService(this.registeredUser, userService.Users);
             if (this.registeredUser.UserRole == User.Role.Patient)
             { 
                 // patient
@@ -63,15 +64,22 @@ namespace Hospital.Model
             }
             else if (this.registeredUser.UserRole == User.Role.Doctor)
             {
-                //doctor
+                // doctor
                 Doctor registeredDoctor = new Doctor(this.registeredUser, helper);
                 registeredDoctor.doctorMenu();
             }
-            else if(this.registeredUser.UserRole == User.Role.Secretary)
+            else if (this.registeredUser.UserRole == User.Role.Secretary)
 			{
+                // secretary
                 Secretary registeredSecretary = new Secretary(this.userService);
                 registeredSecretary.SecretaryMenu();
 			}
+            else if (this.registeredUser.UserRole == User.Role.Manager)
+            {
+                // manager
+                Manager registeredManager = new Manager(this.registeredUser);
+                registeredManager.ManagerMenu();
+            }
         }
     }
 }

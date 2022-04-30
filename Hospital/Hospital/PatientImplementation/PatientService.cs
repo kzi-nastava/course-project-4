@@ -14,7 +14,7 @@ using System.IO;
 
 namespace Hospital.PatientImplementation
 {
-    class Helper
+    class PatientService
     {
         AppointmentService appointmentService = new AppointmentService();  // loading all appointments
         List<Appointment> allAppointments;
@@ -24,7 +24,7 @@ namespace Hospital.PatientImplementation
         // getters
         public List<Appointment> Appointments { get { return allAppointments; } }
 
-        public Helper(User user, List<User> allUsers)
+        public PatientService(User user, List<User> allUsers)
         {
             this.currentRegisteredUser = user;
             this.allUsers = allUsers;
@@ -52,21 +52,18 @@ namespace Hospital.PatientImplementation
             currentlyRegisteredPatient.PatientAppointments = patientCurrentAppointment;
         }
 
-        public List<Appointment> findAppointmentsForDeleteAndUpdate(Patient currentlyRegisteredPatient, string typeAction)
+        public List<Appointment> findAppointmentsForDeleteAndUpdate(Patient currentlyRegisteredPatient)
         {
             int appointmentOrdinalNumber = 0;
 
-            if(typeAction.Equals("delete"))
-                Console.WriteLine("\n\tPREGLEDI ZA BRISANJE");
-            else
-                Console.WriteLine("\n\tPREGLEDI ZA IZMENU");
-            Console.Write("-----------------------------------------\n");
+            this.tableHeader();
 
             List<Appointment> appointmentsForChange = new List<Appointment>();
             foreach (Appointment appointment in currentlyRegisteredPatient.PatientAppointments) 
             {
                 if (appointment.GetAppointmentState != Appointment.AppointmentState.UpdateRequest &&
-                    appointment.GetAppointmentState != Appointment.AppointmentState.DeleteRequest)
+                    appointment.GetAppointmentState != Appointment.AppointmentState.DeleteRequest && 
+                    appointment.GetTypeOfTerm != Appointment.TypeOfTerm.Operation)
                 {
                     appointmentsForChange.Add(appointment);
                     appointmentOrdinalNumber++;
@@ -182,14 +179,21 @@ namespace Hospital.PatientImplementation
             string filePath = @"..\..\Data\actions.csv";
 
             UserAction newAction;
-            if (typeAction.Equals("kreiranje"))
+            if (typeAction.Equals("create"))
                 newAction = new UserAction(registeredUserEmail, DateTime.Now, UserAction.ActionState.Created);
-            else if(typeAction.Equals("izmena"))
+            else if(typeAction.Equals("update"))
                 newAction = new UserAction(registeredUserEmail, DateTime.Now, UserAction.ActionState.Modified);
             else
                 newAction = new UserAction(registeredUserEmail, DateTime.Now, UserAction.ActionState.Deleted);
 
             File.AppendAllText(filePath, newAction.ToString());
+        }
+
+        public void tableHeader()
+        {
+            Console.WriteLine();
+            Console.WriteLine(String.Format("{0,3}|{1,10}|{2,10}|{3,10}|{4,10}|{5,10}|{6,10}|{7,10}", 
+                "Br.", "Doktor", "Datum", "Pocetak", "Kraj", "Soba", "Tip", "Stanje"));
         }
     }
 }

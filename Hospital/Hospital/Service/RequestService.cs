@@ -24,7 +24,7 @@ namespace Hospital.Service
 
 		public void ProcessRequest(Appointment request, int choice)
 		{
-			//if(choice == 2)
+			//if(choice == 1)
 			//{
 			//	DenyRequest(request);
 			//}
@@ -33,7 +33,5 @@ namespace Hospital.Service
 			//	AcceptRequest(request);
 			//}
 		}
-
-
 	}
 }
