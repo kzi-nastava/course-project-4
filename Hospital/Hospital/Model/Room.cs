@@ -13,7 +13,8 @@ namespace Hospital.Model
             OperationRoom = 1,
             ExaminationRoom = 2,
             RestRoom = 3,
-            Other = 4
+            Other = 4,
+            Warehouse = 5
         }
 
         private string id;
@@ -36,10 +37,12 @@ namespace Hospital.Model
                         return "Sala za preglede";
                     case TypeOfRoom.RestRoom:
                         return "Soba za odmor";
+                    case TypeOfRoom.Warehouse:
+                        return "Magacin";
                     case TypeOfRoom.Other:
                     default:
                         return "Druga soba";
-                } 
+                }
             } 
         }
 
