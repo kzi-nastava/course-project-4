@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,12 +15,14 @@ namespace Hospital.ManagerImplementation
         private User currentRegisteredManager;
         private RoomService roomService;
         private EquipmentService equipmentService;
+        private EquipmentMovingService equipmentMovingService;
 
         public Manager(User currentRegisteredManager)
         {
             this.currentRegisteredManager = currentRegisteredManager;
             roomService = new RoomService();
             equipmentService = new EquipmentService(roomService);
+            equipmentMovingService = new EquipmentMovingService(equipmentService, roomService);
         }
 
         public void ManagerMenu() 
@@ -35,7 +38,9 @@ namespace Hospital.ManagerImplementation
                 Console.WriteLine("4. Obrisi sobu");
                 Console.WriteLine("5. Pretraga opreme");
                 Console.WriteLine("6. Filtriranje opreme");
-                Console.WriteLine("7. Odjava");
+                Console.WriteLine("7. Zakazi premestanje opreme");
+                Console.WriteLine("8. Pokreni premestanje opreme");
+                Console.WriteLine("9. Odjava");
                 Console.Write(">> ");
                 choice = Console.ReadLine();
 
@@ -52,6 +57,10 @@ namespace Hospital.ManagerImplementation
                 else if (choice.Equals("6"))
                     this.FilterEquipment();
                 else if (choice.Equals("7"))
+                    this.ScheduleEquipmentMoving();
+                else if (choice.Equals("8"))
+                    this.MoveEquipment();
+                else if (choice.Equals("9"))
                     this.LogOut();
             } while (true);
         }
@@ -337,6 +346,64 @@ namespace Hospital.ManagerImplementation
 
             List<Equipment> foundEquipment = equipmentService.FilterByEquipmentType(equipmentType);
             PrintEquipment(foundEquipment);
+        }
+
+        private void ScheduleEquipmentMoving()
+        {
+            Console.WriteLine("Unesite podatke o pomeranju opreme");
+
+            Console.Write("Unesite identifikator: ");
+            string id = Console.ReadLine();
+            while (equipmentMovingService.DoesIdExist(id)) 
+            {
+                Console.Write("Identifikator vec postoji. Ponovite unos: ");
+                id = Console.ReadLine();
+            }
+
+            Console.Write("Unesite identifikator opreme: ");
+            string equipmentId = Console.ReadLine();
+            while (!equipmentService.DoesIdExist(equipmentId) || 
+                equipmentMovingService.ActiveEquipmentMovingExist(equipmentId))
+            {
+                if (!equipmentService.DoesIdExist(equipmentId))
+                    Console.Write("Identifikator ne postoji. Ponovite unos: ");
+                else
+                    Console.Write("Pomeranje odabrane opreme je vec zakazano. Ponovite unos: ");
+                equipmentId = Console.ReadLine();
+            }
+
+            Console.Write("Unesite vreme pomeranja (u formatu MM/dd/yyyy HH:mm): ");
+            bool isTimeValid = false;
+            DateTime scheduledTime = DateTime.Now;
+            do
+            {
+                string scheduledTimeStr = Console.ReadLine();
+                isTimeValid = DateTime.TryParseExact(scheduledTimeStr, "MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture,
+                    DateTimeStyles.None, out scheduledTime);
+                if (!isTimeValid)
+                    Console.Write("Vreme nije ispravno. Ponovite unos: ");
+            } while (!isTimeValid);
+
+            Equipment equipment = equipmentService.GetEquipmentById(equipmentId);
+            string sourceRoomId = equipment.RoomId;
+
+            Console.WriteLine("Unesite broj sobe u koju se oprema pomera: ");
+            string destinationRoomId = Console.ReadLine();
+            while (!roomService.DoesIdExist(destinationRoomId) || destinationRoomId.Equals(sourceRoomId))
+            {
+                if (destinationRoomId.Equals(sourceRoomId))
+                    Console.Write("Nije moguce pomeriti opremu u istu sobu. Ponovite unos: ");
+                else
+                    Console.Write("Broj sobe ne postoji. Ponovite unos: ");
+                destinationRoomId = Console.ReadLine();
+            }
+
+            equipmentMovingService.CreateEquipmentMoving(id, equipmentId, scheduledTime, sourceRoomId, destinationRoomId);
+        }
+
+        private void MoveEquipment()
+        {
+            equipmentMovingService.MoveEquipment();
         }
 
         private void LogOut()
