@@ -31,9 +31,10 @@ namespace Hospital.Repository
                     DateTime scheduledTime = DateTime.ParseExact(fields[2], "MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture);
                     string sourceRoomId = fields[3];
                     string destinationRoomId = fields[4];
+                    bool active = bool.Parse(fields[5]);
 
                     EquipmentMoving equipmentMoving = new EquipmentMoving(id, equipmentId, scheduledTime,
-                        sourceRoomId, destinationRoomId);
+                        sourceRoomId, destinationRoomId, active);
                     equipmentMovings.Add(equipmentMoving);
                 }
             }
@@ -50,7 +51,7 @@ namespace Hospital.Repository
                 EquipmentMoving equipmentMoving = equipmentMovings[i];
                 lines[i] = equipmentMoving.Id + "," + equipmentMoving.EquipmentId + "," 
                     + equipmentMoving.ScheduledTime.ToString("MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture) + ","
-                    + equipmentMoving.SourceRoomId + "," + equipmentMoving.DestinationRoomId;
+                    + equipmentMoving.SourceRoomId + "," + equipmentMoving.DestinationRoomId + "," + equipmentMoving.Active;
             }
 
             File.WriteAllLines(filePath, lines);

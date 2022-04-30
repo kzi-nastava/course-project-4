@@ -13,21 +13,24 @@ namespace Hospital.Model
         private DateTime scheduledTime;
         private string sourceRoomId;
         private string destinationRoomId;
+        private bool active;
 
         public string Id { get { return id; } }
         public string EquipmentId { get { return equipmentId; } }
         public DateTime ScheduledTime { get { return scheduledTime; } }
         public string SourceRoomId { get { return sourceRoomId; } }
         public string DestinationRoomId { get { return destinationRoomId; } }
+        public bool Active { get { return active; } }
 
         public EquipmentMoving(string id, string equipmentId, DateTime scheduledTime,
-            string sourceRoomId, string destinationRoomId)
+            string sourceRoomId, string destinationRoomId, bool active)
         {
             this.id = id;
             this.equipmentId = equipmentId;
             this.scheduledTime = scheduledTime;
             this.sourceRoomId = sourceRoomId;
             this.destinationRoomId = destinationRoomId;
+            this.active = active;
         }
     }
 }
