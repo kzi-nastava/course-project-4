@@ -50,6 +50,7 @@
     <Compile Include="PatientImplementation\Patient.cs" />
     <Compile Include="Repository\ActionRepository.cs" />
     <Compile Include="Repository\AppointmentRepository.cs" />
+    <Compile Include="Repository\EquipmentRepository.cs" />
     <Compile Include="Repository\HealthRecordRepository.cs" />
     <Compile Include="Repository\RoomRepository.cs" />
     <Compile Include="Repository\UserRepository.cs" />
