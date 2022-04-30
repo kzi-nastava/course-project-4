@@ -205,6 +205,9 @@ namespace Hospital.PatientImplementation
                         else
                         {
                             appointmentForUpdate.AppointmentState = Appointment.State.Updated;
+                            appointmentForUpdate.DateAppointment = appointmentDate;
+                            appointmentForUpdate.StartTime = appointmentStartTime;
+                            appointmentForUpdate.EndTime = appointmentEndTime;
                             Console.WriteLine("Uspesno ste izvrsili izmenu pregleda!");
                         }
                         lines[i] = appointmentForUpdate.ToString();
@@ -262,7 +265,7 @@ namespace Hospital.PatientImplementation
 
                 // append new appointment in file
                 string filePath = @"..\..\Data\appointments.csv";
-                File.AppendAllText(filePath, "\n"+newAppointment.ToString());
+                File.AppendAllText(filePath, newAppointment.ToString()+"\n");
 
                 // refresh data
                 _patientService.RefreshPatientAppointments(this);
