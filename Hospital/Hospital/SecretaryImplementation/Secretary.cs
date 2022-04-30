@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Hospital.Model;
+using Hospital.Repository;
 using Hospital.Service;
 
 namespace Hospital.SecretaryImplementation
@@ -14,6 +15,9 @@ namespace Hospital.SecretaryImplementation
 		private List<User> patients;
 		private UserService userService;
 		private HealthRecordService healthRecordService = new HealthRecordService();
+		private AppointmentService appointmentService = new AppointmentService();
+		private RequestRepository requestRepository = new RequestRepository();
+
 		public Secretary(UserService service)
 		{
 			this.userService = service;
@@ -76,6 +80,10 @@ namespace Hospital.SecretaryImplementation
 					{
 						Console.WriteLine("Trenutno nema blokiranih pacijenata.");
 					}
+				}
+				else if(choice == "7")
+				{
+					AnswerRequest();
 				}
 				else if (choice == "x")
 				{
@@ -284,6 +292,53 @@ namespace Hospital.SecretaryImplementation
 
 			Console.WriteLine("\nNalog pacijenta je uspesno izmenjen.");
 
+		}
+
+		private void AnswerRequest()
+		{
+			List<Appointment> requests = requestRepository.Load();
+			for(int i = 0; i < requests.Count; i++)
+			{
+				Appointment request = requests[i];
+				Console.Write("{0}. {1}, {2}, ", i + 1, userService.GetUserFullName(request.PatientEmail), request.DateAppointment);
+				switch (request.GetAppointmentState)
+				{
+					case (Appointment.AppointmentState.UpdateRequest):
+						Console.Write("Izmena termina");
+						break;
+					case (Appointment.AppointmentState.DeleteRequest):
+						Console.Write("Brisanje termina");
+						break;
+				}
+			}
+			Console.WriteLine("\nx. Odustani");
+			Console.WriteLine("--------------------------------------------");
+			string requestIndexInput;
+			int requestIndex;
+			do
+			{
+				Console.WriteLine("Unesite broj zahteva koji zelite da obradite");
+				Console.Write(">>");
+				requestIndexInput = Console.ReadLine();
+				if (requestIndexInput == "x")
+				{
+					return;
+				}
+			} while (!int.TryParse(requestIndexInput, out requestIndex) || requestIndex < 1 || requestIndex > requests.Count);
+
+			Appointment activeRequest = requests[requestIndex - 1];
+			string actionIndexInput;
+			int actionIndex;
+			do
+			{
+				Console.WriteLine("\nIzaberite akciju koju zelite da izvrsite: ");
+				Console.WriteLine("1. Prihvati zahtev");
+				Console.WriteLine("2. Odbij zahtev");
+				Console.Write(">>");
+				actionIndexInput = Console.ReadLine();
+			}
+			while (!int.TryParse(actionIndexInput, out actionIndex) || actionIndex < 1 || actionIndex > 2);
+			
 		}
 
 		private void LogOut()

@@ -36,6 +36,19 @@ namespace Hospital.Service
             return false;
         }
 
+        public string GetUserFullName(string email)
+		{
+            string fullName = "";
+            foreach(User user in users)
+			{
+                if(user.Email == email)
+				{
+                    fullName = user.Name + " " + user.Surname;
+				}
+			}
+            return fullName;
+		}
+
         public User TryLogin(string email, string password)
         {
             foreach (User user in users)

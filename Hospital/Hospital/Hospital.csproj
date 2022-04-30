@@ -48,11 +48,13 @@
     <Compile Include="Repository\ActionRepository.cs" />
     <Compile Include="Repository\AppointmentRepository.cs" />
     <Compile Include="Repository\HealthRecordRepository.cs" />
+    <Compile Include="Repository\RequestRepository.cs" />
     <Compile Include="Repository\UserRepository.cs" />
     <Compile Include="SecretaryImplementation\Secretary.cs" />
     <Compile Include="Service\ActionService.cs" />
     <Compile Include="Service\AppointmentService.cs" />
     <Compile Include="Service\HealthRecordService.cs" />
+    <Compile Include="Service\RequestService.cs" />
     <Compile Include="Service\UserService.cs" />
   </ItemGroup>
   <ItemGroup>
