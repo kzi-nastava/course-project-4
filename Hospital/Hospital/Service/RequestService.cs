@@ -39,13 +39,28 @@ namespace Hospital.Service
 				string line;
 				foreach (Appointment request in requests)
 				{
-					line = request.AppointmentId+","+request.PatientEmail+","+request.DoctorEmail+","+request.DateAppointment+
-						","+request.StartTime+","+request.EndTime+","+(int)request.AppointmentStateProp+","+request.RoomNumber+","+(int)request.GetTypeOfTerm;
+					line = request.AppointmentId+","+request.PatientEmail+","+request.DoctorEmail+","+request.DateAppointment.ToString("MM/dd/yyyy")+
+						","+request.StartTime.ToString("HH:mm")+","+request.EndTime.ToString("HH:mm") + ","+(int)request.AppointmentStateProp+","
+						+request.RoomNumber+","+(int)request.GetTypeOfTerm;
 					lines.Add(line);
 				}
 				File.WriteAllLines(filePath, lines.ToArray());
 			}
 
+		}
+
+		public Appointment findInitialAppointment(string id)
+		{
+			Appointment initialAppointment = null;
+			foreach(Appointment appointment in appointmentService.Appointments)
+			{
+				if(id == appointment.AppointmentId)
+				{
+					initialAppointment = appointment;
+					break;
+				}
+			}
+			return initialAppointment;
 		}
 
 		public void DenyRequest(Appointment request)
@@ -78,7 +93,15 @@ namespace Hospital.Service
 					if (request.AppointmentStateProp == Appointment.AppointmentState.DeleteRequest)
 						appointment.AppointmentStateProp = Appointment.AppointmentState.Deleted;
 					else
+					{
+						appointment.DoctorEmail = request.DoctorEmail;
+						appointment.DateAppointment = request.DateAppointment;
+						appointment.StartTime = request.StartTime;
+						appointment.EndTime = request.EndTime;
 						appointment.AppointmentStateProp = Appointment.AppointmentState.Updated;
+					}
+						
+						
 					break;
 				}
 			}

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Hospital.Model;
 using System.IO;
 using System.Globalization;
+using Hospital.Service;
 
 namespace Hospital.PatientImplementation
 {
@@ -109,13 +110,16 @@ namespace Hospital.PatientImplementation
 
                     if ((appointmentForDelete.DateAppointment - DateTime.Now).TotalDays <= 2)
                     {
-                        appointmentForDelete.setAppointmentState(Appointment.AppointmentState.DeleteRequest);
+                        appointmentForDelete.AppointmentStateProp = Appointment.AppointmentState.DeleteRequest;
+                        
+                        patientService.RequestService.Requests.Add(appointmentForDelete);
+                        patientService.RequestService.UpdateFile();
                         Console.WriteLine("Zahtev za brisanje je poslat sekretaru!");
                     }
                     else
                     {
                         // logical deletion
-                        appointmentForDelete.setAppointmentState(Appointment.AppointmentState.Deleted);
+                        appointmentForDelete.AppointmentStateProp = Appointment.AppointmentState.Deleted;
                         Console.WriteLine("Uspesno ste obrisali pregled!");
                     }
                     lines[i] = appointmentForDelete.ToString();
@@ -190,19 +194,25 @@ namespace Hospital.PatientImplementation
 
                         if ((appointmentForUpdate.DateAppointment - DateTime.Now).TotalDays <= 2)
                         {
-                            newAppointment = new Appointment(id, this.email, doctorEmail, appointmentDate,
-                    appointmentStartTime, appointmentEndTime, Appointment.AppointmentState.UpdateRequest, Int32.Parse(fields[7]),
-                    Appointment.TypeOfTerm.Examination);
+                            appointmentForUpdate.AppointmentStateProp = Appointment.AppointmentState.UpdateRequest;
+							newAppointment = new Appointment(id, this.email, doctorEmail, appointmentDate,
+							appointmentStartTime, appointmentEndTime, Appointment.AppointmentState.UpdateRequest, Int32.Parse(fields[7]),
+							Appointment.TypeOfTerm.Examination);
+                            lines[i] = appointmentForUpdate.ToString();
+
+                            patientService.RequestService.Requests.Add(newAppointment);
+                            patientService.RequestService.UpdateFile();
                             Console.WriteLine("Zahtev za izmenu je poslat sekretaru!");
                         }
                         else
                         {
                             newAppointment = new Appointment(id, this.email, doctorEmail, appointmentDate,
-                    appointmentStartTime, appointmentEndTime, Appointment.AppointmentState.Updated, Int32.Parse(fields[7]),
-                    Appointment.TypeOfTerm.Examination);
+                            appointmentStartTime, appointmentEndTime, Appointment.AppointmentState.Updated, Int32.Parse(fields[7]),
+                            Appointment.TypeOfTerm.Examination);
                             Console.WriteLine("Uspesno ste izvrsili izmenu pregleda!");
+                            lines[i] = newAppointment.ToString();
                         }
-                        lines[i] = newAppointment.ToString();
+                        
                     }
                 }
 
