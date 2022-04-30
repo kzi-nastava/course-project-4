@@ -476,11 +476,19 @@ namespace Hospital.DoctorImplementation
             } while (Int32.Parse(numberAppointment) > this.allMyAppointments.Count);
 
             Appointment appointmentForDelete = this.allMyAppointments[Int32.Parse(numberAppointment) - 1];
-            appointmentForDelete.AppointmentState = Appointment.State.Deleted;
-           
             appointmentService.DeleteAppointment(appointmentForDelete);
+            appointmentForDelete.AppointmentState = Appointment.State.Deleted;
+            this.allMyAppointments = appointmentService.GetDoctorAppointment(this.currentRegisteredDoctor);
+           
+            
 
         }
+
+    
+
+       
+
+        
 
         private void UpdateOwnAppointment()
         {
