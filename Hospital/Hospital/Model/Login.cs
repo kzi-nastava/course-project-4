@@ -66,7 +66,7 @@ namespace Hospital.Model
             { 
                 // patient
                 Patient registeredPatient = new Patient(this._registeredUser.Email, helper);
-                registeredPatient.patientMenu();
+                registeredPatient.PatientMenu();
             }
             else if (this._registeredUser.UserRole == User.Role.Doctor)
             {
