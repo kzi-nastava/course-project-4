@@ -9,54 +9,54 @@ namespace Hospital.Model
     class HealthRecord
     {
         
-        private string idHealthRecord;
-        private string emailPatient;
-        private int patientHeight;
-        private double patientWeight;
-        private string previousIllnesses;
-        private string allergen;
-        private string bloodType;
+        private string _idHealthRecord;
+        private string _emailPatient;
+        private int _patientHeight;
+        private double _patientWeight;
+        private string _previousIllnesses;
+        private string _allergen;
+        private string _bloodType;
         
 
-        public string IdHealthRecord { get { return idHealthRecord; } }
+        public string IdHealthRecord { get { return _idHealthRecord; } set { _idHealthRecord = value; } }
 
-        public string EmailPatient { get { return emailPatient; } }
-        public int PatientHeight { get { return patientHeight; } }
-        public double PatientWeight { get { return patientWeight; } }
-        public string PreviousIllnesses { get { return previousIllnesses; } }
-        public string Allergen { get { return allergen; } }
+        public string EmailPatient { get { return _emailPatient; } set { _emailPatient = value; } }
+        public int PatientHeight { get { return _patientHeight; } set { _patientHeight = value; } }
+        public double PatientWeight { get { return _patientWeight; } set { _patientWeight = value; } }
+        public string PreviousIllnesses { get { return _previousIllnesses; } set { _previousIllnesses = value; } }
+        public string Allergen { get { return _allergen; } set { _allergen = value; } }
 
-        public string BloodType { get { return bloodType; } }
+        public string BloodType { get { return _bloodType; } set { _bloodType = value; } }
         
 
         public HealthRecord(string idHealthRecord, string emailPatient, int patientHeight, double patientWeight, string previousIllnesses,string allergen,
             string bloodType)
         {
-            this.idHealthRecord = idHealthRecord;
-            this.emailPatient = emailPatient;
-            this.patientHeight = patientHeight;
-            this.patientWeight = patientWeight;
-            this.previousIllnesses = previousIllnesses;
-            this.allergen = allergen;
-            this.bloodType = bloodType;
+            this._idHealthRecord = idHealthRecord;
+            this._emailPatient = emailPatient;
+            this._patientHeight = patientHeight;
+            this._patientWeight = patientWeight;
+            this._previousIllnesses = previousIllnesses;
+            this._allergen = allergen;
+            this._bloodType = bloodType;
          
         }
 
         public override string ToString()
         {
-            return "Id zdravstvenog: " + this.idHealthRecord + "\n" +
-                "Email pacijenta:" + this.emailPatient + "\n" +
-                "Visina: " + this.patientHeight + "\n" +
-                "Težina: " + this.patientWeight + "\n" +
-                "Alergena: " + this.allergen + "\n" +
-                "Krvna grupa: " + this.bloodType + "\n";
+            return "Id zdravstvenog: " + this._idHealthRecord + "\n" +
+                "Email pacijenta:" + this._emailPatient + "\n" +
+                "Visina: " + this._patientHeight + "\n" +
+                "Težina: " + this._patientWeight + "\n" +
+                "Alergena: " + this._allergen + "\n" +
+                "Krvna grupa: " + this._bloodType + "\n";
               
         }
 
         public string ToStringForFile()
 		{
-            return this.idHealthRecord + "*" + this.emailPatient + "*" + this.patientHeight + "*" +
-                this.patientWeight + "*" + this.previousIllnesses + "*" + this.allergen + "*" + this.bloodType;
+            return this._idHealthRecord + "*" + this._emailPatient + "*" + this._patientHeight + "*" +
+                this._patientWeight + "*" + this._previousIllnesses + "*" + this._allergen + "*" + this._bloodType;
 		}
 
     }

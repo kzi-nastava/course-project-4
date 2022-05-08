@@ -31,7 +31,7 @@ namespace Hospital.PatientImplementation
         }
 
         // methods
-        public void patientMenu()
+        public void PatientMenu()
         {
             // the menu
             string choice;

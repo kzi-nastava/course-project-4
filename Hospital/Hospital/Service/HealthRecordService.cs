@@ -11,24 +11,24 @@ namespace Hospital.Service
 {
     class HealthRecordService
     {
-        private HealthRecordRepository healthRecordRepository;
-        private UserRepository userRepository;
-        private List<HealthRecord> healthRecords;
-        private List<User> users;
+        private HealthRecordRepository _healthRecordRepository;
+        private UserRepository _userRepository;
+        private List<HealthRecord> _healthRecords;
+        private List<User> _users;
 
 
         public HealthRecordService()
         {
-            healthRecordRepository = new HealthRecordRepository();
-            userRepository = new UserRepository();
-            healthRecords = healthRecordRepository.Load();
-            users = userRepository.Load();
+            _healthRecordRepository = new HealthRecordRepository();
+            _userRepository = new UserRepository();
+            _healthRecords = _healthRecordRepository.Load();
+            _users = _userRepository.Load();
 
         }
 
-        public List<HealthRecord> HealthRecords { get{ return healthRecords; } }
+        public List<HealthRecord> HealthRecords { get{ return _healthRecords; } }
 
-        public HealthRecordRepository HealthRecordRepository { get { return healthRecordRepository; } }
+        public HealthRecordRepository HealthRecordRepository { get { return _healthRecordRepository; } }
 
         public void UpdateHealthRecordFile()
 		{
@@ -37,7 +37,7 @@ namespace Hospital.Service
             List<string> lines = new List<String>();
 
             string line;
-            foreach (HealthRecord healthRecord in healthRecords)
+            foreach (HealthRecord healthRecord in _healthRecords)
             {
                 line = healthRecord.ToStringForFile();
                 lines.Add(line);
@@ -55,31 +55,20 @@ namespace Hospital.Service
 
         }
 
-        public void UpdateHealthRecord(HealthRecord healthRecord)
+        public void UpdateHealthRecord(HealthRecord healthRecordForUpdate)
         {
-            string filePath = @"..\..\Data\healthRecords.csv";
-            string[] lines = File.ReadAllLines(filePath);
-           
-
-            for (int i = 0; i < lines.Length; i++)
+            foreach (HealthRecord healthRecord in this._healthRecords)
             {
-                string[] fields = lines[i].Split(new[] { '*' });
-                string id = fields[0];
-               
-
-                if (id.Equals(healthRecord.IdHealthRecord))
+                if (healthRecord.IdHealthRecord.Equals(healthRecordForUpdate.IdHealthRecord))
                 {
-
-                    lines[i] = id + "*" + healthRecord.EmailPatient + "*" + healthRecord.PatientHeight.ToString() + "*" + healthRecord.PatientWeight.ToString() + "*" + healthRecord.PreviousIllnesses + "*" + healthRecord.Allergen
-                        + "*" + healthRecord.BloodType;
-                    Console.WriteLine("Uspesno ste izmenili zdravstveni karton");
-
-
+                    healthRecord.EmailPatient = healthRecordForUpdate.EmailPatient;
+                    healthRecord.PatientHeight = healthRecordForUpdate.PatientHeight;
+                    healthRecord.PatientWeight = healthRecordForUpdate.PatientWeight;
+                    healthRecord.PreviousIllnesses = healthRecordForUpdate.PreviousIllnesses;
+                    healthRecord.Allergen = healthRecordForUpdate.Allergen;
+                    healthRecord.BloodType = healthRecord.BloodType;
                 }
             }
-            // saving changes
-            File.WriteAllLines(filePath, lines);
         }
-
     }
 }
