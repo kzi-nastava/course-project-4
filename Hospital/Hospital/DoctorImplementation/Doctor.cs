@@ -439,7 +439,7 @@ namespace Hospital.DoctorImplementation
                 return;
             }
 
-            int id = helper.GetNewAppointmentId();
+            int id = appointmentService.GetNewAppointmentId();
             Appointment newAppointment = new Appointment(id.ToString(), patientEmail, currentRegisteredDoctor.Email, dateOfAppointment, startTime, newEndTime, Appointment.State.Created, roomNumber, (Appointment.Type)int.Parse(typeOfTerm),false);
             
             // append new appointment in file

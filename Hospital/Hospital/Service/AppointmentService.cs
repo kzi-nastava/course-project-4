@@ -27,6 +27,11 @@ namespace Hospital.Service
             _users = _userRepository.Load();
         }
 
+        public int GetNewAppointmentId()
+        {
+            return this._appointments.Count + 1;
+        }
+
         public List<Appointment> GetDoctorAppointment(User user)
         {
 
@@ -62,7 +67,6 @@ namespace Hospital.Service
 
         public bool IsPatientEmailValid(string patientEmail)
         {
-
             foreach(User user in _users)
             {
                 if((user.Email == patientEmail) && (user.UserRole == User.Role.Patient) && user.UserState == User.State.Active)
@@ -102,8 +106,7 @@ namespace Hospital.Service
             }
             return true;
         }
-
-        
+       
         public bool IsRoomNumberValid(string roomNumber)
         {
             //add a check to see if the room exists
@@ -135,9 +138,6 @@ namespace Hospital.Service
 
             }
             return false;
-
-
-
         }
 
         public void DeleteAppointment(Appointment appointmentForDelete)
@@ -159,12 +159,10 @@ namespace Hospital.Service
                     
                 }
             }
-            
-
             // saving changes
             File.WriteAllLines(filePath, lines);
 
-            //update list with all appointments
+            // update list with all appointments
             foreach(Appointment appointment in this._appointments)
             {
                 if (appointment.AppointmentId.Equals(appointmentForDelete.AppointmentId))
@@ -228,16 +226,27 @@ namespace Hospital.Service
 
                     lines[i] = id + "," + fields[1] + "," + fields[2] + "," + fields[3] + "," + fields[4] + "," + fields[5]
                         + "," + (int)Appointment.State.Updated + "," + fields[7] + "," + fields[8] + ",true";
-
-
                 }
             }
             // saving changes
             File.WriteAllLines(filePath, lines);
-
         }
 
-    }
+        public bool IsDoctorExist(string doctorEmail)
+        {
+            foreach (User user in _users)
+            {
+                if (user.Email.Equals(doctorEmail) && user.UserRole == User.Role.Doctor)
+                    return true;
+            }
+            Console.WriteLine("Uneli ste nepostojeceg doktora");
+            return false;
+        }
 
- 
+        public void AppendNewAppointmentInFile(Appointment newAppointment)
+        {
+            string filePath = @"..\..\Data\appointments.csv";
+            File.AppendAllText(filePath, newAppointment.ToString() + "\n");
+        }
+    }
 }
