@@ -40,6 +40,7 @@ namespace Hospital.SecretaryImplementation
 				Console.WriteLine("5. Odblokiranje naloga pacijenata");
 				Console.WriteLine("6. Pregled blokiranih naloga pacijenata");
 				Console.WriteLine("7. Pregled pristiglih zahteva za izmenu/brisanje pregleda");
+				Console.WriteLine("8. Zakazivanje pregleda/operacija na osnovu uputa");
 				Console.WriteLine("x. Odjavi se");
 				Console.WriteLine("--------------------------------------------");
 				Console.Write(">>");
@@ -87,6 +88,10 @@ namespace Hospital.SecretaryImplementation
 				else if(choice == "7")
 				{
 					AnswerRequest();
+				}
+				else if(choice == "8")
+				{
+					ScheduleAppointmentWithReferral();
 				}
 				else if (choice == "x")
 				{
@@ -366,6 +371,11 @@ namespace Hospital.SecretaryImplementation
 
 			requestService.ProcessRequest(activeRequest, actionIndex);
 			Console.WriteLine("\nZahtev je uspesno obradjen");
+		}
+
+		private void ScheduleAppointmentWithReferral()
+		{
+
 		}
 
 		private void LogOut()
