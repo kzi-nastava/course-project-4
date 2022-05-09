@@ -32,7 +32,7 @@ namespace Hospital.Repository
                     HealthRecord newMedicalRecord = new HealthRecord(id, emailPatient, patientHeight, patientWeight, previousIllnesses, allergen, bloodType);
                     allMedicalRecords.Add(newMedicalRecord);
 
-    }
+                }
             }
             return allMedicalRecords;
         }
