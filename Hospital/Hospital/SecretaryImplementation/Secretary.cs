@@ -308,25 +308,6 @@ namespace Hospital.SecretaryImplementation
 
 		}
 
-		private void ShowRequest(Appointment request, int index)
-		{
-			switch (request.AppointmentState)
-			{
-				case (Appointment.State.UpdateRequest):
-					Appointment oldValuesAppointment = requestService.FindInitialAppointment(request.AppointmentId);
-					Console.Write("{0}. {1}, {2}->{3}, {4}->{5}, {6}->{7}, ", index + 1, userService.GetUserFullName(oldValuesAppointment.PatientEmail),
-						oldValuesAppointment.DateAppointment.ToString("MM/dd/yyyy"), request.DateAppointment.ToString("MM/dd/yyyy"),
-						oldValuesAppointment.StartTime.ToString("HH:mm"), request.StartTime.ToString("HH:mm"),
-						oldValuesAppointment.EndTime.ToString("HH:mm"), request.EndTime.ToString("HH:mm"));
-					Console.Write("Izmena termina");
-					break;
-				case (Appointment.State.DeleteRequest):
-					Console.Write("{0}. {1}, {2}, {3}, {4}, ", index + 1, userService.GetUserFullName(request.PatientEmail), request.DateAppointment.ToString("MM/dd/yyyy"),
-						request.StartTime.ToString("HH:mm"), request.EndTime.ToString("HH:mm"));
-					Console.Write("Brisanje termina");
-					break;
-			}
-		}
 
 		private void AnswerRequest()
 		{
@@ -339,7 +320,7 @@ namespace Hospital.SecretaryImplementation
 			for(int i = 0; i < requests.Count; i++)
 			{
 				Appointment request = requests[i];
-				this.ShowRequest(request, i);
+				requestService.ShowRequest(request, i);
 			}
 			Console.WriteLine("\nx. Odustani");
 			Console.WriteLine("--------------------------------------------");
