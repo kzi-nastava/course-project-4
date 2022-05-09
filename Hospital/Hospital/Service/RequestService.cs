@@ -23,6 +23,14 @@ namespace Hospital.Service
 			this.appointmentService = appointmentService;
 		}
 
+		public string ToStringForFile(Appointment request)
+		{
+			string line = request.AppointmentId + "," + request.PatientEmail + "," + request.DoctorEmail + "," + request.DateAppointment.ToString("MM/dd/yyyy") +
+						"," + request.StartTime.ToString("HH:mm") + "," + request.EndTime.ToString("HH:mm") + "," + (int)request.AppointmentState + ","
+						+ request.RoomNumber + "," + (int)request.TypeOfTerm + "," + "false";
+			return line;
+		}
+
 		public void UpdateFile()
 		{
 			string filePath = @"..\..\Data\requests.csv";
@@ -39,9 +47,7 @@ namespace Hospital.Service
 				string line;
 				foreach (Appointment request in requests)
 				{
-					line = request.AppointmentId+","+request.PatientEmail+","+request.DoctorEmail+","+request.DateAppointment.ToString("MM/dd/yyyy")+
-						","+request.StartTime.ToString("HH:mm")+","+request.EndTime.ToString("HH:mm") + ","+(int)request.AppointmentState+","
-						+request.RoomNumber+","+(int)request.TypeOfTerm + "," + "false";
+					line = ToStringForFile(request);
 					lines.Add(line);
 				}
 				File.WriteAllLines(filePath, lines.ToArray());
@@ -49,7 +55,7 @@ namespace Hospital.Service
 
 		}
 
-		public Appointment findInitialAppointment(string id)
+		public Appointment FindInitialAppointment(string id)
 		{
 			Appointment initialAppointment = null;
 			foreach(Appointment appointment in appointmentService.Appointments)

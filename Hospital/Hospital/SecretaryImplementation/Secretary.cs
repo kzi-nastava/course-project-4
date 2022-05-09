@@ -218,9 +218,7 @@ namespace Hospital.SecretaryImplementation
 		}
 
 		public void CreatePatientAccount()
-		{
-			//TODO: create health record
-
+		{ 
 			Console.WriteLine("-------------------------------------");
 			Console.WriteLine("Unesite podatke o pacijentu");
 			Console.Write("Email: ");
@@ -251,6 +249,29 @@ namespace Hospital.SecretaryImplementation
 			Console.WriteLine("\nNalog za pacijenta " + name + " " + surname + " je uspesno kreiran.");
 		}
 
+		private void ChangeData(User patient)
+		{
+			Console.WriteLine("\nStari podaci\n---------------------------------------------");
+			Console.WriteLine("Ime: " + patient.Name);
+			Console.WriteLine("Prezime: " + patient.Surname);
+			Console.WriteLine("Email: " + patient.Email);
+			Console.WriteLine("Lozinka: " + patient.Password);
+			Console.WriteLine("---------------------------------------------\n\nNovi podaci");
+			Console.Write("Ime: ");
+			var newName = Console.ReadLine();
+			Console.Write("Prezime: ");
+			var newSurname = Console.ReadLine();
+			Console.Write("Lozinka: ");
+			var newPassword = Console.ReadLine();
+
+			patient.Name = newName;
+			patient.Surname = newSurname;
+			patient.Password = newPassword;
+
+			userService.UpdateUserInfo(patient);
+
+		}
+
 		private void ChangePatientAccount()
 		{
 			if (patients.Count == 0)
@@ -275,27 +296,31 @@ namespace Hospital.SecretaryImplementation
 			} while (!int.TryParse(patientIndexInput, out patientIndex) || patientIndex < 1 || patientIndex > this.patients.Count);
 
 			User patient = patients[patientIndex - 1];
-			Console.WriteLine("\nStari podaci\n---------------------------------------------");
-			Console.WriteLine("Ime: " + patient.Name);
-			Console.WriteLine("Prezime: " + patient.Surname);
-			Console.WriteLine("Email: " + patient.Email);
-			Console.WriteLine("Lozinka: " + patient.Password);
-			Console.WriteLine("---------------------------------------------\n\nNovi podaci");
-			Console.Write("Ime: ");
-			var newName = Console.ReadLine();
-			Console.Write("Prezime: ");
-			var newSurname = Console.ReadLine();
-			Console.Write("Lozinka: ");
-			var newPassword = Console.ReadLine();
 
-			patient.Name = newName;
-			patient.Surname = newSurname;
-			patient.Password = newPassword;
-
-			userService.UpdateUserInfo(patient);
+			this.ChangeData(patient);
 
 			Console.WriteLine("\nNalog pacijenta je uspesno izmenjen.");
 
+		}
+
+		private void ShowRequest(Appointment request, int index)
+		{
+			switch (request.AppointmentState)
+			{
+				case (Appointment.State.UpdateRequest):
+					Appointment oldValuesAppointment = requestService.FindInitialAppointment(request.AppointmentId);
+					Console.Write("{0}. {1}, {2}->{3}, {4}->{5}, {6}->{7}, ", index + 1, userService.GetUserFullName(oldValuesAppointment.PatientEmail),
+						oldValuesAppointment.DateAppointment.ToString("MM/dd/yyyy"), request.DateAppointment.ToString("MM/dd/yyyy"),
+						oldValuesAppointment.StartTime.ToString("HH:mm"), request.StartTime.ToString("HH:mm"),
+						oldValuesAppointment.EndTime.ToString("HH:mm"), request.EndTime.ToString("HH:mm"));
+					Console.Write("Izmena termina");
+					break;
+				case (Appointment.State.DeleteRequest):
+					Console.Write("{0}. {1}, {2}, {3}, {4}, ", index + 1, userService.GetUserFullName(request.PatientEmail), request.DateAppointment.ToString("MM/dd/yyyy"),
+						request.StartTime.ToString("HH:mm"), request.EndTime.ToString("HH:mm"));
+					Console.Write("Brisanje termina");
+					break;
+			}
 		}
 
 		private void AnswerRequest()
@@ -309,22 +334,7 @@ namespace Hospital.SecretaryImplementation
 			for(int i = 0; i < requests.Count; i++)
 			{
 				Appointment request = requests[i];
-				switch (request.AppointmentState)
-				{
-					case (Appointment.State.UpdateRequest):
-						Appointment oldValuesAppointment = requestService.findInitialAppointment(request.AppointmentId);
-						Console.Write("{0}. {1}, {2}->{3}, {4}->{5}, {6}->{7}, ", i + 1, userService.GetUserFullName(oldValuesAppointment.PatientEmail),
-							oldValuesAppointment.DateAppointment.ToString("MM/dd/yyyy"), request.DateAppointment.ToString("MM/dd/yyyy"),
-							oldValuesAppointment.StartTime.ToString("HH:mm"), request.StartTime.ToString("HH:mm"),
-							oldValuesAppointment.EndTime.ToString("HH:mm"), request.EndTime.ToString("HH:mm"));
-						Console.Write("Izmena termina");
-						break;
-					case (Appointment.State.DeleteRequest):
-						Console.Write("{0}. {1}, {2}, {3}, {4}, ", i+1,userService.GetUserFullName(request.PatientEmail), request.DateAppointment.ToString("MM/dd/yyyy"),
-							request.StartTime.ToString("HH:mm"), request.EndTime.ToString("HH:mm"));
-						Console.Write("Brisanje termina");
-						break;
-				}
+				this.ShowRequest(request, i);
 			}
 			Console.WriteLine("\nx. Odustani");
 			Console.WriteLine("--------------------------------------------");
@@ -332,7 +342,7 @@ namespace Hospital.SecretaryImplementation
 			int requestIndex;
 			do
 			{
-				Console.WriteLine("Unesite broj zahteva koji zelite da obradite");
+				Console.WriteLine("Unesite redni broj zahteva koji zelite da obradite");
 				Console.Write(">>");
 				requestIndexInput = Console.ReadLine();
 				if (requestIndexInput == "x")
