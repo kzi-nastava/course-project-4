@@ -168,6 +168,7 @@ namespace Hospital.DoctorImplementation
                 if (healthRecord.EmailPatient.Equals(patientEmail))
                 {
                     Console.WriteLine(healthRecord.ToString());
+                    Console.WriteLine("Ponovo");
                 }
             }
         }
