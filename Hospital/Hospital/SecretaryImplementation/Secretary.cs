@@ -17,6 +17,7 @@ namespace Hospital.SecretaryImplementation
 		private HealthRecordService healthRecordService;
 		private AppointmentService appointmentService;
 		private RequestService requestService;
+		private ReferralService referralService;
 
 		public Secretary(UserService service)
 		{
@@ -25,6 +26,7 @@ namespace Hospital.SecretaryImplementation
 			this.healthRecordService = new HealthRecordService();
 			this.appointmentService = new AppointmentService();
 			this.requestService = new RequestService(appointmentService);
+			this.referralService = new ReferralService();
 		}
 
 		public void SecretaryMenu()
@@ -40,6 +42,7 @@ namespace Hospital.SecretaryImplementation
 				Console.WriteLine("5. Odblokiranje naloga pacijenata");
 				Console.WriteLine("6. Pregled blokiranih naloga pacijenata");
 				Console.WriteLine("7. Pregled pristiglih zahteva za izmenu/brisanje pregleda");
+				Console.WriteLine("8. Zakazivanje pregleda/operacija na osnovu uputa");
 				Console.WriteLine("x. Odjavi se");
 				Console.WriteLine("--------------------------------------------");
 				Console.Write(">>");
@@ -87,6 +90,10 @@ namespace Hospital.SecretaryImplementation
 				else if(choice == "7")
 				{
 					AnswerRequest();
+				}
+				else if(choice == "8")
+				{
+					ScheduleAppointmentWithReferral();
 				}
 				else if (choice == "x")
 				{
@@ -303,25 +310,6 @@ namespace Hospital.SecretaryImplementation
 
 		}
 
-		private void ShowRequest(Appointment request, int index)
-		{
-			switch (request.AppointmentState)
-			{
-				case (Appointment.State.UpdateRequest):
-					Appointment oldValuesAppointment = requestService.FindInitialAppointment(request.AppointmentId);
-					Console.Write("{0}. {1}, {2}->{3}, {4}->{5}, {6}->{7}, ", index + 1, userService.GetUserFullName(oldValuesAppointment.PatientEmail),
-						oldValuesAppointment.DateAppointment.ToString("MM/dd/yyyy"), request.DateAppointment.ToString("MM/dd/yyyy"),
-						oldValuesAppointment.StartTime.ToString("HH:mm"), request.StartTime.ToString("HH:mm"),
-						oldValuesAppointment.EndTime.ToString("HH:mm"), request.EndTime.ToString("HH:mm"));
-					Console.Write("Izmena termina");
-					break;
-				case (Appointment.State.DeleteRequest):
-					Console.Write("{0}. {1}, {2}, {3}, {4}, ", index + 1, userService.GetUserFullName(request.PatientEmail), request.DateAppointment.ToString("MM/dd/yyyy"),
-						request.StartTime.ToString("HH:mm"), request.EndTime.ToString("HH:mm"));
-					Console.Write("Brisanje termina");
-					break;
-			}
-		}
 
 		private void AnswerRequest()
 		{
@@ -334,7 +322,7 @@ namespace Hospital.SecretaryImplementation
 			for(int i = 0; i < requests.Count; i++)
 			{
 				Appointment request = requests[i];
-				this.ShowRequest(request, i);
+				requestService.ShowRequest(request, i);
 			}
 			Console.WriteLine("\nx. Odustani");
 			Console.WriteLine("--------------------------------------------");
@@ -366,6 +354,46 @@ namespace Hospital.SecretaryImplementation
 
 			requestService.ProcessRequest(activeRequest, actionIndex);
 			Console.WriteLine("\nZahtev je uspesno obradjen");
+		}
+
+		public void ShowReferrals(List<Referral> referrals)
+		{
+			int i = 1;
+			foreach (Referral referral in referrals)
+			{
+				Console.WriteLine("{0}. Pacijent: {1} | Doktor: {2}", i,
+					userService.GetUserFullName(referral.Patient), userService.GetUserFullName(referral.Doctor));
+				i++;
+			}
+		}
+
+		private void ScheduleAppointmentWithReferral()
+		{
+			List<Referral> unusedReferrals = referralService.FilterUnused();
+			if(unusedReferrals.Count == 0)
+			{
+				Console.WriteLine("Trenutno nema neiskoriscenih uputa u sistemu.");
+				return;
+			}
+			this.ShowReferrals(unusedReferrals);
+			Console.WriteLine("x. Odustani");
+			Console.WriteLine("-------------------------------------------------------------");
+			string referralIndexInput;
+			int referralIndex;
+			do
+			{
+				Console.WriteLine("Unesite redni broj uputa koji zelite da obradite.");
+				Console.Write(">>");
+				referralIndexInput = Console.ReadLine();
+				if (referralIndexInput == "x")
+				{
+					return;
+				}
+			} while (!int.TryParse(referralIndexInput, out referralIndex) || referralIndex < 1 || referralIndex > unusedReferrals.Count);
+			Referral referral = unusedReferrals[referralIndex - 1]; 
+
+
+
 		}
 
 		private void LogOut()
