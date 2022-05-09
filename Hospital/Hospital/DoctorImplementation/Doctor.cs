@@ -438,7 +438,7 @@ namespace Hospital.DoctorImplementation
             startTime = DateTime.ParseExact(newStartTime, "HH:mm", CultureInfo.InvariantCulture);
             newEndTime = startTime.AddMinutes(15);
             roomNumber = Int32.Parse(newRoomNumber);
-            int id = helper.GetNewAppointmentId();
+            int id = appointmentService.GetNewAppointmentId();
             return new Appointment(id.ToString(), patientEmail, currentRegisteredDoctor.Email, dateOfAppointment, startTime, newEndTime, Appointment.State.Created, roomNumber, (Appointment.Type)int.Parse(typeOfTerm), false);
         }
 
@@ -477,7 +477,7 @@ namespace Hospital.DoctorImplementation
             startTime = DateTime.ParseExact(newStartTime, "HH:mm", CultureInfo.InvariantCulture);
             newEndTime = startTime.AddMinutes(Int32.Parse(newDurationOperation));
             roomNumber = Int32.Parse(newRoomNumber);
-            int id = helper.GetNewAppointmentId();
+            int id = appointmentService.GetNewAppointmentId();
             return new Appointment(id.ToString(), patientEmail, currentRegisteredDoctor.Email, dateOfAppointment, startTime, newEndTime, Appointment.State.Created, roomNumber, (Appointment.Type)int.Parse(typeOfTerm), false);
         }
 
