@@ -29,7 +29,7 @@ namespace Hospital.Model
 		public string Patient { get { return this.patientEmail; } }
 		public string Doctor { get { return this.doctorEmail; } }
 		public Appointment.Type TypeProp { get { return this.typeOfAppointment; } }
-		public bool Used { get { return this.used; } }
+		public bool Used { get { return this.used; } set { this.used = value; } }
 
 
 	}

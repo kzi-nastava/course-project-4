@@ -127,7 +127,7 @@ namespace Hospital.PatientImplementation
             DateTime appointmentStartTime = DateTime.ParseExact(inputValues[2], "HH:mm", CultureInfo.InvariantCulture);
             DateTime appointmentEndTime = appointmentStartTime.AddMinutes(15);
 
-            Room freeRoom = _patientService.FindFreeRoom(appointmentDate, appointmentStartTime);
+            Room freeRoom = _patientService.AppointmentService.FindFreeRoom(appointmentDate, appointmentStartTime);
             int roomId = Int32.Parse(freeRoom.Id);
 
             //  created appointment
