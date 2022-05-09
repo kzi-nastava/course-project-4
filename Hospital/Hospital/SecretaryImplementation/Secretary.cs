@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -29,23 +30,28 @@ namespace Hospital.SecretaryImplementation
 			this.referralService = new ReferralService();
 		}
 
+		public void PrintSecretaryMenu()
+		{
+			Console.WriteLine("\nMENI");
+			Console.WriteLine("-------------------------------------------");
+			Console.WriteLine("1. Kreiranje novog naloga za pacijenta");
+			Console.WriteLine("2. Pregled aktivnih naloga pacijenata");
+			Console.WriteLine("3. Izmena naloga pacijenta");
+			Console.WriteLine("4. Blokiranje naloga pacijenta");
+			Console.WriteLine("5. Odblokiranje naloga pacijenata");
+			Console.WriteLine("6. Pregled blokiranih naloga pacijenata");
+			Console.WriteLine("7. Pregled pristiglih zahteva za izmenu/brisanje pregleda");
+			Console.WriteLine("8. Zakazivanje pregleda/operacija na osnovu uputa");
+			Console.WriteLine("x. Odjavi se");
+			Console.WriteLine("--------------------------------------------");
+			Console.Write(">>");
+		}
+
 		public void SecretaryMenu()
 		{
 			while (true)
 			{
-				Console.WriteLine("\nMENI");
-				Console.WriteLine("-------------------------------------------");
-				Console.WriteLine("1. Kreiranje novog naloga za pacijenta");
-				Console.WriteLine("2. Pregled aktivnih naloga pacijenata");
-				Console.WriteLine("3. Izmena naloga pacijenta");
-				Console.WriteLine("4. Blokiranje naloga pacijenta");
-				Console.WriteLine("5. Odblokiranje naloga pacijenata");
-				Console.WriteLine("6. Pregled blokiranih naloga pacijenata");
-				Console.WriteLine("7. Pregled pristiglih zahteva za izmenu/brisanje pregleda");
-				Console.WriteLine("8. Zakazivanje pregleda/operacija na osnovu uputa");
-				Console.WriteLine("x. Odjavi se");
-				Console.WriteLine("--------------------------------------------");
-				Console.Write(">>");
+				this.PrintSecretaryMenu();
 				var choice = Console.ReadLine();
 				if (choice == "1")
 				{
@@ -256,7 +262,7 @@ namespace Hospital.SecretaryImplementation
 			Console.WriteLine("\nNalog za pacijenta " + name + " " + surname + " je uspesno kreiran.");
 		}
 
-		private void ChangeData(User patient)
+		public void ChangePatientData(User patient)
 		{
 			Console.WriteLine("\nStari podaci\n---------------------------------------------");
 			Console.WriteLine("Ime: " + patient.Name);
@@ -279,7 +285,7 @@ namespace Hospital.SecretaryImplementation
 
 		}
 
-		private void ChangePatientAccount()
+		public void ChangePatientAccount()
 		{
 			if (patients.Count == 0)
 			{
@@ -304,26 +310,22 @@ namespace Hospital.SecretaryImplementation
 
 			User patient = patients[patientIndex - 1];
 
-			this.ChangeData(patient);
+			this.ChangePatientData(patient);
 
 			Console.WriteLine("\nNalog pacijenta je uspesno izmenjen.");
 
 		}
 
 
-		private void AnswerRequest()
+		public void AnswerRequest()
 		{
-			List<Appointment> requests = requestService.Requests;
+			List<Appointment> requests = requestService.FilterPending();
 			if(requests.Count == 0)
 			{
 				Console.WriteLine("Trenutno nema zahteva za obradu. ");
 				return;
 			}
-			for(int i = 0; i < requests.Count; i++)
-			{
-				Appointment request = requests[i];
-				requestService.ShowRequest(request, i);
-			}
+			requestService.ShowRequests(requests);
 			Console.WriteLine("\nx. Odustani");
 			Console.WriteLine("--------------------------------------------");
 			string requestIndexInput;
@@ -367,7 +369,7 @@ namespace Hospital.SecretaryImplementation
 			}
 		}
 
-		private void ScheduleAppointmentWithReferral()
+		public void ScheduleAppointmentWithReferral()
 		{
 			List<Referral> unusedReferrals = referralService.FilterUnused();
 			if(unusedReferrals.Count == 0)
@@ -390,13 +392,59 @@ namespace Hospital.SecretaryImplementation
 					return;
 				}
 			} while (!int.TryParse(referralIndexInput, out referralIndex) || referralIndex < 1 || referralIndex > unusedReferrals.Count);
-			Referral referral = unusedReferrals[referralIndex - 1]; 
+			Referral referral = unusedReferrals[referralIndex - 1];
+			Appointment newAppointment;
+			do
+			{
+				newAppointment = Create(referral);
+			} while (!appointmentService.IsAppointmentFreeForDoctor(newAppointment));
 
+			appointmentService.Appointments.Add(newAppointment);
+			appointmentService.UpdateFile();
 
+			referralService.UseReferral(referral);
 
 		}
 
-		private void LogOut()
+		public Appointment Create(Referral referral)
+		{
+			string date, startingTime;
+			do
+			{
+				Console.WriteLine("Unesite datum (MM/dd/yyyy): ");
+				date = Console.ReadLine();
+			} while (!appointmentService.IsDateFormValid(date));
+			do
+			{
+				Console.WriteLine("Unesite vreme pocetka pregleda/operacije (HH:mm): ");
+				startingTime = Console.ReadLine();
+			} while (!appointmentService.IsTimeFormValid(startingTime));
+
+			DateTime dateOfAppointment = DateTime.ParseExact(date, "MM/dd/yyyy", CultureInfo.InvariantCulture);
+			DateTime startTime = DateTime.ParseExact(startingTime, "HH:mm", CultureInfo.InvariantCulture);
+			DateTime endTime;
+			if(referral.TypeProp == Appointment.Type.Examination)
+			{
+				endTime = startTime.AddMinutes(15);
+			}
+			else
+			{
+				endTime = startTime.AddMinutes(60);
+			}
+			
+			string id = appointmentService.GetNewAppointmentId().ToString();
+			Room freeRoom = appointmentService.FindFreeRoom(dateOfAppointment, startTime);
+			if(freeRoom is null)
+			{
+				return null;
+			}
+			int roomId = Int32.Parse(freeRoom.Id);
+			return new Appointment(id, referral.Patient, referral.Doctor, dateOfAppointment,
+				startTime, endTime, Appointment.State.Created, roomId, referral.TypeProp, false);
+		}
+		
+
+		public void LogOut()
 		{
 			Login loging = new Login();
 			loging.LogIn();

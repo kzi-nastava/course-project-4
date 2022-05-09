@@ -273,5 +273,29 @@ namespace Hospital.Service
             string filePath = @"..\..\Data\appointments.csv";
             File.AppendAllText(filePath, newAppointment.ToString() + "\n");
         }
+
+        public Room FindFreeRoom(DateTime newDate, DateTime newStartTime)
+        {
+            RoomService roomService = new RoomService();
+            List<Room> freeRooms = roomService.AllRooms;  // at the beginning all the rooms are free
+
+            foreach (Appointment appointment in this._appointments)
+            {
+                if (appointment.DateAppointment == newDate && newStartTime >= appointment.StartTime
+                    && newStartTime < appointment.EndTime && appointment.AppointmentState != Appointment.State.Deleted)
+                {
+                    Room occupiedRoom = roomService.GetRoomById(appointment.RoomNumber.ToString());
+                    freeRooms.Remove(occupiedRoom);
+                }
+            }
+
+            if (freeRooms.Count == 0)
+            {
+                Console.WriteLine("\nNe postoji nijedna slobodna soba za unesen termin.");
+                return null;
+            }
+            else
+                return freeRooms[0];
+        }
     }
 }

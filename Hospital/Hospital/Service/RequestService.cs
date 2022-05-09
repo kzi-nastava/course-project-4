@@ -129,24 +129,43 @@ namespace Hospital.Service
 			}
 		}
 
-		public void ShowRequest(Appointment request, int index)
+		public List<Appointment> FilterPending()
 		{
-			switch (request.AppointmentState)
+			List<Appointment> pendingRequests = new List<Appointment>();
+			foreach(Appointment request in requests)
 			{
-				case (Appointment.State.UpdateRequest):
-					Appointment oldValuesAppointment = FindInitialAppointment(request.AppointmentId);
-					Console.Write("{0}. {1}, {2}->{3}, {4}->{5}, {6}->{7}, ", index + 1, userService.GetUserFullName(oldValuesAppointment.PatientEmail),
-						oldValuesAppointment.DateAppointment.ToString("MM/dd/yyyy"), request.DateAppointment.ToString("MM/dd/yyyy"),
-						oldValuesAppointment.StartTime.ToString("HH:mm"), request.StartTime.ToString("HH:mm"),
-						oldValuesAppointment.EndTime.ToString("HH:mm"), request.EndTime.ToString("HH:mm"));
-					Console.Write("Izmena termina");
-					break;
-				case (Appointment.State.DeleteRequest):
-					Console.Write("{0}. {1}, {2}, {3}, {4}, ", index + 1, userService.GetUserFullName(request.PatientEmail), request.DateAppointment.ToString("MM/dd/yyyy"),
-						request.StartTime.ToString("HH:mm"), request.EndTime.ToString("HH:mm"));
-					Console.Write("Brisanje termina");
-					break;
+				if(request.DateAppointment > DateTime.Now)
+				{
+					pendingRequests.Add(request);
+				}
 			}
+			return pendingRequests;
+		} 
+
+		public void ShowRequests(List<Appointment> requests)
+		{
+
+			for (int i = 0; i < requests.Count; i++)
+			{
+				Appointment request = requests[i];
+				switch (request.AppointmentState)
+				{
+					case (Appointment.State.UpdateRequest):
+						Appointment oldValuesAppointment = FindInitialAppointment(request.AppointmentId);
+						Console.Write("{0}. {1}, {2}->{3}, {4}->{5}, {6}->{7}, ", i + 1, userService.GetUserFullName(oldValuesAppointment.PatientEmail),
+							oldValuesAppointment.DateAppointment.ToString("MM/dd/yyyy"), request.DateAppointment.ToString("MM/dd/yyyy"),
+							oldValuesAppointment.StartTime.ToString("HH:mm"), request.StartTime.ToString("HH:mm"),
+							oldValuesAppointment.EndTime.ToString("HH:mm"), request.EndTime.ToString("HH:mm"));
+						Console.Write("Izmena termina");
+						break;
+					case (Appointment.State.DeleteRequest):
+						Console.Write("{0}. {1}, {2}, {3}, {4}, ", i + 1, userService.GetUserFullName(request.PatientEmail), request.DateAppointment.ToString("MM/dd/yyyy"),
+							request.StartTime.ToString("HH:mm"), request.EndTime.ToString("HH:mm"));
+						Console.Write("Brisanje termina");
+						break;
+				}
+			}
+			
 		}
 	}
 }
