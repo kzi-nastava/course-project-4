@@ -16,6 +16,8 @@ namespace Hospital.Service
         private UserRepository _userRepository;
         private List<Appointment> _appointments;
         private List<User> _users;
+        private RoomRepository _roomRepository;
+        private List<Room> _rooms;
 
         public AppointmentRepository AppointmentRepository { get { return _appointmentRepository; } }
         public List<Appointment> Appointments { get { return _appointments; } }
@@ -23,8 +25,10 @@ namespace Hospital.Service
         {
             _appointmentRepository = new AppointmentRepository();
             _userRepository = new UserRepository();
+            _roomRepository = new RoomRepository();
             _appointments = _appointmentRepository.Load();
             _users = _userRepository.Load();
+            _rooms = _roomRepository.Load();
         }
 
         public List<Appointment> GetDoctorAppointment(User user)
@@ -53,6 +57,11 @@ namespace Hospital.Service
                 if ((appointment.PatientEmail.Equals(newAppointment.PatientEmail)) && (appointment.DateAppointment == newAppointment.DateAppointment) && CheckOverlapTerms(appointment, newAppointment))
                 {
                     Console.WriteLine("Pacijent vec ima zakazan drugi pregled u ovom terminu!");
+                    return false;
+                }
+                if((appointment.DateAppointment == newAppointment.DateAppointment) && (CheckOverlapTerms(appointment, newAppointment))&& (appointment.RoomNumber.Equals(newAppointment.RoomNumber)))
+                {
+                    Console.WriteLine("Soba u ovom terminu je zauzeta!");
                     return false;
                 }
             }
@@ -122,8 +131,15 @@ namespace Hospital.Service
         
         public bool IsRoomNumberValid(string roomNumber)
         {
-            //add a check to see if the room exists
-            return true;
+            foreach(Room room in _rooms)
+            {
+                if (room.Id.Equals(roomNumber))
+                {
+                    return true;
+                }
+            }
+            Console.WriteLine("Broj sobe ne postoji!");
+            return false;
 
         }
 
