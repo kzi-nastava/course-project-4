@@ -63,8 +63,10 @@ namespace Hospital.PatientImplementation
 
         private void ReadOwnAppointments()
         {
-            if (!_patientService.HasPatientAppointmen(this))
+            if (!_patientService.HasPatientAppointmen(this._currentAppointments))
+            { 
                 return;
+            }
                 
             int serialNumber = 0;
 
@@ -80,203 +82,66 @@ namespace Hospital.PatientImplementation
 
         private void DeleteAppointment() 
         {
-            // first check if patient has _appointments for delete
-            if (!_patientService.HasPatientAppointmen(this))
+            Appointment appointmentForDelete = _patientService.PickAppointmentForDeleteOrUpdate(this);
+
+            if (appointmentForDelete == null)
                 return;
 
-            // pick appointment for delete
-            List<Appointment> appointmentsForDelete = _patientService.FindAppointmentsForDeleteAndUpdate(this);
-            string inputNumberAppointment;
-            int numberAppointment;
-            do
-            {
-                Console.WriteLine("Unesite broj pregleda za brisanje");
-                Console.Write(">> ");
-                inputNumberAppointment = Console.ReadLine();
-            } while (!int.TryParse(inputNumberAppointment, out numberAppointment) || numberAppointment < 1 
-            || numberAppointment > appointmentsForDelete.Count);
-
-            Appointment appointmentForDelete = appointmentsForDelete[numberAppointment-1];
-
-            // read from file
-            string filePath = @"..\..\Data\appointments.csv";
-            string[] lines = File.ReadAllLines(filePath);
-            for (int i = 0; i < lines.Length; i++)
-            {
-                string[] fields = lines[i].Split(new[] { ',' });
-                string id = fields[0];
-
-                if (id.Equals(appointmentForDelete.AppointmentId)) {
-
-                    if ((appointmentForDelete.DateAppointment - DateTime.Now).TotalDays <= 2)
-                    {
-                        appointmentForDelete.AppointmentState = Appointment.State.DeleteRequest;
-                        _patientService.RequestService.Requests.Add(appointmentForDelete);
-                        _patientService.RequestService.UpdateFile();
-                        Console.WriteLine("Zahtev za brisanje je poslat sekretaru!");
-                    }
-                    else
-                    {
-                        // logical deletion
-                        appointmentForDelete.AppointmentState = Appointment.State.Deleted;
-                        Console.WriteLine("Uspesno ste obrisali pregled!");
-                    }
-                    lines[i] = appointmentForDelete.ToString();
-                }
-            }
-
-            // saving changes
-            File.WriteAllLines(filePath, lines);
-
-            //refresh data
+            _patientService.ReadFileForDeleteAppointment(appointmentForDelete);
             _patientService.RefreshPatientAppointments(this);
 
-            // append new action in action file
-            _patientService.AppendToActionFile(this._email, "delete");
-
-            // check number of changed, deleted and created _appointments
+            
+            _patientService.AppendToActionFile("delete");
             this.AntiTrolMechanism();
         }
 
         private void UpdateAppointment()
         {
-            // first check if patient has _appointments for update
-            if (!_patientService.HasPatientAppointmen(this))
+            Appointment appointmentForUpdate = _patientService.PickAppointmentForDeleteOrUpdate(this);
+
+            if (appointmentForUpdate == null)
                 return;
 
-            // pick appointment for update
-            List<Appointment> appointmentsForUpdate = _patientService.FindAppointmentsForDeleteAndUpdate(this);
-            string inputNumberAppointment;
-            int numberAppointment;
-            do
-            {
-                Console.WriteLine("Unesite broj pregleda za izmenu");
-                Console.Write(">> ");
-                inputNumberAppointment = Console.ReadLine();
-            } while (!int.TryParse(inputNumberAppointment, out numberAppointment) || numberAppointment < 1
-            || numberAppointment > appointmentsForUpdate.Count);
+            string[] inputValues = _patientService.InputValuesForAppointment();
 
-            Appointment appointmentForUpdate = appointmentsForUpdate[numberAppointment - 1];
+            if (!_patientService.IsAppointmentFree(appointmentForUpdate.AppointmentId, inputValues))
+                return;
 
-            // update
-            string doctorEmail;
-            string newDate;
-            string newStartTime;
+            _patientService.ReadFileForUpdateAppointment(appointmentForUpdate, inputValues);
+            _patientService.RefreshPatientAppointments(this);
 
-            do
-            {
-                // input new values
-                Console.Write("\nUnesite email doktora: ");
-                doctorEmail = Console.ReadLine();
-                Console.Write("Unesite datum (MM/dd/yyyy): ");
-                newDate = Console.ReadLine();
-                Console.Write("Unesite vreme pocetka pregleda (HH:mm): ");
-                newStartTime = Console.ReadLine();
-            } while (!_patientService.IsValidInput(doctorEmail, newDate, newStartTime));
-
-            if (_patientService.IsAppointmentFree(appointmentForUpdate.AppointmentId, this._email, doctorEmail, newDate, newStartTime))
-            {
-                // read from file
-                string filePath = @"..\..\Data\appointments.csv";
-                string[] lines = File.ReadAllLines(filePath);
-                for (int i = 0; i < lines.Length; i++)
-                {
-                    string[] fields = lines[i].Split(new[] { ',' });
-                    string id = fields[0];
-
-                    if (id.Equals(appointmentForUpdate.AppointmentId))
-                    {
-                        Appointment newAppointment;
-                        DateTime appointmentDate = DateTime.ParseExact(newDate, "MM/dd/yyyy", CultureInfo.InvariantCulture);
-                        DateTime appointmentStartTime = DateTime.ParseExact(newStartTime, "HH:mm", CultureInfo.InvariantCulture);
-                        DateTime appointmentEndTime = appointmentStartTime.AddMinutes(15);
-
-                        if ((appointmentForUpdate.DateAppointment - DateTime.Now).TotalDays <= 2)
-                        {
-                            appointmentForUpdate.AppointmentState = Appointment.State.UpdateRequest;
-							newAppointment = new Appointment(id, this._email, doctorEmail, appointmentDate,
-                            appointmentStartTime, appointmentEndTime, Appointment.State.UpdateRequest, Int32.Parse(fields[7]),
-                            Appointment.Type.Examination, false);
-                          
-                            _patientService.RequestService.Requests.Add(newAppointment);
-                            _patientService.RequestService.UpdateFile();
-                            Console.WriteLine("Zahtev za izmenu je poslat sekretaru!");
-                        }
-                        else
-                        {
-                            appointmentForUpdate.AppointmentState = Appointment.State.Updated;
-                            appointmentForUpdate.DoctorEmail = doctorEmail;
-                            appointmentForUpdate.DateAppointment = appointmentDate;
-                            appointmentForUpdate.StartTime = appointmentStartTime;
-                            appointmentForUpdate.EndTime = appointmentEndTime;
-                            Console.WriteLine("Uspesno ste izvrsili izmenu pregleda!");
-                        }
-                        lines[i] = appointmentForUpdate.ToString();
-                    }
-                }
-
-                // saving changes
-                File.WriteAllLines(filePath, lines);
-
-                //refresh data
-                _patientService.RefreshPatientAppointments(this);
-
-                // append new action in action file
-                _patientService.AppendToActionFile(this._email, "update");
-
-                // check number of changed, deleted and created _appointments
-                this.AntiTrolMechanism();
-            }
+            _patientService.AppendToActionFile("update");
+            this.AntiTrolMechanism();
 
         }
 
         private void CreateAppointment()
         {
-            string doctorEmail;
-            string newDate;
-            string newStartTime;
+            string[] inputValues = _patientService.InputValuesForAppointment();
 
-            do
-            {
-                // input values to create an new appointment
-                Console.Write("\nUnesite email doktora: ");
-                doctorEmail = Console.ReadLine();
-                Console.Write("Unesite datum (MM/dd/yyyy): ");
-                newDate = Console.ReadLine();
-                Console.Write("Unesite vreme pocetka pregleda (HH:mm): ");
-                newStartTime = Console.ReadLine();
-            } while (!_patientService.IsValidInput(doctorEmail, newDate, newStartTime));
+            if (!_patientService.IsAppointmentFree("0", inputValues))
+                return;
+            
+            string id = _patientService.AppointmentService.GetNewAppointmentId().ToString();
+            DateTime appointmentDate = DateTime.ParseExact(inputValues[1], "MM/dd/yyyy", CultureInfo.InvariantCulture);
+            DateTime appointmentStartTime = DateTime.ParseExact(inputValues[2], "HH:mm", CultureInfo.InvariantCulture);
+            DateTime appointmentEndTime = appointmentStartTime.AddMinutes(15);
 
-            if (_patientService.IsAppointmentFree("0", this._email, doctorEmail, newDate, newStartTime))
-            {
-                string id = _patientService.GetNewAppointmentId().ToString();
-                DateTime appointmentDate = DateTime.ParseExact(newDate, "MM/dd/yyyy", CultureInfo.InvariantCulture);
-                DateTime appointmentStartTime = DateTime.ParseExact(newStartTime, "HH:mm", CultureInfo.InvariantCulture);
-                DateTime appointmentEndTime = appointmentStartTime.AddMinutes(15);
+            Room freeRoom = _patientService.FindFreeRoom(appointmentDate, appointmentStartTime);
+            int roomId = Int32.Parse(freeRoom.Id);
 
-                Room freeRoom = _patientService.FindFreeRoom(appointmentDate, appointmentStartTime);
-                int roomId = Int32.Parse(freeRoom.Id);
+            //  created appointment
+            Appointment newAppointment = new Appointment(id, this._email, inputValues[0], appointmentDate,
+                appointmentStartTime, appointmentEndTime, Appointment.State.Created, roomId,
+                Appointment.Type.Examination, false);
 
-                //  created appointment
-                Appointment newAppointment = new Appointment(id, this._email, doctorEmail, appointmentDate, 
-                    appointmentStartTime, appointmentEndTime, Appointment.State.Created, roomId, 
-                    Appointment.Type.Examination,false);
+            Console.WriteLine("Uspesno ste kreirali nov pregled!");
 
-                Console.WriteLine("Uspesno ste kreirali nov pregled!");
-
-                // append new appointment in file
-                string filePath = @"..\..\Data\appointments.csv";
-                File.AppendAllText(filePath, newAppointment.ToString()+"\n");
-
-                // refresh data
-                _patientService.RefreshPatientAppointments(this);
-
-                // append new action in action file
-                _patientService.AppendToActionFile(this._email, "create");
-
-                // check number of changed, deleted and created _appointments
-                this.AntiTrolMechanism();
-            }
+            _patientService.AppointmentService.AppendNewAppointmentInFile(newAppointment);
+            _patientService.RefreshPatientAppointments(this);
+            _patientService.AppendToActionFile("create");
+            this.AntiTrolMechanism();
+            
         }
 
         private void AntiTrolMechanism()
@@ -305,7 +170,7 @@ namespace Hospital.PatientImplementation
             else
                 return;
           
-            _patientService.BlockAccessApplication(this._email);
+            _patientService.BlockAccessApplication();
             this.LogOut(); //log out from account
         }
 
