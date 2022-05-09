@@ -20,5 +20,19 @@ namespace Hospital.Service
 			this.referralRepository = new ReferralRepository();
 			referrals = this.referralRepository.Load();
 		}
+
+		public List<Referral> FilterUnused()
+		{
+			List<Referral> unusedReferrals = new List<Referral>();
+
+			foreach(Referral referral in referrals)
+			{
+				if (!referral.Used)
+				{
+					unusedReferrals.Add(referral);
+				}
+			}
+			return unusedReferrals;
+		}
 	}
 }

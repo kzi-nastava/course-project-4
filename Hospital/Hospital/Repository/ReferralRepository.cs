@@ -24,8 +24,9 @@ namespace Hospital.Repository
                     string id = fields[0];
                     string patientEmail = fields[1];
                     string doctorEmail = fields[2];
-                    bool used = Convert.ToBoolean(fields[3]);
-                    Referral newReferral = new Referral(id, patientEmail, doctorEmail, used);
+                    Appointment.Type type = (Appointment.Type)int.Parse(fields[3]);
+                    bool used = Convert.ToBoolean(fields[4]);
+                    Referral newReferral = new Referral(id, patientEmail, doctorEmail, type, used);
                     allReferrals.Add(newReferral);
                 }
             }
