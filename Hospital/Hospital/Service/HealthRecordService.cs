@@ -69,6 +69,7 @@ namespace Hospital.Service
                     healthRecord.BloodType = healthRecord.BloodType;
                 }
             }
+            Console.WriteLine("Uspesno ste izmenili zdravstveni karton!");
         }
     }
 }

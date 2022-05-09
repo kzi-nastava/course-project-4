@@ -25,8 +25,9 @@ namespace Hospital.Repository
                     string idDrug = fields[1];
                     DateTime startConsuming = DateTime.ParseExact(fields[2], "HH:mm", CultureInfo.InvariantCulture);
                     int dose = Int32.Parse(fields[3]);
+                    Prescription.TimeOfConsuming timeOfConsuming = (Prescription.TimeOfConsuming)int.Parse(fields[4]);
 
-                    Prescription newPrescription = new Prescription(idAppointment, idDrug, startConsuming, dose);
+                    Prescription newPrescription = new Prescription(idAppointment, idDrug, startConsuming, dose, timeOfConsuming);
                     allPrecriptions.Add(newPrescription);
 
 
