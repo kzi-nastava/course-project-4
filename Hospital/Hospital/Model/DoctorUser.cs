@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Hospital.Model
 {
-    class DoctorUser : User
+    public class DoctorUser : User
     {
         public enum Speciality
         {
@@ -26,6 +26,6 @@ namespace Hospital.Model
             this._speciality = speciality;
         }
 
-        public Speciality SpecialityDoctor { get; set; }
+        public Speciality SpecialityDoctor { get { return _speciality; }set { _speciality = value; } }
     }
 }

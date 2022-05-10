@@ -25,7 +25,18 @@ namespace Hospital.Service
             }
             return false;
         }
-
+        public List<DoctorUser> GetDoctors()
+        {
+            List<DoctorUser> doctors = new List<DoctorUser>();
+            foreach (User user in _users)
+            {
+                if (user.UserRole.Equals(User.Role.Doctor))
+                {
+                    doctors.Add((DoctorUser)user);
+                }
+            }
+            return doctors;
+        }
         public bool IsUserBlocked(string email)
         {
             foreach (User user in _users)
