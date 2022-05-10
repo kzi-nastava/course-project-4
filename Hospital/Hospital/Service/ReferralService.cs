@@ -11,22 +11,27 @@ namespace Hospital.Service
 {
 	class ReferralService
 	{
-		private ReferralRepository referralRepository;
-		private List<Referral> referrals;
+		private ReferralRepository _referralRepository;
+		private List<Referral> _referrals;
 
-		public List<Referral> Referrals { get { return this.referrals; } }
+		public List<Referral> Referrals { get { return this._referrals; } }
 
 		public ReferralService()
 		{
-			this.referralRepository = new ReferralRepository();
-			referrals = this.referralRepository.Load();
+			this._referralRepository = new ReferralRepository();
+			_referrals = this._referralRepository.Load();
+		}
+
+		public int GetNewReferralId()
+		{
+			return this._referrals.Count + 1;
 		}
 
 		public List<Referral> FilterUnused()
 		{
 			List<Referral> unusedReferrals = new List<Referral>();
 
-			foreach(Referral referral in referrals)
+			foreach(Referral referral in _referrals)
 			{
 				if (!referral.Used)
 				{
@@ -42,9 +47,9 @@ namespace Hospital.Service
 			List<string> lines = new List<String>();
 
 			string line;
-			foreach (Referral referral in referrals)
+			foreach (Referral referral in _referrals)
 			{
-				line = referral.Id + "," + referral.Patient + "," + referral.Doctor + "," + ((int)referral.TypeProp) + "," + referral.Used;
+				line = referral.Id + "," + referral.Patient + "," + referral.Doctor + "," + ((int)referral.DoctorSpeciality) + "," + ((int)referral.TypeProp) + "," + referral.Used;
 				lines.Add(line);
 			}
 			File.WriteAllLines(filePath, lines.ToArray());
@@ -52,7 +57,7 @@ namespace Hospital.Service
 
 		public void UseReferral(Referral usedReferral)
 		{
-			foreach(Referral referral in referrals)
+			foreach(Referral referral in _referrals)
 			{
 				if (referral.Id.Equals(usedReferral.Id))
 				{
