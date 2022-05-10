@@ -257,21 +257,45 @@ namespace Hospital.Service
             File.WriteAllLines(filePath, lines);
         }
 
-        public bool IsDoctorExist(string doctorEmail)
+        public User IsDoctorExist(string doctorEmail)
         {
             foreach (User user in _users)
             {
                 if (user.Email.Equals(doctorEmail) && user.UserRole == User.Role.Doctor)
-                    return true;
+                    return user;
             }
             Console.WriteLine("Uneli ste nepostojeceg doktora");
-            return false;
+            return null;
         }
 
         public void AppendNewAppointmentInFile(Appointment newAppointment)
         {
             string filePath = @"..\..\Data\appointments.csv";
             File.AppendAllText(filePath, newAppointment.ToString() + "\n");
+        }
+
+        public Room FindFreeRoom(DateTime newDate, DateTime newStartTime)
+        {
+            RoomService roomService = new RoomService();
+            List<Room> freeRooms = roomService.AllRooms;  // at the beginning all the rooms are free
+
+            foreach (Appointment appointment in this._appointments)
+            {
+                if (appointment.DateAppointment == newDate && newStartTime >= appointment.StartTime
+                    && newStartTime < appointment.EndTime && appointment.AppointmentState != Appointment.State.Deleted)
+                {
+                    Room occupiedRoom = roomService.GetRoomById(appointment.RoomNumber.ToString());
+                    freeRooms.Remove(occupiedRoom);
+                }
+            }
+
+            if (freeRooms.Count == 0)
+            {
+                Console.WriteLine("\nNe postoji nijedna slobodna soba za unesen termin.");
+                return null;
+            }
+            else
+                return freeRooms[0];
         }
     }
 }
