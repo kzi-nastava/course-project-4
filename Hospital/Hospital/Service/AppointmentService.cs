@@ -31,6 +31,11 @@ namespace Hospital.Service
             _rooms = _roomRepository.Load();
         }
 
+        public int GetNewAppointmentId()
+        {
+            return this._appointments.Count + 1;
+        }
+
         public List<Appointment> GetDoctorAppointment(User user)
         {
 
@@ -87,7 +92,6 @@ namespace Hospital.Service
         }
         public bool IsPatientEmailValid(string patientEmail)
         {
-
             foreach(User user in _users)
             {
                 if((user.Email == patientEmail) && (user.UserRole == User.Role.Patient) && user.UserState == User.State.Active)
@@ -127,8 +131,7 @@ namespace Hospital.Service
             }
             return true;
         }
-
-        
+       
         public bool IsRoomNumberValid(string roomNumber)
         {
             foreach(Room room in _rooms)
@@ -167,13 +170,32 @@ namespace Hospital.Service
 
             }
             return false;
-
-
-
         }
 
         public void DeleteAppointment(Appointment appointmentForDelete)
         {
+            string filePath = @"..\..\Data\appointments.csv";
+            string[] lines = File.ReadAllLines(filePath);
+           
+            for (int i = 0; i < lines.Length; i++)
+            {
+                string[] fields = lines[i].Split(new[] { ',' });
+                string id = fields[0];
+
+                if (id.Equals(appointmentForDelete.AppointmentId))
+                {
+
+                    lines[i] = id + "," + fields[1] + "," + fields[2] + "," + fields[3] + "," + fields[4] + "," + fields[5]
+                        + "," + (int)Appointment.State.Deleted + "," + fields[7] + "," + fields[8] + "," + fields[9];
+                    Console.WriteLine("Uspesno ste obrisali termin!");
+                    
+                }
+            }
+            // saving changes
+            File.WriteAllLines(filePath, lines);
+
+            // update list with all appointments
+
             foreach(Appointment appointment in this._appointments)
             {
                 if (appointment.AppointmentId.Equals(appointmentForDelete.AppointmentId))
@@ -230,7 +252,66 @@ namespace Hospital.Service
             File.WriteAllLines(filePath, lines.ToArray());
         }
 
-    }
+        public void RemakePerformedAppointment(Appointment remakeAppointment)
+        {
+            string filePath = @"..\..\Data\appointments.csv";
+            string[] lines = File.ReadAllLines(filePath);
 
- 
+            for (int i = 0; i < lines.Length; i++)
+            {
+                string[] fields = lines[i].Split(new[] { ',' });
+                string id = fields[0];
+
+                if (id.Equals(remakeAppointment.AppointmentId))
+                {
+
+                    lines[i] = id + "," + fields[1] + "," + fields[2] + "," + fields[3] + "," + fields[4] + "," + fields[5]
+                        + "," + (int)Appointment.State.Updated + "," + fields[7] + "," + fields[8] + ",true";
+                }
+            }
+            // saving changes
+            File.WriteAllLines(filePath, lines);
+        }
+
+        public bool IsDoctorExist(string doctorEmail)
+        {
+            foreach (User user in _users)
+            {
+                if (user.Email.Equals(doctorEmail) && user.UserRole == User.Role.Doctor)
+                    return true;
+            }
+            Console.WriteLine("Uneli ste nepostojeceg doktora");
+            return false;
+        }
+
+        public void AppendNewAppointmentInFile(Appointment newAppointment)
+        {
+            string filePath = @"..\..\Data\appointments.csv";
+            File.AppendAllText(filePath, newAppointment.ToString() + "\n");
+        }
+
+        public Room FindFreeRoom(DateTime newDate, DateTime newStartTime)
+        {
+            RoomService roomService = new RoomService();
+            List<Room> freeRooms = roomService.AllRooms;  // at the beginning all the rooms are free
+
+            foreach (Appointment appointment in this._appointments)
+            {
+                if (appointment.DateAppointment == newDate && newStartTime >= appointment.StartTime
+                    && newStartTime < appointment.EndTime && appointment.AppointmentState != Appointment.State.Deleted)
+                {
+                    Room occupiedRoom = roomService.GetRoomById(appointment.RoomNumber.ToString());
+                    freeRooms.Remove(occupiedRoom);
+                }
+            }
+
+            if (freeRooms.Count == 0)
+            {
+                Console.WriteLine("\nNe postoji nijedna slobodna soba za unesen termin.");
+                return null;
+            }
+            else
+                return freeRooms[0];
+        }
+    }
 }

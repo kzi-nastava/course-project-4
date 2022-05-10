@@ -61,17 +61,17 @@ namespace Hospital.Model
             EquipmentMovingService equipmentMovingService = new EquipmentMovingService(equipmentService, roomService);
             equipmentMovingService.MoveEquipment();
 
-            PatientService helper = new PatientService(this._registeredUser, _userService.Users);
+            PatientService patientService = new PatientService(this._registeredUser, _userService.Users);
             if (this._registeredUser.UserRole == User.Role.Patient)
             { 
                 // patient
-                Patient registeredPatient = new Patient(this._registeredUser.Email, helper);
+                Patient registeredPatient = new Patient(this._registeredUser.Email, patientService);
                 registeredPatient.PatientMenu();
             }
             else if (this._registeredUser.UserRole == User.Role.Doctor)
             {
                 // doctor
-                Doctor registeredDoctor = new Doctor(this._registeredUser, helper);
+                Doctor registeredDoctor = new Doctor(this._registeredUser, patientService);
                 registeredDoctor.DoctorMenu();
             }
             else if (this._registeredUser.UserRole == User.Role.Secretary)

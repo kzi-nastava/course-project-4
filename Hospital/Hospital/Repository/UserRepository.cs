@@ -28,8 +28,17 @@ namespace Hospital.Repository
                     string name = fields[3];
                     string surname = fields[4];
                     User.State state = (User.State)int.Parse(fields[5]);
-                    
-                    User user = new User(role, email, password, name, surname, state);
+
+                    User user;
+                    if (!fields[6].Equals("null"))
+                    {
+                        DoctorUser.Speciality speciality = (DoctorUser.Speciality)int.Parse(fields[6]);
+                        user = new DoctorUser(role, email, password, name, surname, state, speciality);
+                    }
+                    else
+                    {
+                        user = new User(role, email, password, name, surname, state);
+                    }
                     users.Add(user);
                 }
             }

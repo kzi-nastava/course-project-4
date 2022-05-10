@@ -38,6 +38,7 @@
   <ItemGroup>
     <Compile Include="App.cs" />
     <Compile Include="ManagerImplementation\Manager.cs" />
+    <Compile Include="Model\DoctorUser.cs" />
     <Compile Include="Model\Drug.cs" />
     <Compile Include="Model\Equipment.cs" />
     <Compile Include="Model\EquipmentMoving.cs" />
@@ -46,6 +47,7 @@
     <Compile Include="Model\HealthRecord.cs" />
     <Compile Include="Model\MedicalRecord.cs" />
     <Compile Include="Model\Prescription.cs" />
+    <Compile Include="Model\Referral.cs" />
     <Compile Include="Model\Room.cs" />
     <Compile Include="Model\UserAction.cs" />
     <Compile Include="DoctorImplementation\Doctor.cs" />
@@ -58,6 +60,7 @@
     <Compile Include="Repository\IngredientRepository.cs" />
     <Compile Include="Repository\MedicalRecordRepository.cs" />
     <Compile Include="Repository\PrescriptionRepository.cs" />
+    <Compile Include="Repository\ReferralRepository.cs" />
     <Compile Include="Repository\UserActionRepository.cs" />
     <Compile Include="Repository\AppointmentRepository.cs" />
     <Compile Include="Repository\EquipmentRepository.cs" />
@@ -71,6 +74,7 @@
     <Compile Include="Service\IngredientService.cs" />
     <Compile Include="Service\MedicalRecordService.cs" />
     <Compile Include="Service\PrescriptionService.cs" />
+    <Compile Include="Service\ReferralService.cs" />
     <Compile Include="Service\UserActionService.cs" />
     <Compile Include="Service\AppointmentService.cs" />
     <Compile Include="Service\EquipmentService.cs" />
