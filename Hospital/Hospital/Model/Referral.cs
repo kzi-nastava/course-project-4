@@ -9,27 +9,27 @@ namespace Hospital.Model
 	class Referral
 	{
 
-		private string id;
-		private string patientEmail;
-		private string doctorEmail;
-		private Appointment.Type typeOfAppointment;
-		private bool used;
+		private string _id;
+		private string _patientEmail;
+		private string _doctorEmail;
+		private Appointment.Type _typeOfAppointment;
+		private bool _used;
 		
 
 		public Referral(string id, string patientEmail, string doctorEmail, Appointment.Type typeOfAppointment, bool used)
 		{
-			this.id = id;
-			this.patientEmail = patientEmail;
-			this.doctorEmail = doctorEmail;
-			this.typeOfAppointment = typeOfAppointment;
-			this.used = used;
+			this._id = id;
+			this._patientEmail = patientEmail;
+			this._doctorEmail = doctorEmail;
+			this._typeOfAppointment = typeOfAppointment;
+			this._used = used;
 		}
 
-		public string Id { get { return this.id; } }
-		public string Patient { get { return this.patientEmail; } }
-		public string Doctor { get { return this.doctorEmail; } }
-		public Appointment.Type TypeProp { get { return this.typeOfAppointment; } }
-		public bool Used { get { return this.used; } set { this.used = value; } }
+		public string Id { get { return this._id; } }
+		public string Patient { get { return this._patientEmail; } }
+		public string Doctor { get { return this._doctorEmail; } }
+		public Appointment.Type TypeProp { get { return this._typeOfAppointment; } }
+		public bool Used { get { return this._used; } set { this._used = value; } }
 
 
 	}

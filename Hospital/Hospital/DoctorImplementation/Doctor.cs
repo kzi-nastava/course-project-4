@@ -190,9 +190,16 @@ namespace Hospital.DoctorImplementation
             MedicalRecord newMedicalRecord = new MedicalRecord(appointment.AppointmentId, anamnesisInput, " ");
             medicalRecordService.MedicalRecords.Add(newMedicalRecord);
             medicalRecordService.UpdateFile();
-            Console.WriteLine("Uspešno ste uneli anamnezu."); 
+            Console.WriteLine("Uspešno ste uneli anamnezu.");
 
             //updating health record
+            this.UpdatingHealthRecord(appointment);
+
+
+        }
+
+        private void UpdatingHealthRecord(Appointment appointment)
+        {
             foreach (HealthRecord healthRecord in this.healthRecords)
             {
                 if (healthRecord.EmailPatient.Equals(appointment.PatientEmail))
@@ -202,8 +209,6 @@ namespace Hospital.DoctorImplementation
 
                 }
             }
-
-
         }
 
         private void DisplayOfPatientData(string patientEmail)

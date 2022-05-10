@@ -23,12 +23,12 @@ namespace Hospital.Model
             Active = 3
         }
 
-        private Role _role;
-        private string _email;
-        private string _password;
-        private string _name;
-        private string _surname;
-        private State _state;
+        protected Role _role;
+        protected string _email;
+        protected string _password;
+        protected string _name;
+        protected string _surname;
+        protected State _state;
 
         public Role UserRole { get { return _role; } }
         public string Email { get { return _email; } }
