@@ -13,6 +13,7 @@ namespace Hospital.Service
 	{
 		private AppointmentService appointmentService;
 		private RequestRepository requestRepository;
+		private UserService userService;
 		private List<Appointment> requests;
 
 		public List<Appointment> Requests { get { return this.requests; } }
@@ -21,6 +22,7 @@ namespace Hospital.Service
 			requestRepository = new RequestRepository();
 			requests = requestRepository.Load();
 			this.appointmentService = appointmentService;
+			this.userService = new UserService();
 		}
 
 		public string ToStringForFile(Appointment request)
@@ -125,6 +127,45 @@ namespace Hospital.Service
 			{
 				AcceptRequest(request);
 			}
+		}
+
+		public List<Appointment> FilterPending()
+		{
+			List<Appointment> pendingRequests = new List<Appointment>();
+			foreach(Appointment request in requests)
+			{
+				if(request.DateAppointment > DateTime.Now)
+				{
+					pendingRequests.Add(request);
+				}
+			}
+			return pendingRequests;
+		} 
+
+		public void ShowRequests(List<Appointment> requests)
+		{
+
+			for (int i = 0; i < requests.Count; i++)
+			{
+				Appointment request = requests[i];
+				switch (request.AppointmentState)
+				{
+					case (Appointment.State.UpdateRequest):
+						Appointment oldValuesAppointment = FindInitialAppointment(request.AppointmentId);
+						Console.Write("{0}. {1}, {2}->{3}, {4}->{5}, {6}->{7}, ", i + 1, userService.GetUserFullName(oldValuesAppointment.PatientEmail),
+							oldValuesAppointment.DateAppointment.ToString("MM/dd/yyyy"), request.DateAppointment.ToString("MM/dd/yyyy"),
+							oldValuesAppointment.StartTime.ToString("HH:mm"), request.StartTime.ToString("HH:mm"),
+							oldValuesAppointment.EndTime.ToString("HH:mm"), request.EndTime.ToString("HH:mm"));
+						Console.Write("Izmena termina");
+						break;
+					case (Appointment.State.DeleteRequest):
+						Console.Write("{0}. {1}, {2}, {3}, {4}, ", i + 1, userService.GetUserFullName(request.PatientEmail), request.DateAppointment.ToString("MM/dd/yyyy"),
+							request.StartTime.ToString("HH:mm"), request.EndTime.ToString("HH:mm"));
+						Console.Write("Brisanje termina");
+						break;
+				}
+			}
+			
 		}
 	}
 }

@@ -25,7 +25,18 @@ namespace Hospital.Service
             }
             return false;
         }
-
+        public List<DoctorUser> GetDoctors()
+        {
+            List<DoctorUser> doctors = new List<DoctorUser>();
+            foreach (User user in _users)
+            {
+                if (user.UserRole.Equals(User.Role.Doctor))
+                {
+                    doctors.Add((DoctorUser)user);
+                }
+            }
+            return doctors;
+        }
         public bool IsUserBlocked(string email)
         {
             foreach (User user in _users)
@@ -61,7 +72,7 @@ namespace Hospital.Service
 
         public void UpdateFile()
 		{
-            string filePath = @"..\..\Data\_users.csv";
+            string filePath = @"..\..\Data\users.csv";
 
             List<string> lines = new List<String>();
 
@@ -70,8 +81,18 @@ namespace Hospital.Service
             {
                 int role = (int)user.UserRole;
                 int state = (int)user.UserState;
-                line = role.ToString() + "," + user.Email + "," + user.Password + "," + user.Name + "," + user.Surname + "," + state.ToString();
-                lines.Add(line);
+                if (user.UserRole.Equals(User.Role.Doctor))
+                {
+                    DoctorUser doctorUser = (DoctorUser)user;
+                    line = role.ToString() + "," + user.Email + "," + user.Password + "," + user.Name + "," + user.Surname + "," + state.ToString() + "," + (int)doctorUser.SpecialityDoctor ;
+                    lines.Add(line);
+                }
+                else{
+                    line = role.ToString() + "," + user.Email + "," + user.Password + "," + user.Name + "," + user.Surname + "," + state.ToString() + ",null";
+                    lines.Add(line);
+                }
+
+                
             }
             File.WriteAllLines(filePath, lines.ToArray());
         }

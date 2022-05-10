@@ -15,12 +15,14 @@ namespace Hospital.DoctorImplementation
     {
         AppointmentService appointmentService = new AppointmentService();
         UserService userService = new UserService();
+        ReferralService referralService = new ReferralService();
         PatientService helper;
         HealthRecordService healthRecordService = new HealthRecordService();
         List<HealthRecord> healthRecords;
         List<Appointment> allMyAppointments;
         User currentRegisteredDoctor;
         MedicalRecordService medicalRecordService = new MedicalRecordService();
+        PrescriptionService prescriptionService = new PrescriptionService();
         
 
         public Doctor(User currentRegisteredDoctor, PatientService helper)
@@ -109,6 +111,7 @@ namespace Hospital.DoctorImplementation
                 DisplayOfPatientData(appointmentOfSelected.PatientEmail);
                 DisplayOfPatientsHealthRecord(appointmentOfSelected.PatientEmail);
                 EnteringAnamnesis(appointmentOfSelected);
+
                 return;
             }
             else
@@ -117,6 +120,198 @@ namespace Hospital.DoctorImplementation
             }
             
         }
+
+        private void WritingReferral(Appointment appointment, string anamnesis)
+        {
+            string choice;
+            do
+            {
+                Console.WriteLine("Da li želite da izdate uput pacijentu? \n1) DA\n2) NE\nUnesite 1 ili 2.");
+                choice = Console.ReadLine();
+                if (choice.Equals("1"))
+                {
+                    this.ChooseDoctor(appointment,anamnesis);
+                }
+                else if (choice.Equals("2"))
+                {
+                    return;
+                }
+            } while (!choice.Equals("1") && !choice.Equals("2"));
+           
+
+        }
+
+        private void ChooseDoctor(Appointment appointment,string anamnesis)
+        {
+            string choice;
+            do
+            {
+                Console.WriteLine("Izaberite:  \n1) odredjeni doktor \n2) po specijalnosti\nUnesite 1 ili 2.");
+                choice = Console.ReadLine();
+                if (choice.Equals("1"))
+                {
+                    this.ReferralToSpecificDoctor(appointment, anamnesis);
+                  
+                }
+                else if (choice.Equals("2"))
+                {
+                    this.ReferralToSelectedSpeciality(appointment,anamnesis);
+                   
+                }
+            } while (!choice.Equals("1") && !choice.Equals("2"));
+
+            
+
+        }
+        private void ReferralToSpecificDoctor(Appointment appointment, string anamnesis)
+        {
+            string doctor;
+            List<DoctorUser> doctors = userService.GetDoctors();
+            this.PrintDoctors(doctors);
+            do
+            {
+                Console.WriteLine("Unesite redni broj doktora: ");
+                doctor = Console.ReadLine();
+            } while (Int32.Parse(doctor) > doctors.Count);
+            DoctorUser doctorUser = doctors[Int32.Parse(doctor) - 1];
+            Appointment.Type type = GetTypeAppointment();
+            Referral newReferral = new Referral(referralService.GetNewReferralId().ToString(), appointment.PatientEmail,doctorUser.Email, doctorUser.SpecialityDoctor, type, false);
+            referralService.Referrals.Add(newReferral);
+            referralService.UpdateFile();
+            Console.WriteLine("Uspesno ste uneli uput!");
+
+            //updating medical record
+            MedicalRecord newMedicalRecord = new MedicalRecord(appointment.AppointmentId, anamnesis, newReferral.Id);
+            medicalRecordService.MedicalRecords.Add(newMedicalRecord);
+            medicalRecordService.UpdateFile();
+
+
+        }
+
+        private void ReferralToSelectedSpeciality(Appointment appointment, string anamnesis)
+        {
+            string speciality;
+            this.PrintSpecialities();
+            do
+            {
+                Console.WriteLine("Unesite redni broj specijalnosti: ");
+                speciality = Console.ReadLine();
+
+            } while (Int32.Parse(speciality) > Enum.GetNames(typeof(DoctorUser.Speciality)).Length);
+            Appointment.Type type = GetTypeAppointment();
+            DoctorUser.Speciality specialitySelected = (DoctorUser.Speciality)int.Parse(speciality);
+            Referral newReferral = new Referral(referralService.GetNewReferralId().ToString(), appointment.PatientEmail, "null", specialitySelected, type, false);
+            referralService.Referrals.Add(newReferral);
+            referralService.UpdateFile();
+            Console.WriteLine("Uspesno ste uneli uput!");
+
+            //updating medical record
+            MedicalRecord newMedicalRecord = new MedicalRecord(appointment.AppointmentId, anamnesis, newReferral.Id);
+            medicalRecordService.MedicalRecords.Add(newMedicalRecord);
+            medicalRecordService.UpdateFile();
+
+
+        }
+
+        private Appointment.Type GetTypeAppointment()
+        {
+            string choice;
+            do
+            {
+                Console.WriteLine("Uput za: \n1. Pregled\n2.Operaciju\n>>");
+                choice = Console.ReadLine();
+                if (choice.Equals("1"))
+                {
+                    return (Appointment.Type)int.Parse(choice);
+                }
+                return (Appointment.Type)int.Parse(choice);
+            } while (!choice.Equals("1") || !choice.Equals("2"));
+
+
+
+        }
+        private void PrintDoctors(List<DoctorUser> doctors)
+        {
+            int serialNumber = 1;
+            Console.WriteLine(String.Format("|{0,5}|{1,20}|{2,20}|", "Br.", "Doktor", "Specijalnost"));
+            foreach(DoctorUser doctor in doctors)
+            {
+                Console.WriteLine(String.Format("|{0,5}|{1,20}|{2,20}|", serialNumber, doctor.Name +" " + doctor.Surname, doctor.SpecialityDoctor));
+                serialNumber += 1;
+
+            }
+        }
+
+        private void PrintSpecialities()
+        {
+            int serialNumber = 1;
+            Console.WriteLine(String.Format("|{0,5}|{1,11}|", "Br.", "Specijalnost"));
+            foreach (DoctorUser.Speciality speciality in Enum.GetValues(typeof(DoctorUser.Speciality)))
+            {
+                Console.WriteLine(String.Format("|{0,5}|{1,11}|", serialNumber, speciality));
+                serialNumber += 1;
+            }
+
+        }
+
+        
+
+        private void IssuingPrescription(Appointment appointment, HealthRecord healthRecord)
+        {
+            string choice;
+            do
+            {
+                Console.WriteLine("Da li želite da izdate recept pacijentu? \n1) DA\n2) NE\nUnesite 1 ili 2.");
+                choice = Console.ReadLine();
+                if (choice.Equals("1"))
+                {
+                    this.WritingPrescription(appointment, healthRecord);
+                    Console.WriteLine("Uspesno ste upisali recept!");
+
+                }
+                else if (choice.Equals("2"))
+                {
+                    return;
+                }
+            } while (!choice.Equals("1") && !choice.Equals("2"));
+
+        }
+
+        private void WritingPrescription(Appointment appointment, HealthRecord healthRecord)
+        {
+            string drug, startConsuming, dose, timeOfconsuming;
+            do
+            {
+                do
+                {
+                    Console.WriteLine("Unesite naziv leka: ");
+                    drug = Console.ReadLine();
+                } while (!prescriptionService.IsDrugValid(drug));
+                do
+                {
+                    Console.WriteLine("Unesite vreme kada pacijent treba da krene da pije lek (HH:mm): ");
+                    startConsuming = Console.ReadLine();
+                } while (!appointmentService.IsTimeFormValid(startConsuming));
+                do
+                {
+                    Console.WriteLine("Koliko puta na dan treba da pije: ");
+                    dose = Console.ReadLine();
+                } while (!appointmentService.IsIntegerValid(dose));
+                do
+                {
+                    Console.WriteLine("Da li da pije:\n1)Tokom obroka\n2)Posle obroka\n3)Pre obroka\n4)Nije bitno\n>> ");
+                    timeOfconsuming = Console.ReadLine();
+                } while (!prescriptionService.IsTimeOfConsumingValid(timeOfconsuming));
+            } while (!prescriptionService.CheckAllergicToDrug(healthRecord, drug));
+
+            //saving precription
+            Prescription newPrescription = new Prescription(appointment.AppointmentId, prescriptionService.GetIdDrug(drug), DateTime.ParseExact(startConsuming, "HH:mm", CultureInfo.InvariantCulture),Int32.Parse(dose), (Prescription.TimeOfConsuming)int.Parse(timeOfconsuming));
+            prescriptionService.Prescriptions.Add(newPrescription);
+            prescriptionService.UpdateFile();
+        }
+
+
+      
 
         private void EnteringAnamnesis(Appointment appointment)
         {
@@ -128,24 +323,27 @@ namespace Hospital.DoctorImplementation
             appointmentService.PerformAppointment(appointment);
             appointmentService.UpdateFile();
 
-            //updating medical record
-            MedicalRecord newMedicalRecord = new MedicalRecord(appointment.AppointmentId, anamnesisInput, " ");
-            medicalRecordService.MedicalRecords.Add(newMedicalRecord);
-            medicalRecordService.UpdateFile();
-            Console.WriteLine("Uspešno ste uneli anamnezu."); 
+            Console.WriteLine("Uspešno ste uneli anamnezu.");
 
             //updating health record
+            this.UpdatingHealthRecord(appointment);
+            this.WritingReferral(appointment,anamnesisInput);
+            
+
+
+        }
+
+        private void UpdatingHealthRecord(Appointment appointment)
+        {
             foreach (HealthRecord healthRecord in this.healthRecords)
             {
-                Console.WriteLine(healthRecord);
                 if (healthRecord.EmailPatient.Equals(appointment.PatientEmail))
                 {
+                    this.IssuingPrescription(appointment, healthRecord);
                     this.UpdatingSelectedHealthRecord(healthRecord);
 
                 }
             }
-
-
         }
 
         private void DisplayOfPatientData(string patientEmail)
@@ -168,7 +366,6 @@ namespace Hospital.DoctorImplementation
                 if (healthRecord.EmailPatient.Equals(patientEmail))
                 {
                     Console.WriteLine(healthRecord.ToString());
-                    Console.WriteLine("Ponovo");
                 }
             }
         }
@@ -245,6 +442,7 @@ namespace Hospital.DoctorImplementation
             allergenInput = Console.ReadLine();
             Console.WriteLine("Unesite krvnu grupu: ");
             bloodTypeInput = Console.ReadLine();
+
             HealthRecord newHealthRecord = new HealthRecord(healthRecordSelected.IdHealthRecord, healthRecordSelected.EmailPatient, Int32.Parse(patientHeightInput), double.Parse(patientWeightInput), previousIllnessesInput, allergenInput, bloodTypeInput);
             healthRecordService.UpdateHealthRecord(newHealthRecord);
             healthRecordService.UpdateHealthRecordFile();
