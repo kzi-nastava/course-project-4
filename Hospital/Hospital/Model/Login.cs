@@ -63,10 +63,11 @@ namespace Hospital.Model
 
             PatientService patientService = new PatientService(this._registeredUser, _userService.Users);
             PatientSchedulingAppointment patientScheduling = new PatientSchedulingAppointment(this._registeredUser, _userService.Users);
+            PatientAnamnesis patientAnamnesis = new PatientAnamnesis(this._registeredUser);
             if (this._registeredUser.UserRole == User.Role.Patient)
             { 
                 // patient
-                Patient registeredPatient = new Patient(this._registeredUser.Email, patientService, patientScheduling);
+                Patient registeredPatient = new Patient(this._registeredUser.Email, patientService, patientScheduling, patientAnamnesis);
                 registeredPatient.PatientMenu();
             }
             else if (this._registeredUser.UserRole == User.Role.Doctor)

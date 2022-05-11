@@ -12,9 +12,7 @@ namespace Hospital.PatientImplementation
 {
     class PatientSchedulingAppointment
     {
-
         AppointmentService _appointmentService = new AppointmentService();  // loading all appointments
-        List<Appointment> _allAppointments;
         List<User> _allUsers;
         User _currentRegisteredUser;
 
@@ -24,7 +22,6 @@ namespace Hospital.PatientImplementation
         {
             this._currentRegisteredUser = user;
             this._allUsers = allUsers;
-            _allAppointments = _appointmentService.AppointmentRepository.Load();
         }
 
         public bool IsAppointmentFree(string id, string[] inputValues)
@@ -43,19 +40,9 @@ namespace Hospital.PatientImplementation
                     return false;
                 else if (appointment.PatientEmail.Equals(_currentRegisteredUser.Email) && appointment.DateAppointment == dateExamination
                     && appointment.StartTime <= startTime && appointment.EndTime > startTime && !appointment.AppointmentId.Equals(id))
-                {
-                    Console.WriteLine("2");
                     return false;
-                }
             }
             return true;
-        }
-
-        public void TableHeader()
-        {
-            Console.WriteLine();
-            Console.WriteLine(String.Format("{0,3}|{1,10}|{2,10}|{3,10}|{4,10}|{5,10}|{6,10}|{7,10}",
-                "Br.", "Doktor", "Datum", "Pocetak", "Kraj", "Soba", "Tip", "Stanje"));
         }
 
         public string CheckPriority()
@@ -114,7 +101,8 @@ namespace Hospital.PatientImplementation
         public string AcceptAppointment(Appointment newAppointment)
         {
             Console.WriteLine("\nPRONADJEN TERMIN PREGLEDA");
-            this.TableHeader();
+            this._appointmentService.TableHeaderForPatient();
+            Console.WriteLine();
             Console.WriteLine("1. " + newAppointment.DisplayOfPatientAppointment());
 
             string choice;
@@ -200,7 +188,7 @@ namespace Hospital.PatientImplementation
             {
                 if (this.IsTimeBetweenTwoTimes(startTime))
                 {
-                    startTime = DateTime.ParseExact("06:00", "HH:mm", CultureInfo.InvariantCulture);
+                    startTime = DateTime.ParseExact(inputValues[2], "HH:mm", CultureInfo.InvariantCulture);
                     appointmentDate = appointmentDate.AddDays(1);
                 }
 
@@ -244,7 +232,8 @@ namespace Hospital.PatientImplementation
         {
             int numAppointment = 1;
             Console.WriteLine("\nPREDLOZI TERMINA PREGLEDA");
-            this.TableHeader();
+            this._appointmentService.TableHeaderForPatient();
+            Console.WriteLine();
             foreach (Appointment appointment in appointments)
             {
                 Console.WriteLine(numAppointment + ". " + appointment.DisplayOfPatientAppointment());
