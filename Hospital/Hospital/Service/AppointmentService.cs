@@ -313,5 +313,12 @@ namespace Hospital.Service
             else
                 return freeRooms[0];
         }
+
+        public void TableHeaderForPatient()
+        {
+            Console.WriteLine();
+            Console.Write(String.Format("{0,3}|{1,10}|{2,10}|{3,10}|{4,10}|{5,10}|{6,10}|{7,10}",
+                "Br.", "Doktor", "Datum", "Pocetak", "Kraj", "Soba", "Tip", "Stanje"));
+        }
     }
 }
