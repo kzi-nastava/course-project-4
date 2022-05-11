@@ -363,9 +363,20 @@ namespace Hospital.SecretaryImplementation
 			int i = 1;
 			foreach (Referral referral in referrals)
 			{
-				Console.WriteLine("{0}. Pacijent: {1} | Doktor: {2}", i,
-					userService.GetUserFullName(referral.Patient), userService.GetUserFullName(referral.Doctor));
-				i++;
+				if (referral.Doctor != null)
+				{
+					Console.Write("{0}. Pacijent: {1} | Doktor: {2} | ", i,
+						userService.GetUserFullName(referral.Patient), userService.GetUserFullName(referral.Doctor));
+					i++;
+				}
+				else
+				{
+					Console.Write("{0}. Pacijent: {1} | Specijalnost: {2} | ", i,
+						userService.GetUserFullName(referral.Patient), referralService.DoctorSpecialization(referral));
+					i++;
+				}
+				Console.WriteLine("Tip: " + referralService.AppointmentType(referral));
+				
 			}
 		}
 
@@ -441,6 +452,7 @@ namespace Hospital.SecretaryImplementation
 			int roomId = Int32.Parse(freeRoom.Id);
 			return new Appointment(id, referral.Patient, referral.Doctor, dateOfAppointment,
 				startTime, endTime, Appointment.State.Created, roomId, referral.TypeProp, false);
+
 		}
 		
 

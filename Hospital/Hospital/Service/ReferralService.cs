@@ -22,6 +22,36 @@ namespace Hospital.Service
 			referrals = this.referralRepository.Load();
 		}
 
+		public string AppointmentType(Referral referral)
+		{
+			if (referral.TypeProp == Appointment.Type.Examination)
+			{
+				return "Pregled";
+			}
+			return "Operacija";
+		}
+
+		public string DoctorSpecialization(Referral referral)
+		{
+			if(referral.DoctorSpeciality == DoctorUser.Speciality.Cardiologist)
+			{
+				return "Kardiologija";
+			}else if(referral.DoctorSpeciality == DoctorUser.Speciality.Neurologist)
+			{
+				return "Neurologija";
+			}else if(referral.DoctorSpeciality == DoctorUser.Speciality.Pediatrician)
+			{
+				return "Pedijatrija";
+			}else if(referral.DoctorSpeciality == DoctorUser.Speciality.Psychologist)
+			{
+				return "Psihologija";
+			}else if(referral.DoctorSpeciality == DoctorUser.Speciality.General)
+			{
+				return "Opsta praksa";
+			}
+			return "Hirurgija";
+		}
+
 		public List<Referral> FilterUnused()
 		{
 			List<Referral> unusedReferrals = new List<Referral>();
@@ -44,7 +74,7 @@ namespace Hospital.Service
 			string line;
 			foreach (Referral referral in referrals)
 			{
-				line = referral.Id + "," + referral.Patient + "," + referral.Doctor + "," + ((int)referral.TypeProp) + "," + referral.Used;
+				line = referral.Id + "," + referral.Patient + "," + referral.Doctor + ","+referral.DoctorSpeciality+"," + ((int)referral.TypeProp) + "," + referral.Used;
 				lines.Add(line);
 			}
 			File.WriteAllLines(filePath, lines.ToArray());
