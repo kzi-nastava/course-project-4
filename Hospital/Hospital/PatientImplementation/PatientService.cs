@@ -37,7 +37,6 @@ namespace Hospital.PatientImplementation
             _allAppointments = _appointmentService.AppointmentRepository.Load();
         }
 
-        // VRATI LISTU I ONDA U PATIENT SETUJ
         public void RefreshPatientAppointments(Patient currentRegisteredPatient) 
         {
              this._allAppointments = _appointmentService.AppointmentRepository.Load();
@@ -59,18 +58,11 @@ namespace Hospital.PatientImplementation
             currentRegisteredPatient.PatientAppointments = patientCurrentAppointment;
         }
 
-        public void TableHeader()
-        {
-            Console.WriteLine();
-            Console.WriteLine(String.Format("{0,3}|{1,10}|{2,10}|{3,10}|{4,10}|{5,10}|{6,10}|{7,10}",
-                "Br.", "Doktor", "Datum", "Pocetak", "Kraj", "Soba", "Tip", "Stanje"));
-        }
-
         public List<Appointment> FindAppointmentsForDeleteAndUpdate(Patient currentlyRegisteredPatient)
         {
             int appointmentOrdinalNumber = 0;
 
-            this.TableHeader();
+            this._appointmentService.TableHeaderForPatient();
 
             List<Appointment> appointmentsForChange = new List<Appointment>();
             foreach (Appointment appointment in currentlyRegisteredPatient.PatientAppointments) 
@@ -127,32 +119,6 @@ namespace Hospital.PatientImplementation
             return (_appointmentService.IsDateFormValid(newDateAppointment) &&
                 _appointmentService.IsTimeFormValid(newStartTime) && _appointmentService.IsDoctorExist(doctorEmail)!=null);
         }
-
-        //public bool IsAppointmentFree(string id, string[] inputValues)
-        //{
-        //    string doctorEmail = inputValues[0];
-        //    string newDate = inputValues[1];
-        //    string newStartTime = inputValues[2];
-
-        //    DateTime dateExamination = DateTime.Parse(newDate);
-        //    DateTime startTime = DateTime.Parse(newStartTime);
-
-        //    foreach (Appointment appointment in _appointmentService.Appointments) {
-        //        if (appointment.DoctorEmail.Equals(doctorEmail) && appointment.DateAppointment == dateExamination
-        //            && appointment.StartTime <= startTime && appointment.EndTime > startTime)
-        //        {
-        //            //Console.WriteLine("Izabran doktor je zauzet u tom terminu!");
-        //            return false;
-        //        }
-        //        else if (appointment.PatientEmail.Equals(_currentRegisteredUser.Email) && appointment.DateAppointment == dateExamination
-        //            && appointment.StartTime <= startTime && appointment.EndTime > startTime && !appointment.AppointmentId.Equals(id))
-        //        {
-        //            //Console.WriteLine("Vec imate zakazan pregled u tom terminu!");
-        //            return false;
-        //        }
-        //    }
-        //    return true;
-        //}
 
         public List<UserAction> LoadMyCurrentActions(string registeredUserEmail)
         {
@@ -339,223 +305,5 @@ namespace Hospital.PatientImplementation
 
             return inputValues;
         }
-
-        //public string CheckPriority()
-        //{
-        //    string priority;
-        //    do
-        //    {
-        //        Console.WriteLine("\nIzaberite prioritet pri zakazivanju");
-        //        Console.WriteLine("1. Doktor");
-        //        Console.WriteLine("2. Vremenski opseg");
-        //        Console.Write(">> ");
-        //        priority = Console.ReadLine();
-
-        //        if (priority.Equals("1"))
-        //            return "1";
-        //        else if (priority.Equals("2"))
-        //            return "2";
-        //    } while (true);
-        //}
-
-        //public bool IsTimeBetweenTwoTimes(DateTime time)
-        //{
-        //    DateTime midnight = DateTime.ParseExact("00:00", "HH:mm", CultureInfo.InvariantCulture);
-        //    DateTime earliestTime = DateTime.ParseExact("06:00", "HH:mm", CultureInfo.InvariantCulture);
-        //    if (TimeSpan.Compare(time.TimeOfDay, midnight.TimeOfDay) != -1 &&
-        //        TimeSpan.Compare(time.TimeOfDay, earliestTime.TimeOfDay) == -1) 
-        //        return true;
-        //    return false;
-        //}
-
-        //public Appointment FindAppointmentAtChosenDoctor(string[] inputValues)
-        //{
-        //    string doctorEmail = inputValues[0];
-        //    DateTime latestDate = DateTime.ParseExact(inputValues[1], "MM/dd/yyyy", CultureInfo.InvariantCulture);
-        //    DateTime startTime = DateTime.ParseExact(inputValues[2], "HH:mm", CultureInfo.InvariantCulture);
-
-        //    DateTime earliestDate = DateTime.Now.AddDays(1);
-        //    string[] dataForAppointment;
-        //    do
-        //    {
-        //        if (this.IsTimeBetweenTwoTimes(startTime))
-        //        {
-        //            startTime = DateTime.ParseExact("06:00", "HH:mm", CultureInfo.InvariantCulture);
-        //            earliestDate = earliestDate.AddDays(1);
-        //        }
-                
-        //        if (earliestDate.Date > latestDate.Date)
-        //            return null; // daj mu predloge
-
-        //        dataForAppointment = new string[] { doctorEmail, earliestDate.ToString("MM/dd/yyyy"), startTime.ToString("HH:mm") };
-        //        startTime = startTime.AddMinutes(15);
-        //    } while (!this.IsAppointmentFree("0", dataForAppointment));
-
-        //    return this.CreateAppointment(dataForAppointment);
-        //}
-
-        //public string AcceptAppointment(Appointment newAppointment)
-        //{
-        //    Console.WriteLine("\nPRONADJEN TERMIN PREGLEDA");
-        //    this.TableHeader();
-        //    Console.WriteLine("1. " + newAppointment.DisplayOfPatientAppointment());
-
-        //    string choice;
-        //    do
-        //    {
-        //        Console.WriteLine("\nIzaberite opciju");
-        //        Console.WriteLine("1. Prihvatam");
-        //        Console.WriteLine("2. Odbijam");
-        //        Console.Write(">> ");
-        //        choice = Console.ReadLine();
-
-        //        if (choice.Equals("1"))
-        //            return "1";
-        //        else if (choice.Equals("2"))
-        //            return "2";
-        //    } while (true);
-        //}
-
-        //public Appointment FindAppointmentInTheSelectedRange(string[] inputValues)
-        //{
-        //    string[] dataForAppointment = new string[3];
-
-        //    foreach (User doctor in this.AllDoctors())
-        //    {
-        //        dataForAppointment = this.IsDoctorAvailable(inputValues, doctor);
-        //        if (dataForAppointment != null)
-        //            break;
-        //    }
-        //    if (dataForAppointment == null)
-        //        return null;  // daj mu opcije
-
-        //    return this.CreateAppointment(dataForAppointment);
-        //}
-
-        //public string[] IsDoctorAvailable(string[] inputValues, User doctor)
-        //{
-        //    DateTime latestDate = DateTime.ParseExact(inputValues[1], "MM/dd/yyyy", CultureInfo.InvariantCulture);
-        //    DateTime startTime = DateTime.ParseExact(inputValues[2], "HH:mm", CultureInfo.InvariantCulture);
-        //    DateTime endTime = DateTime.ParseExact(inputValues[3], "HH:mm", CultureInfo.InvariantCulture);
-
-        //    DateTime earliestDate = DateTime.Now.AddDays(1);
-        //    string[] dataForAppointment;
-        //    do
-        //    {
-        //        if (startTime.TimeOfDay >= endTime.TimeOfDay)
-        //        {
-        //            earliestDate = earliestDate.AddDays(1);
-        //            startTime = DateTime.ParseExact(inputValues[2], "HH:mm", CultureInfo.InvariantCulture);
-        //        }
-
-        //        if (earliestDate.Date > latestDate.Date)
-        //            return null;
-               
-        //        dataForAppointment = new string[] { doctor.Email, earliestDate.ToString("MM/dd/yyyy"), startTime.ToString("HH:mm") };
-        //        startTime = startTime.AddMinutes(15);
-        //    } while (!this.IsAppointmentFree("0", dataForAppointment));
-
-        //    return dataForAppointment;
-        //}
-
-        //public void FindAppointmentsClosestPatientWishesForDoctor(string[] inputValues)
-        //{
-        //    List<Appointment> appointmentsForChoosing = new List<Appointment>();
-
-        //    foreach (User doctor in this.AllDoctors())
-        //    {
-        //        inputValues[0] = doctor.Email;
-        //        Appointment newAppointment = this.FindAppointmentInTheSelectedRange(inputValues);
-        //        if (newAppointment == null) // ako ne moze nikako
-        //        {
-        //            appointmentsForChoosing = this.FindRandomAppointmentForScheduling(inputValues);
-        //            Appointment selectedAppointment = this.PickAppointmentForScheduling(appointmentsForChoosing);
-        //            // kreiraj?
-        //            return;
-        //        }
-        //        appointmentsForChoosing.Add(newAppointment);
-
-        //    }
-        //}
-
-        //public List<Appointment> FindRandomAppointmentForScheduling(string[] inputValues)
-        //{
-        //    List<Appointment> appointmentsForChoosing = new List<Appointment>();
-
-        //    DateTime appointmentDate = DateTime.Now.AddDays(1);
-        //    DateTime startTime = DateTime.ParseExact("06:00", "HH:mm", CultureInfo.InvariantCulture);
-
-        //    int appointmentNumber = 0;
-        //    string[] dataForAppointment;
-
-        //    do
-        //    {
-        //        if (this.IsTimeBetweenTwoTimes(startTime))
-        //        {
-        //            startTime = DateTime.ParseExact("06:00", "HH:mm", CultureInfo.InvariantCulture);
-        //            appointmentDate = appointmentDate.AddDays(1);
-        //        }
-
-        //        dataForAppointment = new string[] { inputValues[0], appointmentDate.ToString("MM/dd/yyyy"), startTime.ToString("HH:mm") };
-
-        //        if (this.IsAppointmentFree("0", dataForAppointment))
-        //        {
-        //            appointmentsForChoosing.Add(this.CreateAppointment(dataForAppointment));
-        //            appointmentNumber += 1;
-        //        }
-        //        startTime = startTime.AddMinutes(15);
-        //    } while (appointmentNumber != 3);
-
-        //    return appointmentsForChoosing;
-        //}
-
-        //public List<User> AllDoctors()
-        //{
-        //    List<User> allDoctors = new List<User>();
-        //    foreach (User user in _allUsers)
-        //        if (user.UserRole == User.Role.Doctor)
-        //            allDoctors.Add(user);
-        //    return allDoctors;
-        //}
-
-        //public Appointment CreateAppointment(string[] dataForAppointment)
-        //{
-        //    DateTime appointmentDate = DateTime.ParseExact(dataForAppointment[1], "MM/dd/yyyy", CultureInfo.InvariantCulture);
-        //    DateTime startTime = DateTime.ParseExact(dataForAppointment[2], "HH:mm", CultureInfo.InvariantCulture);
-
-        //    string id = this.AppointmentService.GetNewAppointmentId().ToString();
-        //    Room freeRoom = this.FindFreeRoom(appointmentDate, startTime);
-        //    int roomId = Int32.Parse(freeRoom.Id);
-
-        //    Appointment newAppointment = new Appointment(id, this._currentRegisteredUser.Email, dataForAppointment[0],
-        //        appointmentDate, startTime, startTime.AddMinutes(15), Appointment.State.Created, roomId,
-        //        Appointment.Type.Examination, false);
-
-        //    return newAppointment;
-        //}
-
-        //public void PrintAppointments(List<Appointment> appointments)
-        //{
-        //    int numAppointment = 1;
-        //    Console.WriteLine("\nPREDLOZI TERMINA PREGLEDA");
-        //    this.TableHeader();
-        //    foreach (Appointment appointment in appointments)
-        //        Console.WriteLine(numAppointment + ". " + appointment.DisplayOfPatientAppointment());
-        //}
-
-        //public Appointment PickAppointmentForScheduling(List<Appointment> appointments)
-        //{
-        //    this.PrintAppointments(appointments);
-        //    int numAppointment;
-        //    string choice;
-        //    do
-        //    {
-        //        Console.WriteLine("Unesite broj pregleda koji zelite da zakazete");
-        //        Console.Write(">> ");
-        //        choice = Console.ReadLine();
-        //    } while (!int.TryParse(choice, out numAppointment) || numAppointment < 1 || numAppointment > appointments.Count);
-
-        //    return appointments[numAppointment - 1];
-        //}
     }
 }
