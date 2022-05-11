@@ -363,7 +363,7 @@ namespace Hospital.SecretaryImplementation
 			int i = 1;
 			foreach (Referral referral in referrals)
 			{
-				if (referral.Doctor != null)
+				if (referral.Doctor != "null")
 				{
 					Console.Write("{0}. Pacijent: {1} | Doktor: {2} | ", i,
 						userService.GetUserFullName(referral.Patient), userService.GetUserFullName(referral.Doctor));
@@ -405,11 +405,25 @@ namespace Hospital.SecretaryImplementation
 			} while (!int.TryParse(referralIndexInput, out referralIndex) || referralIndex < 1 || referralIndex > unusedReferrals.Count);
 			Referral referral = unusedReferrals[referralIndex - 1];
 			Appointment newAppointment;
-			do
+			if(referral.Doctor != "null")
 			{
-				newAppointment = Create(referral);
-			} while (!appointmentService.IsAppointmentFreeForDoctor(newAppointment));
-
+				do
+				{
+					newAppointment = Create(referral);
+				} while (!appointmentService.IsAppointmentFreeForDoctor(newAppointment));
+			}
+			else
+			{
+				User freeDoctor;
+				do
+				{
+					newAppointment = Create(referral);
+					freeDoctor = appointmentService.FindFreeDoctor(referral.DoctorSpeciality, newAppointment);
+				} while (freeDoctor is null);
+				newAppointment.DoctorEmail = freeDoctor.Email;
+				Console.WriteLine("Izabrani doktor: " + userService.GetUserFullName(freeDoctor.Email));
+			}
+			Console.WriteLine("Uspesno zakazan pregled!");
 			appointmentService.Appointments.Add(newAppointment);
 			appointmentService.UpdateFile();
 
@@ -450,6 +464,7 @@ namespace Hospital.SecretaryImplementation
 				return null;
 			}
 			int roomId = Int32.Parse(freeRoom.Id);
+
 			return new Appointment(id, referral.Patient, referral.Doctor, dateOfAppointment,
 				startTime, endTime, Appointment.State.Created, roomId, referral.TypeProp, false);
 
