@@ -53,6 +53,7 @@
     <Compile Include="DoctorImplementation\Doctor.cs" />
     <Compile Include="Model\Appointment.cs" />
     <Compile Include="Model\User.cs" />
+    <Compile Include="PatientImplementation\PatientSchedulingAppointment.cs" />
     <Compile Include="PatientImplementation\PatientService.cs" />
     <Compile Include="PatientImplementation\Patient.cs" />
     <Compile Include="Repository\DrugRepository.cs" />

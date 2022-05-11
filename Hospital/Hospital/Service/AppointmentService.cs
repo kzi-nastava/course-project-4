@@ -273,15 +273,15 @@ namespace Hospital.Service
             File.WriteAllLines(filePath, lines);
         }
 
-        public bool IsDoctorExist(string doctorEmail)
+        public User IsDoctorExist(string doctorEmail)
         {
             foreach (User user in _users)
             {
                 if (user.Email.Equals(doctorEmail) && user.UserRole == User.Role.Doctor)
-                    return true;
+                    return user;
             }
             Console.WriteLine("Uneli ste nepostojeceg doktora");
-            return false;
+            return null;
         }
 
         public void AppendNewAppointmentInFile(Appointment newAppointment)
