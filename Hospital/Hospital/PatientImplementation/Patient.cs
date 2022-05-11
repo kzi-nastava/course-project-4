@@ -15,6 +15,7 @@ namespace Hospital.PatientImplementation
         string _email;
         PatientService _patientService;
         PatientSchedulingAppointment _patientScheduling;
+        PatientAnamnesis _patientAnamnesis;
         List<Appointment> _currentAppointments; 
 
         public string Email { get { return _email; } }
@@ -24,11 +25,12 @@ namespace Hospital.PatientImplementation
             set { _currentAppointments = value; }
         } 
 
-        public Patient(string email, PatientService patientService, PatientSchedulingAppointment patientScheduling)
+        public Patient(string email, PatientService patientService, PatientSchedulingAppointment patientScheduling, PatientAnamnesis patientAnamnesis)
         {
             this._email = email;
             this._patientService = patientService;
             this._patientScheduling = patientScheduling;
+            this._patientAnamnesis = patientAnamnesis;
             patientService.RefreshPatientAppointments(this);
         }
 
@@ -62,8 +64,8 @@ namespace Hospital.PatientImplementation
                     this.DeleteAppointment();
                 else if (choice.Equals("5"))
                     this.RecommendationFreeAppointments();
-                //else if (choice.Equals("6"))
-                // TODO
+                else if (choice.Equals("6"))
+                    this.AnamnesisSearch();
                 else if (choice.Equals("7"))
                     this.LogOut();
             } while (true);
@@ -76,7 +78,8 @@ namespace Hospital.PatientImplementation
                 
             int serialNumber = 0;
 
-            _patientService.TableHeader();
+            _patientService.AppointmentService.TableHeaderForPatient();
+            Console.WriteLine();
             
             foreach (Appointment appointment in this._currentAppointments)
             {
@@ -132,19 +135,6 @@ namespace Hospital.PatientImplementation
             }
 
             Appointment newAppointment = _patientScheduling.CreateAppointment(inputValues);
-            
-            //string id = _patientService.AppointmentService.GetNewAppointmentId().ToString();
-            //DateTime appointmentDate = DateTime.ParseExact(inputValues[1], "MM/dd/yyyy", CultureInfo.InvariantCulture);
-            //DateTime appointmentStartTime = DateTime.ParseExact(inputValues[2], "HH:mm", CultureInfo.InvariantCulture);
-            //DateTime appointmentEndTime = appointmentStartTime.AddMinutes(15);
-
-            //Room freeRoom = _patientService.AppointmentService.FindFreeRoom(appointmentDate, appointmentStartTime);
-            //int roomId = Int32.Parse(freeRoom.Id);
-
-            ////  created appointment
-            //Appointment newAppointment = new Appointment(id, this._email, inputValues[0], appointmentDate,
-            //    appointmentStartTime, appointmentEndTime, Appointment.State.Created, roomId,
-            //    Appointment.Type.Examination, false);
 
             Console.WriteLine("Uspesno ste kreirali nov pregled!");
 
@@ -191,22 +181,14 @@ namespace Hospital.PatientImplementation
             Appointment newAppointment;
 
             if (priority.Equals("1"))
-            {
                 newAppointment = _patientScheduling.FindAppointmentAtChosenDoctor(inputValues);
-                if (newAppointment == null)
-                {
-                    Console.WriteLine("Zakazivanje je odbijeno!");
-                    return;
-                }
-            }
             else
-            {
                 newAppointment = _patientScheduling.FindAppointmentInTheSelectedRange(inputValues);
-                if (newAppointment == null)
-                {
-                    Console.WriteLine("Zakazivanje je odbijeno!");
-                    return;
-                }
+
+            if (newAppointment == null)
+            {
+                Console.WriteLine("Zakazivanje je odbijeno!");
+                return;
             }
             if (_patientScheduling.AcceptAppointment(newAppointment).Equals("2"))
                 return;
@@ -215,6 +197,11 @@ namespace Hospital.PatientImplementation
             _patientService.RefreshPatientAppointments(this);
             _patientService.AppendToActionFile("create");
             this.AntiTrolMechanism();
+        }
+
+        private void AnamnesisSearch()
+        {
+            _patientAnamnesis.MainMenuForSearch();
         }
 
         private void LogOut()
