@@ -60,9 +60,8 @@ namespace Hospital.PatientImplementation
 
         public List<Appointment> FindAppointmentsForDeleteAndUpdate(Patient currentlyRegisteredPatient)
         {
-            int appointmentOrdinalNumber = 0;
-
             this._appointmentService.TableHeaderForPatient();
+            Console.WriteLine();
 
             List<Appointment> appointmentsForChange = new List<Appointment>();
             foreach (Appointment appointment in currentlyRegisteredPatient.PatientAppointments) 
@@ -72,8 +71,7 @@ namespace Hospital.PatientImplementation
                     appointment.TypeOfTerm != Appointment.Type.Operation)
                 {
                     appointmentsForChange.Add(appointment);
-                    appointmentOrdinalNumber++;
-                    Console.WriteLine(appointmentOrdinalNumber + ". " + appointment.DisplayOfPatientAppointment());
+                    Console.WriteLine(appointmentsForChange.Count + ". " + appointment.DisplayOfPatientAppointment());
                 }
             }
             Console.WriteLine();
