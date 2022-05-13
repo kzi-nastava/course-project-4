@@ -144,7 +144,7 @@ namespace Hospital.PatientImplementation
                 string userEmailFromFile = fields[1];
                 if (_currentRegisteredUser.Email.Equals(userEmailFromFile))
                     lines[i] = fields[0] + "," + fields[1] + "," + fields[2] + "," + fields[3] + "," + fields[4]
-                        + "," + (int) User.State.BlockedBySystem;
+                        + "," + (int) User.State.BlockedBySystem + "," + "null";
             }
             // saving changes
             File.WriteAllLines(filePath, lines);
