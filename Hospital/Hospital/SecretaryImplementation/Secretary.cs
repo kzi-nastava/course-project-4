@@ -13,21 +13,21 @@ namespace Hospital.SecretaryImplementation
 {
 	class Secretary
 	{
-		private List<User> patients;
-		private UserService userService;
-		private HealthRecordService healthRecordService;
-		private AppointmentService appointmentService;
-		private RequestService requestService;
-		private ReferralService referralService;
+		private List<User> _patients;
+		private UserService _userService;
+		private HealthRecordService _healthRecordService;
+		private AppointmentService _appointmentService;
+		private RequestService _requestService;
+		private ReferralService _referralService;
 
 		public Secretary(UserService service)
 		{
-			this.userService = service;
-			this.patients = FilterPatients(service.Users);
-			this.healthRecordService = new HealthRecordService();
-			this.appointmentService = new AppointmentService();
-			this.requestService = new RequestService(appointmentService);
-			this.referralService = new ReferralService();
+			this._userService = service;
+			this._patients = FilterPatients(service.Users);
+			this._healthRecordService = new HealthRecordService();
+			this._appointmentService = new AppointmentService();
+			this._requestService = new RequestService(_appointmentService);
+			this._referralService = new ReferralService();
 		}
 
 		public void PrintSecretaryMenu()
@@ -42,6 +42,7 @@ namespace Hospital.SecretaryImplementation
 			Console.WriteLine("6. Pregled blokiranih naloga pacijenata");
 			Console.WriteLine("7. Pregled pristiglih zahteva za izmenu/brisanje pregleda");
 			Console.WriteLine("8. Zakazivanje pregleda/operacija na osnovu uputa");
+			Console.WriteLine("9. Hitno zakazivanje");
 			Console.WriteLine("x. Odjavi se");
 			Console.WriteLine("--------------------------------------------");
 			Console.Write(">>");
@@ -101,6 +102,10 @@ namespace Hospital.SecretaryImplementation
 				{
 					ScheduleAppointmentWithReferral();
 				}
+				else if(choice == "9")
+				{
+					UrgentSchedule();
+				}
 				else if (choice == "x")
 				{
 					this.LogOut();
@@ -130,7 +135,7 @@ namespace Hospital.SecretaryImplementation
 		{
 			List<User> activePatients = new List<User>();
 
-			foreach (User user in this.patients)
+			foreach (User user in this._patients)
 			{
 				if (user.UserState == User.State.Active)
 				{
@@ -143,7 +148,7 @@ namespace Hospital.SecretaryImplementation
 		public List<User> FilterBlockedPatients()
 		{
 			List<User> blockedPatients = new List<User>();
-			foreach (User user in this.patients)
+			foreach (User user in this._patients)
 			{
 				if (user.UserState == User.State.BlockedBySecretary || user.UserState == User.State.BlockedBySystem)
 				{
@@ -162,36 +167,41 @@ namespace Hospital.SecretaryImplementation
 			}
 		}
 
-		public void BlockPatient()
+		public User SelectPatient(List<User> patients)
 		{
-			List<User> activePatients = this.FilterActivePatients();
-			if(activePatients.Count == 0)
+			if(patients.Count == 0)
 			{
-				Console.WriteLine("Trenutno nema aktivnih pacijenata. ");
-				return;
+				Console.WriteLine("Trenutno nema pacijenata za prikazivanje");
+				return null;
 			}
-			ShowPatients(activePatients);
+			ShowPatients(patients);
 			Console.WriteLine("x. Odustani");
-
-			Console.WriteLine("--------------------------------------");
+			Console.WriteLine("------------------------------------");
 			string patientIndexInput;
 			int patientIndex;
 			do
 			{
-				Console.WriteLine("Unesite redni broj pacijenta ciji nalog zelite da blokirate");
+				Console.WriteLine("Unesite redni broj pacijenta:");
 				Console.Write(">>");
 				patientIndexInput = Console.ReadLine();
-				if(patientIndexInput == "x")
+				if (patientIndexInput == "x")
 				{
-					return;
+					return null;
 				}
-			}
-			while (!int.TryParse(patientIndexInput, out patientIndex) || patientIndex < 1 || patientIndex > activePatients.Count);
 
-			User patient = activePatients[patientIndex-1];
+			} while (!int.TryParse(patientIndexInput, out patientIndex) || patientIndex < 1 || patientIndex > patients.Count);
 
-			userService.BlockOrUnblockUser(patient, true);
-			this.patients = FilterPatients(userService.Users);
+			return patients[patientIndex];
+		}
+
+		public void BlockPatient()
+		{
+			User patient = SelectPatient(FilterActivePatients());
+			if (patient is null)
+				return;
+
+			_userService.BlockOrUnblockUser(patient, true);
+			this._patients = FilterPatients(_userService.Users);
 
 			Console.WriteLine("\nPacijent " + patient.Name + " " + patient.Surname + " je uspesno blokiran.\n");
 		}
@@ -199,32 +209,11 @@ namespace Hospital.SecretaryImplementation
 
 		public void UnblockPatient()
 		{
-			List<User> blockedPatients = this.FilterBlockedPatients();
-			if (blockedPatients.Count == 0)
-			{
-				Console.WriteLine("Trenutno nema blokiranih pacijenata. ");
+			User patient = SelectPatient(FilterBlockedPatients());
+			if (patient is null)
 				return;
-			}
-			ShowPatients(blockedPatients);
-			Console.WriteLine("--------------------------------------");
-			Console.WriteLine("x. Odustani");
-			string patientIndexInput;
-			int patientIndex;
-			do
-			{
-				Console.WriteLine("Unesite redni broj pacijenta ciji nalog zelite da odblokirate");
-				Console.Write(">>");
-				patientIndexInput = Console.ReadLine();
-				if(patientIndexInput == "x")
-				{
-					return;
-				}
-			} 
-			while (!int.TryParse(patientIndexInput, out patientIndex) || patientIndex < 1 || patientIndex > blockedPatients.Count);
-
-			User patient = blockedPatients[patientIndex - 1];
-			userService.BlockOrUnblockUser(patient, false);
-			this.patients = FilterPatients(userService.Users);
+			_userService.BlockOrUnblockUser(patient, false);
+			this._patients = FilterPatients(_userService.Users);
 
 			Console.WriteLine("\nPacijent " + patient.Name + " " + patient.Surname + " je uspesno odblokiran.\n");
 
@@ -236,13 +225,13 @@ namespace Hospital.SecretaryImplementation
 			Console.WriteLine("Unesite podatke o pacijentu");
 			Console.Write("Email: ");
 			var email = Console.ReadLine();
-			bool emailDuplicate = this.userService.IsEmailValid(email);
+			bool emailDuplicate = this._userService.IsEmailValid(email);
 			while (emailDuplicate)
 			{
 				Console.WriteLine("Vec postoji nalog sa ovom email adresom.");
 				Console.Write("Email: ");
 				email = Console.ReadLine();
-				emailDuplicate = this.userService.IsEmailValid(email);
+				emailDuplicate = this._userService.IsEmailValid(email);
 			}
 			Console.Write("Password: ");
 			var password = Console.ReadLine();
@@ -252,13 +241,13 @@ namespace Hospital.SecretaryImplementation
 			var surname = Console.ReadLine();
 
 			User newPatient = new User(User.Role.Patient, email, password, name, surname, User.State.Active);
-			this.userService.Users.Add(newPatient);
-			this.patients.Add(newPatient);
+			this._userService.Users.Add(newPatient);
+			this._patients.Add(newPatient);
 
-			this.userService.UpdateFile();
+			this._userService.UpdateFile();
 
 
-			this.healthRecordService.CreateHealthRecord(newPatient);
+			this._healthRecordService.CreateHealthRecord(newPatient);
 			Console.WriteLine("\nNalog za pacijenta " + name + " " + surname + " je uspesno kreiran.");
 		}
 
@@ -281,34 +270,15 @@ namespace Hospital.SecretaryImplementation
 			patient.Surname = newSurname;
 			patient.Password = newPassword;
 
-			userService.UpdateUserInfo(patient);
+			_userService.UpdateUserInfo(patient);
 
 		}
 
 		public void ChangePatientAccount()
 		{
-			if (patients.Count == 0)
-			{
-				Console.WriteLine("\nTrenutno nema postojecih naloga za izmenu.");
+			User patient = SelectPatient(_patients);
+			if (patient is null)
 				return;
-			}
-			ShowPatients(patients);
-			Console.WriteLine("x. Odustani");
-			Console.WriteLine("--------------------------------------");
-			string patientIndexInput;
-			int patientIndex;
-			do
-			{
-				Console.WriteLine("Unesite redni broj pacijenta ciji nalog zelite da izmenite.");
-				Console.Write(">>");
-				patientIndexInput = Console.ReadLine();
-				if (patientIndexInput == "x")
-				{
-					return;
-				}
-			} while (!int.TryParse(patientIndexInput, out patientIndex) || patientIndex < 1 || patientIndex > this.patients.Count);
-
-			User patient = patients[patientIndex - 1];
 
 			this.ChangePatientData(patient);
 
@@ -316,32 +286,8 @@ namespace Hospital.SecretaryImplementation
 
 		}
 
-
-		public void AnswerRequest()
+		public int GetAction()
 		{
-			List<Appointment> requests = requestService.FilterPending();
-			if(requests.Count == 0)
-			{
-				Console.WriteLine("Trenutno nema zahteva za obradu. ");
-				return;
-			}
-			requestService.ShowRequests(requests);
-			Console.WriteLine("\nx. Odustani");
-			Console.WriteLine("--------------------------------------------");
-			string requestIndexInput;
-			int requestIndex;
-			do
-			{
-				Console.WriteLine("Unesite redni broj zahteva koji zelite da obradite");
-				Console.Write(">>");
-				requestIndexInput = Console.ReadLine();
-				if (requestIndexInput == "x")
-				{
-					return;
-				}
-			} while (!int.TryParse(requestIndexInput, out requestIndex) || requestIndex < 1 || requestIndex > requests.Count);
-
-			Appointment activeRequest = requests[requestIndex - 1];
 			string actionIndexInput;
 			int actionIndex;
 			do
@@ -353,8 +299,48 @@ namespace Hospital.SecretaryImplementation
 				actionIndexInput = Console.ReadLine();
 			}
 			while (!int.TryParse(actionIndexInput, out actionIndex) || actionIndex < 1 || actionIndex > 2);
+			return actionIndex;
+		}
 
-			requestService.ProcessRequest(activeRequest, actionIndex);
+		public Appointment SelectRequest()
+		{
+			List<Appointment> requests = _requestService.FilterPending();
+			if (requests.Count == 0)
+			{
+				Console.WriteLine("Trenutno nema zahteva za obradu. ");
+				return null;
+			}
+			_requestService.ShowRequests(requests);
+			Console.WriteLine("\nx. Odustani");
+			Console.WriteLine("--------------------------------------------");
+			string requestIndexInput;
+			int requestIndex;
+			do
+			{
+				Console.WriteLine("Unesite redni broj zahteva koji zelite da obradite");
+				Console.Write(">>");
+				requestIndexInput = Console.ReadLine();
+				if (requestIndexInput == "x")
+				{
+					return null;
+				}
+			} while (!int.TryParse(requestIndexInput, out requestIndex) || requestIndex < 1 || requestIndex > requests.Count);
+
+			return requests[requestIndex - 1];
+		}
+
+
+		public void AnswerRequest()
+		{
+			Appointment activeRequest = SelectRequest();
+			if(activeRequest is null)
+			{
+				return;
+			}
+			
+			int actionIndex = GetAction();
+
+			_requestService.ProcessRequest(activeRequest, actionIndex);
 			Console.WriteLine("\nZahtev je uspesno obradjen");
 		}
 
@@ -364,18 +350,18 @@ namespace Hospital.SecretaryImplementation
 			foreach (Referral referral in referrals)
 			{
 				Console.WriteLine("{0}. Pacijent: {1} | Doktor: {2}", i,
-					userService.GetUserFullName(referral.Patient), userService.GetUserFullName(referral.Doctor));
+					_userService.GetUserFullName(referral.Patient), _userService.GetUserFullName(referral.Doctor));
 				i++;
 			}
 		}
 
-		public void ScheduleAppointmentWithReferral()
+		public Referral SelectReferral()
 		{
-			List<Referral> unusedReferrals = referralService.FilterUnused();
-			if(unusedReferrals.Count == 0)
+			List<Referral> unusedReferrals = _referralService.FilterUnused();
+			if (unusedReferrals.Count == 0)
 			{
 				Console.WriteLine("Trenutno nema neiskoriscenih uputa u sistemu.");
-				return;
+				return null;
 			}
 			this.ShowReferrals(unusedReferrals);
 			Console.WriteLine("x. Odustani");
@@ -389,20 +375,29 @@ namespace Hospital.SecretaryImplementation
 				referralIndexInput = Console.ReadLine();
 				if (referralIndexInput == "x")
 				{
-					return;
+					return null;
 				}
 			} while (!int.TryParse(referralIndexInput, out referralIndex) || referralIndex < 1 || referralIndex > unusedReferrals.Count);
-			Referral referral = unusedReferrals[referralIndex - 1];
+			return unusedReferrals[referralIndex - 1];
+		}
+
+		public void ScheduleAppointmentWithReferral()
+		{
+			Referral referral = SelectReferral();
+			if(referral is null)
+			{
+				return;
+			}
 			Appointment newAppointment;
 			do
 			{
 				newAppointment = Create(referral);
-			} while (!appointmentService.IsAppointmentFreeForDoctor(newAppointment));
+			} while (!_appointmentService.IsAppointmentFreeForDoctor(newAppointment));
 
-			appointmentService.Appointments.Add(newAppointment);
-			appointmentService.UpdateFile();
+			_appointmentService.Appointments.Add(newAppointment);
+			_appointmentService.UpdateFile();
 
-			referralService.UseReferral(referral);
+			_referralService.UseReferral(referral);
 
 		}
 
@@ -413,12 +408,12 @@ namespace Hospital.SecretaryImplementation
 			{
 				Console.WriteLine("Unesite datum (MM/dd/yyyy): ");
 				date = Console.ReadLine();
-			} while (!appointmentService.IsDateFormValid(date));
+			} while (!_appointmentService.IsDateFormValid(date));
 			do
 			{
 				Console.WriteLine("Unesite vreme pocetka pregleda/operacije (HH:mm): ");
 				startingTime = Console.ReadLine();
-			} while (!appointmentService.IsTimeFormValid(startingTime));
+			} while (!_appointmentService.IsTimeFormValid(startingTime));
 
 			DateTime dateOfAppointment = DateTime.ParseExact(date, "MM/dd/yyyy", CultureInfo.InvariantCulture);
 			DateTime startTime = DateTime.ParseExact(startingTime, "HH:mm", CultureInfo.InvariantCulture);
@@ -432,8 +427,8 @@ namespace Hospital.SecretaryImplementation
 				endTime = startTime.AddMinutes(60);
 			}
 			
-			string id = appointmentService.GetNewAppointmentId().ToString();
-			Room freeRoom = appointmentService.FindFreeRoom(dateOfAppointment, startTime);
+			string id = _appointmentService.GetNewAppointmentId().ToString();
+			Room freeRoom = _appointmentService.FindFreeRoom(dateOfAppointment, startTime);
 			if(freeRoom is null)
 			{
 				return null;
@@ -442,7 +437,13 @@ namespace Hospital.SecretaryImplementation
 			return new Appointment(id, referral.Patient, referral.Doctor, dateOfAppointment,
 				startTime, endTime, Appointment.State.Created, roomId, referral.TypeProp, false);
 		}
+
 		
+
+		public void UrgentSchedule()
+		{
+			User patient = SelectPatient(_patients);
+		}
 
 		public void LogOut()
 		{
