@@ -252,16 +252,36 @@ namespace Hospital.Service
             File.WriteAllLines(filePath, lines.ToArray());
         }
 
-       
-        public bool IsDoctorExist(string doctorEmail)
+        public void RemakePerformedAppointment(Appointment remakeAppointment)
+        {
+            string filePath = @"..\..\Data\appointments.csv";
+            string[] lines = File.ReadAllLines(filePath);
+
+            for (int i = 0; i < lines.Length; i++)
+            {
+                string[] fields = lines[i].Split(new[] { ',' });
+                string id = fields[0];
+
+                if (id.Equals(remakeAppointment.AppointmentId))
+                {
+
+                    lines[i] = id + "," + fields[1] + "," + fields[2] + "," + fields[3] + "," + fields[4] + "," + fields[5]
+                        + "," + (int)Appointment.State.Updated + "," + fields[7] + "," + fields[8] + ",true";
+                }
+            }
+            // saving changes
+            File.WriteAllLines(filePath, lines);
+        }
+
+        public User IsDoctorExist(string doctorEmail)
         {
             foreach (User user in _users)
             {
                 if (user.Email.Equals(doctorEmail) && user.UserRole == User.Role.Doctor)
-                    return true;
+                    return user;
             }
             Console.WriteLine("Uneli ste nepostojeceg doktora");
-            return false;
+            return null;
         }
 
         public void AppendNewAppointmentInFile(Appointment newAppointment)
@@ -292,6 +312,13 @@ namespace Hospital.Service
             }
             else
                 return freeRooms[0];
+        }
+
+        public void TableHeaderForPatient()
+        {
+            Console.WriteLine();
+            Console.Write(String.Format("{0,3}|{1,10}|{2,10}|{3,10}|{4,10}|{5,10}|{6,10}|{7,10}",
+                "Br.", "Doktor", "Datum", "Pocetak", "Kraj", "Soba", "Tip", "Stanje"));
         }
     }
 }

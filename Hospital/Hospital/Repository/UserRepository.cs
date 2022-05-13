@@ -10,10 +10,13 @@ namespace Hospital.Repository
 {
     public class UserRepository
     {
+        private List<User> users = new List<User>();
+        private List<DoctorUser> doctorUsers = new List<DoctorUser>();
+
+        public List<DoctorUser> DoctorUsers { get { return doctorUsers; } set { doctorUsers = value; } }
+
         public List<User> Load()
         {
-            List<User> users = new List<User>();
-
             using (TextFieldParser parser = new TextFieldParser(@"..\..\Data\users.csv"))
             {
                 parser.TextFieldType = FieldType.Delimited;
@@ -34,16 +37,17 @@ namespace Hospital.Repository
                     {
                         DoctorUser.Speciality speciality = (DoctorUser.Speciality)int.Parse(fields[6]);
                         user = new DoctorUser(role, email, password, name, surname, state, speciality);
+                        DoctorUser specialist = new DoctorUser(role, email, password, name, surname, state, speciality);
+                        this.doctorUsers.Add(specialist);
                     }
                     else
                     {
                         user = new User(role, email, password, name, surname, state);
                     }
-                    users.Add(user);
+                    this.users.Add(user);
                 }
             }
-
-            return users;
+            return this.users;
         }
     }
 }

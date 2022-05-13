@@ -14,6 +14,8 @@ namespace Hospital.PatientImplementation
     {
         string _email;
         PatientService _patientService;
+        PatientSchedulingAppointment _patientScheduling;
+        PatientAnamnesis _patientAnamnesis;
         List<Appointment> _currentAppointments; 
 
         public string Email { get { return _email; } }
@@ -23,10 +25,12 @@ namespace Hospital.PatientImplementation
             set { _currentAppointments = value; }
         } 
 
-        public Patient(string email, PatientService patientService)
+        public Patient(string email, PatientService patientService, PatientSchedulingAppointment patientScheduling, PatientAnamnesis patientAnamnesis)
         {
             this._email = email;
             this._patientService = patientService;
+            this._patientScheduling = patientScheduling;
+            this._patientAnamnesis = patientAnamnesis;
             patientService.RefreshPatientAppointments(this);
         }
 
@@ -40,10 +44,12 @@ namespace Hospital.PatientImplementation
             do
             {
                 Console.WriteLine("\n1. Lista sopstvenih pregleda");
-                Console.WriteLine("2. Kreiraj pregled");
+                Console.WriteLine("2. Zakazi pregled");
                 Console.WriteLine("3. Izmeni pregled");
                 Console.WriteLine("4. Obrisi pregled");
-                Console.WriteLine("5. Odjava");
+                Console.WriteLine("5. Preporuka termina pregleda");
+                Console.WriteLine("6. Pregled i pretraga anamneza");
+                Console.WriteLine("7. Odjava");
                 Console.Write(">> ");
                 choice = Console.ReadLine();
 
@@ -51,26 +57,29 @@ namespace Hospital.PatientImplementation
                 if (choice.Equals("1"))
                     this.ReadOwnAppointments();
                 else if (choice.Equals("2"))
-                    this.CreateAppointment();
+                    this.SchedulingAppointment();
                 else if (choice.Equals("3"))
                     this.UpdateAppointment();
                 else if (choice.Equals("4"))
                     this.DeleteAppointment();
                 else if (choice.Equals("5"))
+                    this.RecommendationFreeAppointments();
+                else if (choice.Equals("6"))
+                    this.AnamnesisSearch();
+                else if (choice.Equals("7"))
                     this.LogOut();
             } while (true);
         }
 
         private void ReadOwnAppointments()
         {
-            if (!_patientService.HasPatientAppointmen(this._currentAppointments))
-            { 
+            if (!_patientService.HasPatientAppointmen(this._currentAppointments)) 
                 return;
-            }
                 
             int serialNumber = 0;
 
-            _patientService.TableHeader();
+            _patientService.AppointmentService.TableHeaderForPatient();
+            Console.WriteLine();
             
             foreach (Appointment appointment in this._currentAppointments)
             {
@@ -89,8 +98,6 @@ namespace Hospital.PatientImplementation
 
             _patientService.ReadFileForDeleteAppointment(appointmentForDelete);
             _patientService.RefreshPatientAppointments(this);
-
-            
             _patientService.AppendToActionFile("delete");
             this.AntiTrolMechanism();
         }
@@ -104,44 +111,37 @@ namespace Hospital.PatientImplementation
 
             string[] inputValues = _patientService.InputValuesForAppointment();
 
-            if (!_patientService.IsAppointmentFree(appointmentForUpdate.AppointmentId, inputValues))
+            if (!_patientScheduling.IsAppointmentFree(appointmentForUpdate.AppointmentId, inputValues))
+            {
+                Console.WriteLine("Nije moguce izmeniti pregled u izabranom terminu!");
                 return;
+            }
 
             _patientService.ReadFileForUpdateAppointment(appointmentForUpdate, inputValues);
             _patientService.RefreshPatientAppointments(this);
-
             _patientService.AppendToActionFile("update");
             this.AntiTrolMechanism();
 
         }
 
-        private void CreateAppointment()
+        private void SchedulingAppointment()
         {
             string[] inputValues = _patientService.InputValuesForAppointment();
 
-            if (!_patientService.IsAppointmentFree("0", inputValues))
+            if (!_patientScheduling.IsAppointmentFree("0", inputValues))
+            {
+                Console.WriteLine("Nije moguce zakazati pregled u izabranom terminu!");
                 return;
-            
-            string id = _patientService.AppointmentService.GetNewAppointmentId().ToString();
-            DateTime appointmentDate = DateTime.ParseExact(inputValues[1], "MM/dd/yyyy", CultureInfo.InvariantCulture);
-            DateTime appointmentStartTime = DateTime.ParseExact(inputValues[2], "HH:mm", CultureInfo.InvariantCulture);
-            DateTime appointmentEndTime = appointmentStartTime.AddMinutes(15);
+            }
 
-            Room freeRoom = _patientService.AppointmentService.FindFreeRoom(appointmentDate, appointmentStartTime);
-            int roomId = Int32.Parse(freeRoom.Id);
-
-            //  created appointment
-            Appointment newAppointment = new Appointment(id, this._email, inputValues[0], appointmentDate,
-                appointmentStartTime, appointmentEndTime, Appointment.State.Created, roomId,
-                Appointment.Type.Examination, false);
+            Appointment newAppointment = _patientScheduling.CreateAppointment(inputValues);
 
             Console.WriteLine("Uspesno ste kreirali nov pregled!");
 
             _patientService.AppointmentService.AppendNewAppointmentInFile(newAppointment);
             _patientService.RefreshPatientAppointments(this);
             _patientService.AppendToActionFile("create");
-            this.AntiTrolMechanism();
-            
+            this.AntiTrolMechanism(); 
         }
 
         private void AntiTrolMechanism()
@@ -172,6 +172,36 @@ namespace Hospital.PatientImplementation
           
             _patientService.BlockAccessApplication();
             this.LogOut(); //log out from account
+        }
+
+        private void RecommendationFreeAppointments()
+        {
+            string[] inputValues = _patientService.InputValueForRecommendationAppointments();
+            string priority = _patientScheduling.CheckPriority();
+            Appointment newAppointment;
+
+            if (priority.Equals("1"))
+                newAppointment = _patientScheduling.FindAppointmentAtChosenDoctor(inputValues);
+            else
+                newAppointment = _patientScheduling.FindAppointmentInTheSelectedRange(inputValues);
+
+            if (newAppointment == null)
+            {
+                Console.WriteLine("Zakazivanje je odbijeno!");
+                return;
+            }
+            if (_patientScheduling.AcceptAppointment(newAppointment).Equals("2"))
+                return;
+
+            _patientService.AppointmentService.AppendNewAppointmentInFile(newAppointment);
+            _patientService.RefreshPatientAppointments(this);
+            _patientService.AppendToActionFile("create");
+            this.AntiTrolMechanism();
+        }
+
+        private void AnamnesisSearch()
+        {
+            _patientAnamnesis.MainMenuForSearch();
         }
 
         private void LogOut()

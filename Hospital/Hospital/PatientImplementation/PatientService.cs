@@ -10,6 +10,7 @@ using Hospital.Model;
 using Hospital.Service;
 using System.Globalization;
 using System.IO;
+using Hospital.DoctorImplementation;
 
 namespace Hospital.PatientImplementation
 {
@@ -57,18 +58,11 @@ namespace Hospital.PatientImplementation
             currentRegisteredPatient.PatientAppointments = patientCurrentAppointment;
         }
 
-        public void TableHeader()
-        {
-            Console.WriteLine();
-            Console.WriteLine(String.Format("{0,3}|{1,10}|{2,10}|{3,10}|{4,10}|{5,10}|{6,10}|{7,10}",
-                "Br.", "Doktor", "Datum", "Pocetak", "Kraj", "Soba", "Tip", "Stanje"));
-        }
-
         public List<Appointment> FindAppointmentsForDeleteAndUpdate(Patient currentlyRegisteredPatient)
         {
             int appointmentOrdinalNumber = 0;
 
-            this.TableHeader();
+            this._appointmentService.TableHeaderForPatient();
 
             List<Appointment> appointmentsForChange = new List<Appointment>();
             foreach (Appointment appointment in currentlyRegisteredPatient.PatientAppointments) 
@@ -123,34 +117,7 @@ namespace Hospital.PatientImplementation
         public bool IsValidInput(string doctorEmail, string newDateAppointment, string newStartTime)
         {           
             return (_appointmentService.IsDateFormValid(newDateAppointment) &&
-                _appointmentService.IsTimeFormValid(newStartTime) && _appointmentService.IsDoctorExist(doctorEmail));
-        }
-
-        public bool IsAppointmentFree(string id, string[] inputValues)
-        {
-
-            string doctorEmail = inputValues[0];
-            string newDate = inputValues[1];
-            string newStartTime = inputValues[2];
-
-            DateTime dateExamination = DateTime.Parse(newDate);
-            DateTime startTime = DateTime.Parse(newStartTime);
-
-            foreach (Appointment appointment in _appointmentService.Appointments) {
-                if (appointment.DoctorEmail.Equals(doctorEmail) && appointment.DateAppointment == dateExamination
-                    && appointment.StartTime <= startTime && appointment.EndTime > startTime)
-                {
-                    Console.WriteLine("Izabran doktor je zauzet u tom terminu!");
-                    return false;
-                }
-                else if (appointment.PatientEmail.Equals(_currentRegisteredUser.Email) && appointment.DateAppointment == dateExamination
-                    && appointment.StartTime <= startTime && appointment.EndTime > startTime && !appointment.AppointmentId.Equals(id))
-                {
-                    Console.WriteLine("Vec imate zakazan pregled u tom terminu!");
-                    return false;
-                }
-            }
-            return true;
+                _appointmentService.IsTimeFormValid(newStartTime) && _appointmentService.IsDoctorExist(doctorEmail)!=null);
         }
 
         public List<UserAction> LoadMyCurrentActions(string registeredUserEmail)
@@ -295,8 +262,48 @@ namespace Hospital.PatientImplementation
                 }
                 // saving changes
                 File.WriteAllLines(filePath, lines);
-
             }
+        }
+
+        public bool CompareTwoTimes(string startTime, string endTime)
+        {
+            DateTime initialTime = DateTime.ParseExact(startTime, "HH:mm", CultureInfo.InvariantCulture);
+            DateTime latestTime = DateTime.ParseExact(endTime, "HH:mm", CultureInfo.InvariantCulture);
+
+            if (initialTime.AddMinutes(15) > latestTime)
+                return false;
+
+            return initialTime < latestTime;
+        }
+
+        public string[] InputValueForRecommendationAppointments()
+        {
+            string[] inputValues = new string[4];
+
+            string doctorEmail;
+            string latestDate;
+            string startTime;
+            string endTime;
+
+            do
+            {
+                Console.Write("\nUnesite email doktora: ");
+                doctorEmail = Console.ReadLine();
+                Console.Write("Unesite datum do kog mora da bude pregled (MM/dd/yyyy): ");
+                latestDate = Console.ReadLine();
+                Console.Write("Unesite vreme najranije moguceg pregleda (HH:mm): ");
+                startTime = Console.ReadLine();
+                Console.Write("Unesite vreme najkasnijeg moguceg pregleda (HH:mm): ");
+                endTime = Console.ReadLine();
+            } while (!(this.IsValidInput(doctorEmail, latestDate, startTime) && _appointmentService.IsTimeFormValid(endTime)
+            && this.CompareTwoTimes(startTime, endTime)));
+
+            inputValues[0] = doctorEmail;
+            inputValues[1] = latestDate;
+            inputValues[2] = startTime;
+            inputValues[3] = endTime;
+
+            return inputValues;
         }
     }
 }
