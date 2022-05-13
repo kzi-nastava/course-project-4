@@ -349,9 +349,22 @@ namespace Hospital.SecretaryImplementation
 			int i = 1;
 			foreach (Referral referral in referrals)
 			{
-				Console.WriteLine("{0}. Pacijent: {1} | Doktor: {2}", i,
-					_userService.GetUserFullName(referral.Patient), _userService.GetUserFullName(referral.Doctor));
-				i++;
+
+				if (referral.Doctor != "null")
+				{
+					Console.Write("{0}. Pacijent: {1} | Doktor: {2} | ", i,
+						_userService.GetUserFullName(referral.Patient), _userService.GetUserFullName(referral.Doctor));
+					i++;
+				}
+				else
+				{
+					Console.Write("{0}. Pacijent: {1} | Specijalnost: {2} | ", i,
+						_userService.GetUserFullName(referral.Patient), _referralService.DoctorSpecialization(referral));
+					i++;
+				}
+				Console.WriteLine("Tip: " + _referralService.AppointmentType(referral));
+				
+
 			}
 		}
 
@@ -389,13 +402,29 @@ namespace Hospital.SecretaryImplementation
 				return;
 			}
 			Appointment newAppointment;
-			do
+			if(referral.Doctor != "null")
 			{
-				newAppointment = Create(referral);
-			} while (!_appointmentService.IsAppointmentFreeForDoctor(newAppointment));
 
+				do
+				{
+					newAppointment = Create(referral);
+				} while (!_appointmentService.IsAppointmentFreeForDoctor(newAppointment));
+			}
+			else
+			{
+				User freeDoctor;
+				do
+				{
+					newAppointment = Create(referral);
+					freeDoctor = _appointmentService.FindFreeDoctor(referral.DoctorSpeciality, newAppointment);
+				} while (freeDoctor is null);
+				newAppointment.DoctorEmail = freeDoctor.Email;
+				Console.WriteLine("Izabrani doktor: " + _userService.GetUserFullName(freeDoctor.Email));
+			}
+			Console.WriteLine("Uspesno zakazan pregled!");
 			_appointmentService.Appointments.Add(newAppointment);
 			_appointmentService.UpdateFile();
+
 
 			_referralService.UseReferral(referral);
 
@@ -434,8 +463,10 @@ namespace Hospital.SecretaryImplementation
 				return null;
 			}
 			int roomId = Int32.Parse(freeRoom.Id);
+
 			return new Appointment(id, referral.Patient, referral.Doctor, dateOfAppointment,
 				startTime, endTime, Appointment.State.Created, roomId, referral.TypeProp, false);
+
 		}
 
 		

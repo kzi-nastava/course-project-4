@@ -13,7 +13,7 @@ namespace Hospital.Service
     class AppointmentService
     {
         private AppointmentRepository _appointmentRepository;
-        private UserRepository _userRepository;
+        private UserService _userService;
         private List<Appointment> _appointments;
         private List<User> _users;
         private RoomRepository _roomRepository;
@@ -24,10 +24,10 @@ namespace Hospital.Service
         public AppointmentService()
         {
             _appointmentRepository = new AppointmentRepository();
-            _userRepository = new UserRepository();
+            _userService = new UserService();
             _roomRepository = new RoomRepository();
             _appointments = _appointmentRepository.Load();
-            _users = _userRepository.Load();
+            _users = _userService.Users;
             _rooms = _roomRepository.Load();
         }
 
@@ -35,6 +35,23 @@ namespace Hospital.Service
         {
             return this._appointments.Count + 1;
         }
+
+        public User FindFreeDoctor(DoctorUser.Speciality speciality, Appointment newAppointment)
+		{
+            List<User> allDoctors = _userService.FilterDoctors(speciality);
+            foreach(User doctor in allDoctors)
+			{
+                newAppointment.DoctorEmail = doctor.Email;
+				if (IsAppointmentFreeForDoctor(newAppointment))
+				{
+                    return doctor;
+				}
+			}
+            newAppointment.DoctorEmail = "null";
+            Console.WriteLine("\nNema slobodnih doktora u ovom terminu. \n");
+            return null;
+            
+		}
 
         public List<Appointment> GetDoctorAppointment(User user)
         {
