@@ -33,5 +33,17 @@ namespace Hospital.Service
             return null;
         }
 
+        public bool IsIngredientNameValid(string name)
+        {
+            foreach (Ingredient ingredient in _ingredients)
+            {
+                if (ingredient.IngredientName.ToLower().Equals(name.ToLower()))
+                {
+                    return true;
+                }
+            }
+            return false;
+
+        }
     }
 }
