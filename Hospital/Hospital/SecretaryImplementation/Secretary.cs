@@ -354,6 +354,7 @@ namespace Hospital.SecretaryImplementation
 				{
 					Console.Write("{0}. Pacijent: {1} | Doktor: {2} | ", i,
 						_userService.GetUserFullName(referral.Patient), _userService.GetUserFullName(referral.Doctor));
+
 					i++;
 				}
 				else
@@ -363,8 +364,7 @@ namespace Hospital.SecretaryImplementation
 					i++;
 				}
 				Console.WriteLine("Tip: " + _referralService.AppointmentType(referral));
-				
-
+	
 			}
 		}
 
@@ -404,11 +404,11 @@ namespace Hospital.SecretaryImplementation
 			Appointment newAppointment;
 			if(referral.Doctor != "null")
 			{
-
 				do
 				{
 					newAppointment = Create(referral);
 				} while (!_appointmentService.IsAppointmentFreeForDoctor(newAppointment));
+
 			}
 			else
 			{
@@ -505,7 +505,7 @@ namespace Hospital.SecretaryImplementation
 				indexInput = Console.ReadLine();
 			} while (!int.TryParse(indexInput, out index) || index < 1 || index > 2);
 			_appointmentService.ScheduleUrgently(patient, speciality, index);
-			
+
 		}
 
 		public void LogOut()

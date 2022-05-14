@@ -69,6 +69,7 @@ namespace Hospital.Model
                 this.DateAppointment.ToString("MM/dd/yyyy") + "," + this._startTime.ToString("HH:mm") + "," + 
                 this._endTime.ToString("HH:mm") + "," + (int)this.AppointmentState
                 + "," + this._roomNumber + "," + (int)this.TypeOfTerm + "," + this._appointmentPerformed + "," + this._urgent;
+
         }
 
         public string DisplayOfPatientAppointment()
