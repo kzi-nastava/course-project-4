@@ -13,15 +13,17 @@ namespace Hospital.Service
         private RenovationRepository _renovationRepository;
         private RoomService _roomService;
         private AppointmentService _appointmentService;
+        private EquipmentService _equipmentService;
         private List<Renovation> _allRenovations;
 
         public List<Renovation> AllRenovations { get { return _allRenovations; } }
 
-        public RenovationService(RoomService roomService, AppointmentService appointmentService) 
+        public RenovationService(RoomService roomService, AppointmentService appointmentService, EquipmentService equipmentService) 
         {
             this._renovationRepository = new RenovationRepository();
             this._roomService = roomService;
             this._appointmentService = appointmentService;
+            this._equipmentService = equipmentService;
             this._allRenovations = _renovationRepository.Load();
         }
 
@@ -77,6 +79,44 @@ namespace Hospital.Service
             _allRenovations.Add(renovation);
             _renovationRepository.Save(_allRenovations);
             return true;
+        }
+
+        public void Renovate()
+        {
+            foreach (Renovation renovation in _allRenovations)
+            {
+                if (!renovation.IsActive || renovation.EndDate >= DateTime.Today)
+                    continue;
+
+                renovation.IsActive = false;
+
+                if (renovation.RenovationType == Renovation.Type.SplitRenovation)
+                {
+                    Room roomBefore = _roomService.GetRoomById(renovation.RoomId);
+                    _equipmentService.ChangeRoom(roomBefore.Id, roomBefore.Id + "_1");
+                    
+                    _roomService.DeleteRoom(roomBefore.Id);
+                    _roomService.CreateRoom(roomBefore.Id + "_1", roomBefore.Name + " 1", roomBefore.RoomType);
+                    _roomService.CreateRoom(roomBefore.Id + "_2", roomBefore.Name + " 2", roomBefore.RoomType);
+                }
+                else if (renovation.RenovationType == Renovation.Type.MergeRenovation)
+                {
+                    MergeRenovation mergeRenovation = (MergeRenovation)renovation;
+                    Room room1 = _roomService.GetRoomById(mergeRenovation.RoomId);
+                    Room room2 = _roomService.GetRoomById(mergeRenovation.OtherRoomId);
+
+                    string newId = room1.Id + "+" + room2.Id;
+                    string newName = room1.Name + " + " + room2.Name;
+
+                    _equipmentService.ChangeRoom(room1.Id, newId);
+                    _equipmentService.ChangeRoom(room2.Id, newId);
+
+                    _roomService.DeleteRoom(room1.Id);
+                    _roomService.DeleteRoom(room2.Id);
+                    _roomService.CreateRoom(newId, newName, room1.RoomType);
+                }
+            }
+            _renovationRepository.Save(_allRenovations);
         }
     }
 }

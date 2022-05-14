@@ -26,7 +26,7 @@ namespace Hospital.Model
         public DateTime StartDate { get { return _startDate; } }
         public DateTime EndDate { get { return _endDate; } }
         public string RoomId { get { return _roomId; } }
-        public bool IsActive { get { return _active; } }
+        public bool IsActive { get { return _active; } set { _active = value; } }
         public Type RenovationType { get { return _type; } }
 
         public Renovation(string id, DateTime startDate, DateTime endDate, string roomId, bool active, Type type)
