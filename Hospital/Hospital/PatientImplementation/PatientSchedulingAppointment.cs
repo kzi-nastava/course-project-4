@@ -127,7 +127,8 @@ namespace Hospital.PatientImplementation
 
             foreach (User doctor in this.AllDoctors())
             {
-                dataForAppointment = this.IsDoctorAvailable(inputValues, doctor);
+                inputValues[0] = doctor.Email;
+                dataForAppointment = this.IsDoctorAvailable(inputValues);
                 if (dataForAppointment != null)
                     break;
             }
@@ -137,7 +138,7 @@ namespace Hospital.PatientImplementation
             return this.CreateAppointment(dataForAppointment);
         }
 
-        public string[] IsDoctorAvailable(string[] inputValues, User doctor)
+        public string[] IsDoctorAvailable(string[] inputValues)
         {
             DateTime latestDate = DateTime.ParseExact(inputValues[1], "MM/dd/yyyy", CultureInfo.InvariantCulture);
             DateTime startTime = DateTime.ParseExact(inputValues[2], "HH:mm", CultureInfo.InvariantCulture);
@@ -150,13 +151,13 @@ namespace Hospital.PatientImplementation
                 if (startTime.TimeOfDay >= endTime.TimeOfDay)
                 {
                     earliestDate = earliestDate.AddDays(1);
-                    startTime = DateTime.ParseExact(inputValues[2], "HH:mm", CultureInfo.InvariantCulture);
+                    startTime = DateTime.ParseExact(inputValues[2], "HH:mm", CultureInfo.InvariantCulture); // reset time
                 }
 
                 if (earliestDate.Date > latestDate.Date)
                     return null;
 
-                dataForAppointment = new string[] { doctor.Email, earliestDate.ToString("MM/dd/yyyy"), startTime.ToString("HH:mm") };
+                dataForAppointment = new string[] { inputValues[0], earliestDate.ToString("MM/dd/yyyy"), startTime.ToString("HH:mm") };
                 startTime = startTime.AddMinutes(15);
             } while (!this.IsAppointmentFree("0", dataForAppointment));
 
@@ -193,7 +194,7 @@ namespace Hospital.PatientImplementation
                 }
 
                 dataForAppointment = new string[] { inputValues[0], appointmentDate.ToString("MM/dd/yyyy"), startTime.ToString("HH:mm") };
-
+              
                 if (this.IsAppointmentFree("0", dataForAppointment))
                     appointmentsForChoosing.Add(this.CreateAppointment(dataForAppointment));
                 

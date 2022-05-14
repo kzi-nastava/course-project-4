@@ -26,7 +26,7 @@ namespace Hospital.ManagerImplementation
             this._equipmentService = new EquipmentService(_roomService);
             this._equipmentMovingService = new EquipmentMovingService(_equipmentService, _roomService);
             this._appointmentService = new AppointmentService();
-            this._renovationService = new RenovationService(_roomService, _appointmentService);
+            this._renovationService = new RenovationService(_roomService, _appointmentService, _equipmentService);
         }
 
         public void ManagerMenu() 
@@ -45,7 +45,8 @@ namespace Hospital.ManagerImplementation
                 Console.WriteLine("7. Zakazi premestanje opreme");
                 Console.WriteLine("8. Pokreni premestanje opreme");
                 Console.WriteLine("9. Zakazivanje renoviranja");
-                Console.WriteLine("10. Odjava");
+                Console.WriteLine("10. Izvrsi renoviranja");
+                Console.WriteLine("11. Odjava");
                 Console.Write(">> ");
                 choice = Console.ReadLine();
 
@@ -66,8 +67,10 @@ namespace Hospital.ManagerImplementation
                 else if (choice.Equals("8"))
                     this.MoveEquipment();
                 else if (choice.Equals("9"))
-                    this.ScheduleRenovations();
+                    this.ScheduleRenovation();
                 else if (choice.Equals("10"))
+                    this.Renovate();
+                else if (choice.Equals("11"))
                     this.LogOut();
             } while (true);
         }
@@ -129,7 +132,7 @@ namespace Hospital.ManagerImplementation
             List<Room> allRooms = _roomService.AllRooms;
             foreach (Room room in allRooms)
             {
-                Console.WriteLine("Broj sobe: " + room.Id + ", naziv sobe: " + room.Name + ", tip sobe: " + room.TypeDescription);
+                Console.WriteLine("Broj sobe: " + room.Id + ", naziv sobe: " + room.Name + ", tip sobe: " + room.TypeDescription + ", obrisana: " + room.IsDeleted);
             }
         }
 
@@ -413,7 +416,7 @@ namespace Hospital.ManagerImplementation
             _equipmentMovingService.MoveEquipment();
         }
 
-        private void ScheduleRenovations()
+        private void ScheduleRenovation(Renovation.Type type)
         {
             Console.WriteLine("Unesite podatke o renoviranju");
 
@@ -434,6 +437,21 @@ namespace Hospital.ManagerImplementation
                 else
                     Console.Write("Renoviranje za trazenu sobu je vec zakazano. Ponovite unos: ");
                 roomId = Console.ReadLine();
+            }
+
+            string otherRoomId = "";
+            if (type == Renovation.Type.MergeRenovation) 
+            {
+                Console.Write("Unesite broj druge sobe: ");
+                otherRoomId = Console.ReadLine();
+                while (!_roomService.IdExists(otherRoomId) || _renovationService.ActiveRenovationExists(otherRoomId))
+                {
+                    if (!_roomService.IdExists(otherRoomId))
+                        Console.Write("Identifikator ne postoji. Ponovite unos: ");
+                    else
+                        Console.Write("Renoviranje za trazenu sobu je vec zakazano. Ponovite unos: ");
+                    otherRoomId = Console.ReadLine();
+                }
             }
 
             Console.Write("Unesite datum pocetka renoviranja (u formatu MM/dd/yyyy): ");
@@ -473,7 +491,47 @@ namespace Hospital.ManagerImplementation
                 return;
             }
 
-            _renovationService.Create(id, startDate, endDate, roomId);
+            if (type == Renovation.Type.SimpleRenovation)
+                _renovationService.CreateSimpleRenovation(id, startDate, endDate, roomId);
+            else if (type == Renovation.Type.SplitRenovation)
+                _renovationService.CreateSplitRenovation(id, startDate, endDate, roomId);
+            else
+                _renovationService.CreateMergeRenovation(id, startDate, endDate, roomId, otherRoomId);
+        }
+
+        private void ScheduleRenovation()
+        {
+            Console.WriteLine("Izaberite tip renoviranja");
+            Console.WriteLine("1. Renoviranje sobe");
+            Console.WriteLine("2. Razdvajanje sobe na dve");
+            Console.WriteLine("3. Spajanje dve sobe");
+
+            Renovation.Type type = Renovation.Type.SimpleRenovation;
+            while (true)
+            {
+                Console.Write(">> ");
+                string choice = Console.ReadLine();
+
+                bool shouldBreak = true;
+                if (choice.Equals("1"))
+                    type = Renovation.Type.SimpleRenovation;
+                else if (choice.Equals("2"))
+                    type = Renovation.Type.SplitRenovation;
+                else if (choice.Equals("3"))
+                    type = Renovation.Type.MergeRenovation;
+                else
+                    shouldBreak = false;
+
+                if (shouldBreak)
+                    break;
+            }
+
+            ScheduleRenovation(type);
+        }
+
+        private void Renovate()
+        {
+            _renovationService.Renovate();
         }
 
         private void LogOut()

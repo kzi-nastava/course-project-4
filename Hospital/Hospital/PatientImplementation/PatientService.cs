@@ -37,7 +37,7 @@ namespace Hospital.PatientImplementation
             _allAppointments = _appointmentService.AppointmentRepository.Load();
         }
 
-        public void RefreshPatientAppointments(Patient currentRegisteredPatient) 
+        public List<Appointment> RefreshPatientAppointments() 
         {
              this._allAppointments = _appointmentService.AppointmentRepository.Load();
 
@@ -55,7 +55,7 @@ namespace Hospital.PatientImplementation
                     patientCurrentAppointment.Add(appointment);
                 }
             }
-            currentRegisteredPatient.PatientAppointments = patientCurrentAppointment;
+            return patientCurrentAppointment;
         }
 
         public List<Appointment> FindAppointmentsForDeleteAndUpdate(Patient currentlyRegisteredPatient)
@@ -219,8 +219,6 @@ namespace Hospital.PatientImplementation
         {
 
             string doctorEmail = inputValues[0];
-            string newDate = inputValues[1];
-            string newStartTime = inputValues[2];
 
             string filePath = @"..\..\Data\appointments.csv";
             string[] lines = File.ReadAllLines(filePath);
@@ -232,9 +230,8 @@ namespace Hospital.PatientImplementation
                 if (id.Equals(appointmentForUpdate.AppointmentId))
                 {
                     Appointment newAppointment;
-                    DateTime appointmentDate = DateTime.ParseExact(newDate, "MM/dd/yyyy", CultureInfo.InvariantCulture);
-                    DateTime appointmentStartTime = DateTime.ParseExact(newStartTime, "HH:mm", CultureInfo.InvariantCulture);
-                    DateTime appointmentEndTime = appointmentStartTime.AddMinutes(15);
+                    DateTime appointmentDate = DateTime.ParseExact(inputValues[1], "MM/dd/yyyy", CultureInfo.InvariantCulture);
+                    DateTime startTime = DateTime.ParseExact(inputValues[2], "HH:mm", CultureInfo.InvariantCulture);
 
                     if ((appointmentForUpdate.DateAppointment - DateTime.Now).TotalDays <= 2)
                     {
@@ -242,6 +239,7 @@ namespace Hospital.PatientImplementation
                         newAppointment = new Appointment(id, this._currentRegisteredUser.Email, doctorEmail, appointmentDate,
                         appointmentStartTime, appointmentEndTime, Appointment.State.UpdateRequest, Int32.Parse(fields[7]),
                         Appointment.Type.Examination, false, false);
+
 
                         this._requestService.Requests.Add(newAppointment);
                         this._requestService.UpdateFile();
@@ -252,8 +250,8 @@ namespace Hospital.PatientImplementation
                         appointmentForUpdate.AppointmentState = Appointment.State.Updated;
                         appointmentForUpdate.DoctorEmail = doctorEmail;
                         appointmentForUpdate.DateAppointment = appointmentDate;
-                        appointmentForUpdate.StartTime = appointmentStartTime;
-                        appointmentForUpdate.EndTime = appointmentEndTime;
+                        appointmentForUpdate.StartTime = startTime;
+                        appointmentForUpdate.EndTime = startTime.AddMinutes(15);
                         Console.WriteLine("Uspesno ste izvrsili izmenu pregleda!");
                     }
                     lines[i] = appointmentForUpdate.ToString();

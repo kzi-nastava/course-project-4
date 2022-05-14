@@ -50,8 +50,7 @@ namespace Hospital.Service
 			}else if(speciality == DoctorUser.Speciality.Psychologist)
 			{
 				return "Psihologija";
-			}else if(speciality == DoctorUser.Speciality.General)
-			{
+			}else if(speciality == DoctorUser.Speciality.General){
 				return "Opsta praksa";
 			}
 			return "Hirurgija";

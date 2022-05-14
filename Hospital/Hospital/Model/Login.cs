@@ -61,6 +61,11 @@ namespace Hospital.Model
             EquipmentMovingService equipmentMovingService = new EquipmentMovingService(equipmentService, roomService);
             equipmentMovingService.MoveEquipment();
 
+            // Merge or split rooms if complex renovations are finished
+            AppointmentService appointmentService = new AppointmentService();
+            RenovationService renovationService = new RenovationService(roomService, appointmentService, equipmentService);
+            renovationService.Renovate();
+
             PatientService patientService = new PatientService(this._registeredUser, _userService.Users);
             PatientSchedulingAppointment patientScheduling = new PatientSchedulingAppointment(this._registeredUser, _userService.Users);
             PatientAnamnesis patientAnamnesis = new PatientAnamnesis(this._registeredUser);

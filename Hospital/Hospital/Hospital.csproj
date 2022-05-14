@@ -47,6 +47,7 @@
     <Compile Include="Model\HealthRecord.cs" />
     <Compile Include="Model\MedicalRecord.cs" />
     <Compile Include="Model\Notification.cs" />
+    <Compile Include="Model\MergeRenovation.cs" />
     <Compile Include="Model\Prescription.cs" />
     <Compile Include="Model\Referral.cs" />
     <Compile Include="Model\Renovation.cs" />
