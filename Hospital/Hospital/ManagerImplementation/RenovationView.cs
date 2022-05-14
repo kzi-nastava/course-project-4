@@ -22,10 +22,8 @@ namespace Hospital.ManagerImplementation
             this._renovationService = renovationService;
         }
 
-        public void ScheduleRenovation(Renovation.Type type)
+        private string EnterRenovationId()
         {
-            Console.WriteLine("Unesite podatke o renoviranju");
-
             Console.Write("Unesite identifikator: ");
             string id = Console.ReadLine();
             while (_renovationService.IdExists(id))
@@ -33,8 +31,16 @@ namespace Hospital.ManagerImplementation
                 Console.Write("Identifikator vec postoji. Ponovite unos: ");
                 id = Console.ReadLine();
             }
+            return id;
+        }
 
-            Console.Write("Unesite broj sobe: ");
+        private string EnterRoomId(bool isOther)
+        {
+            if (isOther)
+                Console.Write("Unesite broj druge sobe: ");
+            else
+                Console.Write("Unesite broj sobe: ");
+
             string roomId = Console.ReadLine();
             while (!_roomService.IdExists(roomId) || _renovationService.ActiveRenovationExists(roomId))
             {
@@ -44,50 +50,55 @@ namespace Hospital.ManagerImplementation
                     Console.Write("Renoviranje za trazenu sobu je vec zakazano. Ponovite unos: ");
                 roomId = Console.ReadLine();
             }
+            return roomId;
+        }
 
-            string otherRoomId = "";
-            if (type == Renovation.Type.MergeRenovation)
-            {
-                Console.Write("Unesite broj druge sobe: ");
-                otherRoomId = Console.ReadLine();
-                while (!_roomService.IdExists(otherRoomId) || _renovationService.ActiveRenovationExists(otherRoomId))
-                {
-                    if (!_roomService.IdExists(otherRoomId))
-                        Console.Write("Identifikator ne postoji. Ponovite unos: ");
-                    else
-                        Console.Write("Renoviranje za trazenu sobu je vec zakazano. Ponovite unos: ");
-                    otherRoomId = Console.ReadLine();
-                }
-            }
+        private DateTime EnterDate(bool isStart)
+        {
+            if (isStart)
+                Console.Write("Unesite datum pocetka renoviranja (u formatu MM/dd/yyyy): ");
+            else
+                Console.Write("Unesite datum kraja renoviranja (u formatu MM/dd/yyyy): ");
 
-            Console.Write("Unesite datum pocetka renoviranja (u formatu MM/dd/yyyy): ");
             bool isDateValid = false;
-            DateTime startDate = DateTime.Now;
+            DateTime date = DateTime.Now;
             do
             {
                 string startDateStr = Console.ReadLine();
                 isDateValid = DateTime.TryParseExact(startDateStr, "MM/dd/yyyy", CultureInfo.InvariantCulture,
-                    DateTimeStyles.None, out startDate);
+                    DateTimeStyles.None, out date);
                 if (!isDateValid)
                     Console.Write("Datum nije ispravan. Ponovite unos: ");
             } while (!isDateValid);
+            return date;
+        }
 
-            Console.Write("Unesite datum kraja renoviranja (u formatu MM/dd/yyyy): ");
-            isDateValid = false;
-            DateTime endDate = DateTime.Now;
-            do
+        public void ScheduleRenovation(Renovation.Type type)
+        {
+            Console.WriteLine("Unesite podatke o renoviranju");
+
+            string id = EnterRenovationId();
+            string roomId = EnterRoomId(false);
+
+            string otherRoomId = "";
+            if (type == Renovation.Type.MergeRenovation)
             {
-                string endDateStr = Console.ReadLine();
-                isDateValid = DateTime.TryParseExact(endDateStr, "MM/dd/yyyy", CultureInfo.InvariantCulture,
-                    DateTimeStyles.None, out endDate);
-                if (!isDateValid)
-                    Console.Write("Datum nije ispravan. Ponovite unos: ");
-            } while (!isDateValid);
+                otherRoomId = EnterRoomId(true);
+                while (roomId.Equals(otherRoomId))
+                {
+                    Console.WriteLine("Sobe koje se spajaju moraju biti razlicite!");
+                    otherRoomId = EnterRoomId(true);
+                }
+            }
 
-            if (endDate < startDate)
+            DateTime startDate = EnterDate(true);
+            DateTime endDate = EnterDate(false);
+            
+            while (endDate < startDate)
             {
                 Console.WriteLine("Datum kraja ne moze biti pre datuma pocetka!");
-                return;
+                startDate = EnterDate(true);
+                endDate = EnterDate(false);
             }
 
             if (_appointmentService.OverlapingAppointmentExists(startDate, endDate, roomId))
@@ -105,33 +116,30 @@ namespace Hospital.ManagerImplementation
                 _renovationService.CreateMergeRenovation(id, startDate, endDate, roomId, otherRoomId);
         }
 
-        public void ScheduleRenovation()
+        private Renovation.Type EnterRenovationType()
         {
             Console.WriteLine("Izaberite tip renoviranja");
             Console.WriteLine("1. Renoviranje sobe");
             Console.WriteLine("2. Razdvajanje sobe na dve");
             Console.WriteLine("3. Spajanje dve sobe");
 
-            Renovation.Type type = Renovation.Type.SimpleRenovation;
             while (true)
             {
                 Console.Write(">> ");
                 string choice = Console.ReadLine();
 
-                bool shouldBreak = true;
                 if (choice.Equals("1"))
-                    type = Renovation.Type.SimpleRenovation;
+                    return Renovation.Type.SimpleRenovation;
                 else if (choice.Equals("2"))
-                    type = Renovation.Type.SplitRenovation;
+                    return Renovation.Type.SplitRenovation;
                 else if (choice.Equals("3"))
-                    type = Renovation.Type.MergeRenovation;
-                else
-                    shouldBreak = false;
-
-                if (shouldBreak)
-                    break;
+                    return Renovation.Type.MergeRenovation;
             }
+        }
 
+        public void ScheduleRenovation()
+        {
+            Renovation.Type type = EnterRenovationType();
             ScheduleRenovation(type);
         }
 

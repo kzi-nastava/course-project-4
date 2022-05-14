@@ -17,19 +17,33 @@ namespace Hospital.ManagerImplementation
             this._roomService = roomService;
         }
 
-        public void CreateRoom()
+        private string EnterRoomId(bool existing)
         {
-            Console.WriteLine("Unesite podatke o sobi");
-            Console.WriteLine("------------------");
-
             Console.Write("Unesite broj sobe: ");
             string id = Console.ReadLine();
-            while (_roomService.IdExists(id))
+            while (_roomService.IdExists(id) != existing)
             {
-                Console.Write("Broj sobe je zauzet. Odaberite drugi broj: ");
+                if (existing)
+                    Console.Write("Broj ne postoji. Unesite broj sobe: ");
+                else
+                    Console.Write("Broj sobe je zauzet. Odaberite drugi broj: ");
                 id = Console.ReadLine();
             }
+            return id;
+        }
 
+        private string EnterNewRoomId()
+        {
+            return EnterRoomId(false);
+        }
+
+        private string EnterExistingRoomId()
+        {
+            return EnterRoomId(true);
+        }
+
+        private string EnterRoomName()
+        {
             Console.Write("Unesite naziv sobe: ");
             string name = Console.ReadLine();
             while (name.Length == 0)
@@ -37,34 +51,41 @@ namespace Hospital.ManagerImplementation
                 Console.Write("Naziv ne moze biti prazan! Unesite naziv sobe: ");
                 name = Console.ReadLine();
             }
+            return name;
+        }
 
+        private Room.Type EnterRoomType()
+        {
             Console.WriteLine("Odaberite tip sobe");
             Console.WriteLine("1. Operaciona sala");
             Console.WriteLine("2. Sala za preglede");
             Console.WriteLine("3. Soba za odmor");
             Console.WriteLine("4. Druga prostorija");
 
-            Room.Type type = Room.Type.Other;
             while (true)
             {
                 Console.Write(">> ");
                 string choice = Console.ReadLine();
 
-                bool shouldBreak = true;
                 if (choice.Equals("1"))
-                    type = Room.Type.OperationRoom;
+                    return Room.Type.OperationRoom;
                 else if (choice.Equals("2"))
-                    type = Room.Type.ExaminationRoom;
+                    return Room.Type.ExaminationRoom;
                 else if (choice.Equals("3"))
-                    type = Room.Type.RestRoom;
+                    return Room.Type.RestRoom;
                 else if (choice.Equals("4"))
-                    type = Room.Type.Other;
-                else
-                    shouldBreak = false;
-
-                if (shouldBreak)
-                    break;
+                    return Room.Type.Other;
             }
+        }
+
+        public void CreateRoom()
+        {
+            Console.WriteLine("Unesite podatke o sobi");
+            Console.WriteLine("------------------");
+
+            string id = EnterNewRoomId();
+            string name = EnterRoomName();
+            Room.Type type = EnterRoomType();
 
             _roomService.CreateRoom(id, name, type);
         }
@@ -74,7 +95,8 @@ namespace Hospital.ManagerImplementation
             List<Room> allRooms = _roomService.AllRooms;
             foreach (Room room in allRooms)
             {
-                Console.WriteLine("Broj sobe: " + room.Id + ", naziv sobe: " + room.Name + ", tip sobe: " + room.TypeDescription + ", obrisana: " + room.IsDeleted);
+                Console.WriteLine("Broj sobe: " + room.Id + ", naziv sobe: " + room.Name + ", tip sobe: " 
+                    + room.TypeDescription + ", obrisana: " + room.IsDeleted);
             }
         }
 
@@ -83,49 +105,9 @@ namespace Hospital.ManagerImplementation
             Console.WriteLine("Unesite podatke o sobi");
             Console.WriteLine("------------------");
 
-            Console.Write("Unesite broj sobe: ");
-            string id = Console.ReadLine();
-            while (!_roomService.IdExists(id))
-            {
-                Console.Write("Broj ne postoji. Unesite broj sobe: ");
-                id = Console.ReadLine();
-            }
-
-            Console.Write("Unesite naziv sobe: ");
-            string name = Console.ReadLine();
-            while (name.Length == 0)
-            {
-                Console.Write("Naziv ne moze biti prazan! Unesite naziv sobe: ");
-                name = Console.ReadLine();
-            }
-
-            Console.WriteLine("Odaberite tip sobe");
-            Console.WriteLine("1. Operaciona sala");
-            Console.WriteLine("2. Sala za preglede");
-            Console.WriteLine("3. Soba za odmor");
-            Console.WriteLine("4. Druga prostorija");
-
-            Room.Type type = Room.Type.Other;
-            while (true)
-            {
-                Console.Write(">> ");
-                string choice = Console.ReadLine();
-
-                bool shouldBreak = true;
-                if (choice.Equals("1"))
-                    type = Room.Type.OperationRoom;
-                else if (choice.Equals("2"))
-                    type = Room.Type.ExaminationRoom;
-                else if (choice.Equals("3"))
-                    type = Room.Type.RestRoom;
-                else if (choice.Equals("4"))
-                    type = Room.Type.Other;
-                else
-                    shouldBreak = false;
-
-                if (shouldBreak)
-                    break;
-            }
+            string id = EnterExistingRoomId();
+            string name = EnterRoomName();
+            Room.Type type = EnterRoomType();
 
             _roomService.UpdateRoom(id, name, type);
         }
@@ -133,13 +115,7 @@ namespace Hospital.ManagerImplementation
         public void DeleteRoom()
         {
             Console.Write("Unesite broj sobe: ");
-            string id = Console.ReadLine();
-            while (!_roomService.IdExists(id))
-            {
-                Console.Write("Broj ne postoji. Unesite broj sobe: ");
-                id = Console.ReadLine();
-            }
-
+            string id = EnterExistingRoomId();
             _roomService.DeleteRoom(id);
         }
     }

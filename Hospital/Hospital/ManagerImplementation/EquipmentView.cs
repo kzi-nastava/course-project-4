@@ -67,7 +67,7 @@ namespace Hospital.ManagerImplementation
             }
         }
 
-        public void FilterEquipmentByRoomType()
+        private Room.Type EnterRoomType()
         {
             Console.WriteLine("Odaberite tip sobe");
             Console.WriteLine("1. Operaciona sala");
@@ -76,30 +76,27 @@ namespace Hospital.ManagerImplementation
             Console.WriteLine("4. Druga soba");
             Console.WriteLine("5. Magacin");
 
-            Room.Type roomType = Room.Type.Other;
             while (true)
             {
                 Console.Write(">> ");
                 string choice = Console.ReadLine();
 
-                bool shouldBreak = true;
                 if (choice.Equals("1"))
-                    roomType = Room.Type.OperationRoom;
+                    return Room.Type.OperationRoom;
                 else if (choice.Equals("2"))
-                    roomType = Room.Type.ExaminationRoom;
+                    return Room.Type.ExaminationRoom;
                 else if (choice.Equals("3"))
-                    roomType = Room.Type.RestRoom;
+                    return Room.Type.RestRoom;
                 else if (choice.Equals("4"))
-                    roomType = Room.Type.Other;
+                    return Room.Type.Other;
                 else if (choice.Equals("5"))
-                    roomType = Room.Type.Warehouse;
-                else
-                    shouldBreak = false;
-
-                if (shouldBreak)
-                    break;
+                    return Room.Type.Warehouse;
             }
+        }
 
+        public void FilterEquipmentByRoomType()
+        {
+            Room.Type roomType = EnterRoomType();
             List<Equipment> foundEquipment = _equipmentService.FilterByRoomType(roomType);
             PrintEquipment(foundEquipment);
         }
@@ -145,7 +142,7 @@ namespace Hospital.ManagerImplementation
             PrintEquipment(foundEquipment);
         }
 
-        public void FilterEquipmentByType()
+        private Equipment.Type EnterEquipmentType()
         {
             Console.WriteLine("Odaberite tip opreme");
             Console.WriteLine("1. Oprema za preglede");
@@ -153,36 +150,31 @@ namespace Hospital.ManagerImplementation
             Console.WriteLine("3. Sobni namestaj");
             Console.WriteLine("4. Oprema za hodnike");
 
-            Equipment.Type equipmentType = Equipment.Type.ExaminationEquipment;
             while (true)
             {
                 Console.Write(">> ");
                 string choice = Console.ReadLine();
 
-                bool shouldBreak = true;
                 if (choice.Equals("1"))
-                    equipmentType = Equipment.Type.ExaminationEquipment;
+                    return Equipment.Type.ExaminationEquipment;
                 else if (choice.Equals("2"))
-                    equipmentType = Equipment.Type.OperationEquipment;
+                    return Equipment.Type.OperationEquipment;
                 else if (choice.Equals("3"))
-                    equipmentType = Equipment.Type.Furniture;
+                    return Equipment.Type.Furniture;
                 else if (choice.Equals("4"))
-                    equipmentType = Equipment.Type.HallwayEquipment;
-                else
-                    shouldBreak = false;
-
-                if (shouldBreak)
-                    break;
+                    return Equipment.Type.HallwayEquipment;
             }
+        }
 
+        public void FilterEquipmentByType()
+        {
+            Equipment.Type equipmentType = EnterEquipmentType();
             List<Equipment> foundEquipment = _equipmentService.FilterByEquipmentType(equipmentType);
             PrintEquipment(foundEquipment);
         }
 
-        public void ScheduleEquipmentMoving()
+        private string EnterEquipmentMovingId() 
         {
-            Console.WriteLine("Unesite podatke o pomeranju opreme");
-
             Console.Write("Unesite identifikator: ");
             string id = Console.ReadLine();
             while (_equipmentMovingService.IdExists(id))
@@ -190,7 +182,11 @@ namespace Hospital.ManagerImplementation
                 Console.Write("Identifikator vec postoji. Ponovite unos: ");
                 id = Console.ReadLine();
             }
+            return id;
+        }
 
+        private string EnterEquipmentId()
+        {
             Console.Write("Unesite identifikator opreme: ");
             string equipmentId = Console.ReadLine();
             while (!_equipmentService.IdExist(equipmentId) ||
@@ -202,22 +198,27 @@ namespace Hospital.ManagerImplementation
                     Console.Write("Pomeranje odabrane opreme je vec zakazano. Ponovite unos: ");
                 equipmentId = Console.ReadLine();
             }
+            return equipmentId;
+        }
 
+        private DateTime EnterTime()
+        {
             Console.Write("Unesite vreme pomeranja (u formatu MM/dd/yyyy HH:mm): ");
             bool isTimeValid = false;
-            DateTime scheduledTime = DateTime.Now;
+            DateTime time = DateTime.Now;
             do
             {
                 string scheduledTimeStr = Console.ReadLine();
                 isTimeValid = DateTime.TryParseExact(scheduledTimeStr, "MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture,
-                    DateTimeStyles.None, out scheduledTime);
+                    DateTimeStyles.None, out time);
                 if (!isTimeValid)
                     Console.Write("Vreme nije ispravno. Ponovite unos: ");
             } while (!isTimeValid);
+            return time;
+        }
 
-            Equipment equipment = _equipmentService.GetEquipmentById(equipmentId);
-            string sourceRoomId = equipment.RoomId;
-
+        private string EnterDestinationRoomId(string sourceRoomId)
+        {
             Console.Write("Unesite broj sobe u koju se oprema pomera: ");
             string destinationRoomId = Console.ReadLine();
             while (!_roomService.IdExists(destinationRoomId) || destinationRoomId.Equals(sourceRoomId))
@@ -228,6 +229,21 @@ namespace Hospital.ManagerImplementation
                     Console.Write("Broj sobe ne postoji. Ponovite unos: ");
                 destinationRoomId = Console.ReadLine();
             }
+            return destinationRoomId;
+        }
+
+        public void ScheduleEquipmentMoving()
+        {
+            Console.WriteLine("Unesite podatke o pomeranju opreme");
+
+            string id = EnterEquipmentMovingId();
+            string equipmentId = EnterEquipmentId();
+            DateTime scheduledTime = EnterTime();
+
+            Equipment equipment = _equipmentService.GetEquipmentById(equipmentId);
+            string sourceRoomId = equipment.RoomId;
+
+            string destinationRoomId = EnterDestinationRoomId(sourceRoomId);
 
             _equipmentMovingService.CreateEquipmentMoving(id, equipmentId, scheduledTime, sourceRoomId, destinationRoomId);
         }
