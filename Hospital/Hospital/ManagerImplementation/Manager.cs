@@ -26,7 +26,7 @@ namespace Hospital.ManagerImplementation
             this._equipmentService = new EquipmentService(_roomService);
             this._equipmentMovingService = new EquipmentMovingService(_equipmentService, _roomService);
             this._appointmentService = new AppointmentService();
-            this._renovationService = new RenovationService(_roomService, _appointmentService);
+            this._renovationService = new RenovationService(_roomService, _appointmentService, _equipmentService);
         }
 
         public void ManagerMenu() 
@@ -45,7 +45,8 @@ namespace Hospital.ManagerImplementation
                 Console.WriteLine("7. Zakazi premestanje opreme");
                 Console.WriteLine("8. Pokreni premestanje opreme");
                 Console.WriteLine("9. Zakazivanje renoviranja");
-                Console.WriteLine("10. Odjava");
+                Console.WriteLine("10. Izvrsi renoviranja");
+                Console.WriteLine("11. Odjava");
                 Console.Write(">> ");
                 choice = Console.ReadLine();
 
@@ -68,6 +69,8 @@ namespace Hospital.ManagerImplementation
                 else if (choice.Equals("9"))
                     this.ScheduleRenovation();
                 else if (choice.Equals("10"))
+                    this.Renovate();
+                else if (choice.Equals("11"))
                     this.LogOut();
             } while (true);
         }
@@ -129,7 +132,7 @@ namespace Hospital.ManagerImplementation
             List<Room> allRooms = _roomService.AllRooms;
             foreach (Room room in allRooms)
             {
-                Console.WriteLine("Broj sobe: " + room.Id + ", naziv sobe: " + room.Name + ", tip sobe: " + room.TypeDescription);
+                Console.WriteLine("Broj sobe: " + room.Id + ", naziv sobe: " + room.Name + ", tip sobe: " + room.TypeDescription + ", obrisana: " + room.IsDeleted);
             }
         }
 
@@ -524,6 +527,11 @@ namespace Hospital.ManagerImplementation
             }
 
             ScheduleRenovation(type);
+        }
+
+        private void Renovate()
+        {
+            _renovationService.Renovate();
         }
 
         private void LogOut()
