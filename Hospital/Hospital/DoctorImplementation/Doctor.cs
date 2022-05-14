@@ -23,6 +23,7 @@ namespace Hospital.DoctorImplementation
         User currentRegisteredDoctor;
         MedicalRecordService medicalRecordService = new MedicalRecordService();
         PrescriptionService prescriptionService = new PrescriptionService();
+        IngredientService ingredientService = new IngredientService();
         
 
         public Doctor(User currentRegisteredDoctor, PatientService helper)
@@ -438,8 +439,11 @@ namespace Hospital.DoctorImplementation
             } while (!appointmentService.IsDoubleValid(patientWeightInput));
             Console.WriteLine("Unesite prethodne bolesti: ");
             previousIllnessesInput = Console.ReadLine();
-            Console.WriteLine("Unesite alergene: ");
-            allergenInput = Console.ReadLine();
+            do
+            {
+                Console.WriteLine("Unesite alergenu: ");
+                allergenInput = Console.ReadLine();
+            } while (!ingredientService.IsIngredientNameValid(allergenInput));
             Console.WriteLine("Unesite krvnu grupu: ");
             bloodTypeInput = Console.ReadLine();
 

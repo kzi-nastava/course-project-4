@@ -469,11 +469,21 @@ namespace Hospital.SecretaryImplementation
 
 		}
 
-		
+		//public DoctorUser.Speciality SelectSpeciality()
+		//{
+		//	var specialities = Enum.GetValues(typeof(DoctorUser.Speciality));
+		//	int i = 1;
+		//	foreach (DoctorUser.Speciality speciality in specialities)
+		//	{
+		//		Console.WriteLine("{0}. {1}", i, _referralService.DoctorSpecialization())
+		//	}
+		//}
 
 		public void UrgentSchedule()
 		{
 			User patient = SelectPatient(_patients);
+			
+			//DoctorUser.Speciality speciality = SelectSpeciality();
 		}
 
 		public void LogOut()
