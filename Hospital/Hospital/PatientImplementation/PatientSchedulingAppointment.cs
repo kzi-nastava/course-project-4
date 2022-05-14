@@ -223,7 +223,7 @@ namespace Hospital.PatientImplementation
 
             Appointment newAppointment = new Appointment(id, this._currentRegisteredUser.Email, dataForAppointment[0],
                 appointmentDate, startTime, startTime.AddMinutes(15), Appointment.State.Created, roomId,
-                Appointment.Type.Examination, false);
+                Appointment.Type.Examination, false, false);
 
             return newAppointment;
         }

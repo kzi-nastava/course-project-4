@@ -191,7 +191,7 @@ namespace Hospital.SecretaryImplementation
 
 			} while (!int.TryParse(patientIndexInput, out patientIndex) || patientIndex < 1 || patientIndex > patients.Count);
 
-			return patients[patientIndex];
+			return patients[patientIndex-1];
 		}
 
 		public void BlockPatient()
@@ -359,7 +359,7 @@ namespace Hospital.SecretaryImplementation
 				else
 				{
 					Console.Write("{0}. Pacijent: {1} | Specijalnost: {2} | ", i,
-						_userService.GetUserFullName(referral.Patient), _referralService.DoctorSpecialization(referral));
+						_userService.GetUserFullName(referral.Patient),_referralService.SpecialityToString(referral.DoctorSpeciality));
 					i++;
 				}
 				Console.WriteLine("Tip: " + _referralService.AppointmentType(referral));
@@ -465,25 +465,47 @@ namespace Hospital.SecretaryImplementation
 			int roomId = Int32.Parse(freeRoom.Id);
 
 			return new Appointment(id, referral.Patient, referral.Doctor, dateOfAppointment,
-				startTime, endTime, Appointment.State.Created, roomId, referral.TypeProp, false);
+				startTime, endTime, Appointment.State.Created, roomId, referral.TypeProp, false, false);
 
 		}
 
-		//public DoctorUser.Speciality SelectSpeciality()
-		//{
-		//	var specialities = Enum.GetValues(typeof(DoctorUser.Speciality));
-		//	int i = 1;
-		//	foreach (DoctorUser.Speciality speciality in specialities)
-		//	{
-		//		Console.WriteLine("{0}. {1}", i, _referralService.DoctorSpecialization())
-		//	}
-		//}
+		public DoctorUser.Speciality SelectSpeciality()
+		{
+			Console.WriteLine("");
+			var specialities = Enum.GetValues(typeof(DoctorUser.Speciality)).Cast<DoctorUser.Speciality>().ToList();
+			int i = 1;
+			foreach (DoctorUser.Speciality speciality in specialities)
+			{
+				Console.WriteLine("{0}. {1}", i, _referralService.SpecialityToString(speciality));
+				++i;
+			}
+			string indexInput;
+			int index;
+			do
+			{
+				Console.WriteLine("Unesite redni broj specijalizacije.");
+				Console.Write(">>");
+				indexInput = Console.ReadLine();
+				
+			} while (!int.TryParse(indexInput, out index) || index < 1 || index > specialities.Count());
+			return specialities[index - 1];
+
+		}
 
 		public void UrgentSchedule()
 		{
 			User patient = SelectPatient(_patients);
+			DoctorUser.Speciality speciality = SelectSpeciality();
+			Console.WriteLine("\nTip:\n1.Pregled\n2.Operacija");
+			string indexInput;
+			int index;
+			do
+			{
+				Console.Write(">>");
+				indexInput = Console.ReadLine();
+			} while (!int.TryParse(indexInput, out index) || index < 1 || index > 2);
+			_appointmentService.ScheduleUrgently(patient, speciality, index);
 			
-			//DoctorUser.Speciality speciality = SelectSpeciality();
 		}
 
 		public void LogOut()

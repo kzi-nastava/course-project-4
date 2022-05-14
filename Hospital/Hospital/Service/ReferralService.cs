@@ -36,21 +36,21 @@ namespace Hospital.Service
 			return "Operacija";
 		}
 
-		public string DoctorSpecialization(Referral referral)
+		public string SpecialityToString(DoctorUser.Speciality speciality)
 		{
-			if(referral.DoctorSpeciality == DoctorUser.Speciality.Cardiologist)
+			if(speciality == DoctorUser.Speciality.Cardiologist)
 			{
 				return "Kardiologija";
-			}else if(referral.DoctorSpeciality == DoctorUser.Speciality.Neurologist)
+			}else if(speciality == DoctorUser.Speciality.Neurologist)
 			{
 				return "Neurologija";
-			}else if(referral.DoctorSpeciality == DoctorUser.Speciality.Pediatrician)
+			}else if(speciality == DoctorUser.Speciality.Pediatrician)
 			{
 				return "Pedijatrija";
-			}else if(referral.DoctorSpeciality == DoctorUser.Speciality.Psychologist)
+			}else if(speciality == DoctorUser.Speciality.Psychologist)
 			{
 				return "Psihologija";
-			}else if(referral.DoctorSpeciality == DoctorUser.Speciality.General)
+			}else if(speciality == DoctorUser.Speciality.General)
 			{
 				return "Opsta praksa";
 			}

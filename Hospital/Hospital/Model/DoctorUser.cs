@@ -28,29 +28,5 @@ namespace Hospital.Model
 
         public Speciality SpecialityDoctor { get { return _speciality; }set { _speciality = value; } }
 
-        public string SpecialityToString()
-		{
-            if (SpecialityDoctor == Speciality.Cardiologist)
-            {
-                return "Kardiologija";
-            }
-            else if (SpecialityDoctor == Speciality.Neurologist)
-            {
-                return "Neurologija";
-            }
-            else if (SpecialityDoctor == Speciality.Pediatrician)
-            {
-                return "Pedijatrija";
-            }
-            else if (SpecialityDoctor == Speciality.Psychologist)
-            {
-                return "Psihologija";
-            }
-            else if (SpecialityDoctor == Speciality.General)
-            {
-                return "Opsta praksa";
-            }
-            return "Hirurgija";
-        }
     }
 }
