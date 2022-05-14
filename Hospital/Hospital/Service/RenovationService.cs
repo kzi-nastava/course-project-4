@@ -45,12 +45,35 @@ namespace Hospital.Service
             return false;
         }
 
-        public bool Create(string id, DateTime startDate, DateTime endDate, string roomId)
+        public bool Create(string id, DateTime startDate, DateTime endDate, string roomId, Renovation.Type type)
         {
-            if (IdExists(id) || endDate < startDate || !_roomService.IdExists(roomId) || ActiveRenovationExists(roomId) 
+            if (IdExists(id) || endDate < startDate || !_roomService.IdExists(roomId) || ActiveRenovationExists(roomId)
                 || _appointmentService.OverlapingAppointmentExists(startDate, endDate, roomId))
                 return false;
-            Renovation renovation = new Renovation(id, startDate, endDate, roomId, true);
+            Renovation renovation = new Renovation(id, startDate, endDate, roomId, true, type);
+            _allRenovations.Add(renovation);
+            _renovationRepository.Save(_allRenovations);
+            return true;
+        }
+
+        public bool CreateSimpleRenovation(string id, DateTime startDate, DateTime endDate, string roomId)
+        {
+            return Create(id, startDate, endDate, roomId, Renovation.Type.SimpleRenovation);
+        }
+
+        public bool CreateSplitRenovation(string id, DateTime startDate, DateTime endDate, string roomId)
+        {
+            return Create(id, startDate, endDate, roomId, Renovation.Type.SplitRenovation);
+        }
+
+        public bool CreateMergeRenovation(string id, DateTime startDate, DateTime endDate, string roomId, string otherRoomId)
+        {
+            if (IdExists(id) || endDate < startDate || !_roomService.IdExists(roomId) || !_roomService.IdExists(otherRoomId)
+                || ActiveRenovationExists(roomId) || ActiveRenovationExists(otherRoomId)
+                || _appointmentService.OverlapingAppointmentExists(startDate, endDate, roomId)
+                || _appointmentService.OverlapingAppointmentExists(startDate, endDate, otherRoomId))
+                return false;
+            Renovation renovation = new MergeRenovation(id, startDate, endDate, roomId, true, otherRoomId);
             _allRenovations.Add(renovation);
             _renovationRepository.Save(_allRenovations);
             return true;

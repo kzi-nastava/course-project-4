@@ -473,7 +473,7 @@ namespace Hospital.ManagerImplementation
                 return;
             }
 
-            _renovationService.Create(id, startDate, endDate, roomId);
+            _renovationService.CreateSimpleRenovation(id, startDate, endDate, roomId);
         }
 
         private void LogOut()
