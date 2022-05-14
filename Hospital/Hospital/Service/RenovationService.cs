@@ -12,14 +12,16 @@ namespace Hospital.Service
     {
         private RenovationRepository _renovationRepository;
         private RoomService _roomService;
+        private AppointmentService _appointmentService;
         private List<Renovation> _allRenovations;
 
         public List<Renovation> AllRenovations { get { return _allRenovations; } }
 
-        public RenovationService(RoomService roomService) 
+        RenovationService(RoomService roomService, AppointmentService appointmentService) 
         {
             this._renovationRepository = new RenovationRepository();
             this._roomService = roomService;
+            this._appointmentService = appointmentService;
             this._allRenovations = _renovationRepository.Load();
         }
 
@@ -45,7 +47,8 @@ namespace Hospital.Service
 
         public bool Create(string id, DateTime startDate, DateTime endDate, string roomId)
         {
-            if (IdExists(id) || endDate < startDate || !_roomService.IdExists(roomId) || ActiveRenovationExists(roomId))
+            if (IdExists(id) || endDate < startDate || !_roomService.IdExists(roomId) || ActiveRenovationExists(roomId) 
+                || _appointmentService.OverlapingAppointmentExists(startDate, endDate, roomId))
                 return false;
             Renovation renovation = new Renovation(id, startDate, endDate, roomId, true);
             _allRenovations.Add(renovation);

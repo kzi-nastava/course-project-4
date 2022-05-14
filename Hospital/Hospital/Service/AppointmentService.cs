@@ -320,5 +320,20 @@ namespace Hospital.Service
             Console.Write(String.Format("{0,3}|{1,10}|{2,10}|{3,10}|{4,10}|{5,10}|{6,10}|{7,10}",
                 "Br.", "Doktor", "Datum", "Pocetak", "Kraj", "Soba", "Tip", "Stanje"));
         }
+
+        public bool IntervalsOverlap(DateTime firstStart, DateTime firstEnd, DateTime secondStart, DateTime secondEnd)
+        {
+            return firstStart <= secondEnd && secondStart <= firstEnd;
+        }
+
+        public bool OverlapingAppointmentExists(DateTime start, DateTime end, string roomId)
+        {
+            foreach (Appointment appointment in _appointments)
+            {
+                if (appointment.RoomNumber.Equals(roomId) && IntervalsOverlap(start, end, appointment.StartTime, appointment.EndTime))
+                    return true;
+            }
+            return false;
+        }
     }
 }
