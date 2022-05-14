@@ -65,7 +65,7 @@ namespace Hospital.Model
             return this._id + "," + this._patientEmail + "," + this._doctorEmail + "," + 
                 this.DateAppointment.ToString("MM/dd/yyyy") + "," + this._startTime.ToString("HH:mm") + "," + 
                 this._endTime.ToString("HH:mm") + "," + (int)this.AppointmentState
-                + "," + this._roomNumber + "," + (int)this.TypeOfTerm + "," + "false";
+                + "," + this._roomNumber + "," + (int)this.TypeOfTerm + "," + "False";
         }
 
         public string DisplayOfPatientAppointment()
