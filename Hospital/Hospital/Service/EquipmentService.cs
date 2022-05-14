@@ -116,5 +116,15 @@ namespace Hospital.Service
             }
             return answer;
         }
+
+        public void ChangeRoom(string roomBefore, string roomAfter)
+        {
+            foreach (Equipment equipment in _allEquipment)
+            {
+                if (equipment.RoomId.Equals(roomBefore))
+                    equipment.RoomId = roomAfter;
+            }
+            _equipmentRepository.Save(_allEquipment);
+        }
     }
 }

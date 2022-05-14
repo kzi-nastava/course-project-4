@@ -26,7 +26,7 @@ namespace Hospital.Model
         public string Name { get { return _name; } }
         public Type EquipmentType { get { return _type; } }
         public int Quantity { get { return _quantity; } }
-        public string RoomId { get { return _roomId; } }
+        public string RoomId { get { return _roomId; } set { _roomId = value; } }
 
         public string TypeDescription
         {
