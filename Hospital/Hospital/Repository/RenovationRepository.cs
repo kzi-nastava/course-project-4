@@ -61,7 +61,7 @@ namespace Hospital.Repository
 
                 lines[i] = renovation.Id + "," + renovation.StartDate.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture) + ","
                     + renovation.EndDate.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture) + "," + renovation.RoomId + ","
-                    + renovation.IsActive.ToString() + "," + renovation.RenovationType.ToString() + ",";
+                    + renovation.IsActive.ToString() + "," + (int)renovation.RenovationType + ",";
 
                 if (renovation.RenovationType == Renovation.Type.MergeRenovation)
                     lines[i] += ((MergeRenovation)renovation).OtherRoomId;
