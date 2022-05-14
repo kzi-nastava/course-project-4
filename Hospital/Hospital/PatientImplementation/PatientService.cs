@@ -232,12 +232,13 @@ namespace Hospital.PatientImplementation
                     Appointment newAppointment;
                     DateTime appointmentDate = DateTime.ParseExact(inputValues[1], "MM/dd/yyyy", CultureInfo.InvariantCulture);
                     DateTime startTime = DateTime.ParseExact(inputValues[2], "HH:mm", CultureInfo.InvariantCulture);
+                    DateTime appointmentEndTime = startTime.AddMinutes(15);
 
                     if ((appointmentForUpdate.DateAppointment - DateTime.Now).TotalDays <= 2)
                     {
                         appointmentForUpdate.AppointmentState = Appointment.State.UpdateRequest;
                         newAppointment = new Appointment(id, this._currentRegisteredUser.Email, doctorEmail, appointmentDate,
-                        appointmentStartTime, appointmentEndTime, Appointment.State.UpdateRequest, Int32.Parse(fields[7]),
+                        startTime, appointmentEndTime, Appointment.State.UpdateRequest, Int32.Parse(fields[7]),
                         Appointment.Type.Examination, false, false);
 
 

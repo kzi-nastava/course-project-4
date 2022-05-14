@@ -494,7 +494,7 @@ namespace Hospital.SecretaryImplementation
 
 		public void UrgentSchedule()
 		{
-			User patient = SelectPatient(_patients);
+			User patient = SelectPatient(FilterActivePatients());
 			DoctorUser.Speciality speciality = SelectSpeciality();
 			Console.WriteLine("\nTip:\n1.Pregled\n2.Operacija");
 			string indexInput;
