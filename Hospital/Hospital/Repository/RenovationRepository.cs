@@ -31,8 +31,19 @@ namespace Hospital.Repository
                     DateTime endDate = DateTime.ParseExact(fields[2], "MM/dd/yyyy", CultureInfo.InvariantCulture);
                     string roomId = fields[3];
                     bool active = bool.Parse(fields[4]);
+                    Renovation.Type type = (Renovation.Type)int.Parse(fields[5]);
 
-                    Renovation renovation = new Renovation(id, startDate, endDate, roomId, active);
+                    Renovation renovation;
+
+                    if (type == Renovation.Type.MergeRenovation)
+                    {
+                        string otherRoomId = fields[6];
+                        renovation = new MergeRenovation(id, startDate, endDate, roomId, active, otherRoomId);
+                    }
+                    else
+                    {
+                        renovation = new Renovation(id, startDate, endDate, roomId, active, type);
+                    }
                     allRenovations.Add(renovation);
                 }
             }
@@ -47,9 +58,15 @@ namespace Hospital.Repository
             for (int i = 0; i < lines.Length; i++)
             {
                 Renovation renovation = allRenovations[i];
+
                 lines[i] = renovation.Id + "," + renovation.StartDate.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture) + ","
                     + renovation.EndDate.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture) + "," + renovation.RoomId + ","
-                    + renovation.IsActive.ToString();
+                    + renovation.IsActive.ToString() + "," + (int)renovation.RenovationType + ",";
+
+                if (renovation.RenovationType == Renovation.Type.MergeRenovation)
+                    lines[i] += ((MergeRenovation)renovation).OtherRoomId;
+                else
+                    lines[i] += "null";
             }
 
             File.WriteAllLines(s_filePath, lines);

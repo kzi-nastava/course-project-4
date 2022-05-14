@@ -40,7 +40,7 @@ namespace Hospital.Service
         {
             if (IdExists(id))
                 return false;
-            Room room = new Room(id, name, type);
+            Room room = new Room(id, name, type, false);
             _allRooms.Add(room);
             _roomRepository.Save(_allRooms);
             return true;
@@ -59,7 +59,11 @@ namespace Hospital.Service
         {
             if (!IdExists(id))
                 return false;
-            _allRooms.Remove(GetRoomById(id));
+            foreach (Room room in _allRooms)
+            {
+                if (room.Id.Equals(id))
+                    room.IsDeleted = true;
+            }
             _roomRepository.Save(_allRooms);
             return true;
         }
