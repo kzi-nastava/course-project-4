@@ -16,13 +16,17 @@ namespace Hospital.ManagerImplementation
         private RoomService _roomService;
         private EquipmentService _equipmentService;
         private EquipmentMovingService _equipmentMovingService;
+        private AppointmentService _appointmentService;
+        private RenovationService _renovationService;
 
         public Manager(User currentRegisteredManager)
         {
             this._currentRegisteredManager = currentRegisteredManager;
-            _roomService = new RoomService();
-            _equipmentService = new EquipmentService(_roomService);
-            _equipmentMovingService = new EquipmentMovingService(_equipmentService, _roomService);
+            this._roomService = new RoomService();
+            this._equipmentService = new EquipmentService(_roomService);
+            this._equipmentMovingService = new EquipmentMovingService(_equipmentService, _roomService);
+            this._appointmentService = new AppointmentService();
+            this._renovationService = new RenovationService(_roomService, _appointmentService);
         }
 
         public void ManagerMenu() 
@@ -40,7 +44,8 @@ namespace Hospital.ManagerImplementation
                 Console.WriteLine("6. Filtriranje opreme");
                 Console.WriteLine("7. Zakazi premestanje opreme");
                 Console.WriteLine("8. Pokreni premestanje opreme");
-                Console.WriteLine("9. Odjava");
+                Console.WriteLine("9. Zakazivanje renoviranja");
+                Console.WriteLine("10. Odjava");
                 Console.Write(">> ");
                 choice = Console.ReadLine();
 
@@ -61,6 +66,8 @@ namespace Hospital.ManagerImplementation
                 else if (choice.Equals("8"))
                     this.MoveEquipment();
                 else if (choice.Equals("9"))
+                    this.ScheduleRenovations();
+                else if (choice.Equals("10"))
                     this.LogOut();
             } while (true);
         }
@@ -404,6 +411,69 @@ namespace Hospital.ManagerImplementation
         private void MoveEquipment()
         {
             _equipmentMovingService.MoveEquipment();
+        }
+
+        private void ScheduleRenovations()
+        {
+            Console.WriteLine("Unesite podatke o renoviranju");
+
+            Console.Write("Unesite identifikator: ");
+            string id = Console.ReadLine();
+            while (_renovationService.IdExists(id))
+            {
+                Console.Write("Identifikator vec postoji. Ponovite unos: ");
+                id = Console.ReadLine();
+            }
+
+            Console.Write("Unesite broj sobe: ");
+            string roomId = Console.ReadLine();
+            while (!_roomService.IdExists(roomId) || _renovationService.ActiveRenovationExists(roomId))
+            {
+                if (!_roomService.IdExists(roomId))
+                    Console.Write("Identifikator ne postoji. Ponovite unos: ");
+                else
+                    Console.Write("Renoviranje za trazenu sobu je vec zakazano. Ponovite unos: ");
+                roomId = Console.ReadLine();
+            }
+
+            Console.Write("Unesite datum pocetka renoviranja (u formatu MM/dd/yyyy): ");
+            bool isDateValid = false;
+            DateTime startDate = DateTime.Now;
+            do
+            {
+                string startDateStr = Console.ReadLine();
+                isDateValid = DateTime.TryParseExact(startDateStr, "MM/dd/yyyy", CultureInfo.InvariantCulture,
+                    DateTimeStyles.None, out startDate);
+                if (!isDateValid)
+                    Console.Write("Datum nije ispravan. Ponovite unos: ");
+            } while (!isDateValid);
+
+            Console.Write("Unesite datum kraja renoviranja (u formatu MM/dd/yyyy): ");
+            isDateValid = false;
+            DateTime endDate = DateTime.Now;
+            do
+            {
+                string endDateStr = Console.ReadLine();
+                isDateValid = DateTime.TryParseExact(endDateStr, "MM/dd/yyyy", CultureInfo.InvariantCulture,
+                    DateTimeStyles.None, out endDate);
+                if (!isDateValid)
+                    Console.Write("Datum nije ispravan. Ponovite unos: ");
+            } while (!isDateValid);
+
+            if (endDate < startDate)
+            {
+                Console.WriteLine("Datum kraja ne moze biti pre datuma pocetka!");
+                return;
+            }
+
+            if (_appointmentService.OverlapingAppointmentExists(startDate, endDate, roomId))
+            {
+                Console.WriteLine("Zakazani pregled ili operacija se poklapa sa vremenom renoviranja.");
+                Console.WriteLine("Zakazivanje nije uspelo!");
+                return;
+            }
+
+            _renovationService.Create(id, startDate, endDate, roomId);
         }
 
         private void LogOut()

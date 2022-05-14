@@ -9,7 +9,7 @@ using Microsoft.VisualBasic.FileIO;
 
 namespace Hospital.Repository
 {
-    class AppointmentRepository
+    public class AppointmentRepository
     {
         public List<Appointment> Load()
         {
