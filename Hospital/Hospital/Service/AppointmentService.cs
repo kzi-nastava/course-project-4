@@ -14,6 +14,7 @@ namespace Hospital.Service
     {
         private AppointmentRepository _appointmentRepository;
         private UserService _userService;
+        private NotificationService _notificationService;
         private List<Appointment> _appointments;
         private List<User> _users;
         private RoomRepository _roomRepository;
@@ -26,6 +27,7 @@ namespace Hospital.Service
             _appointmentRepository = new AppointmentRepository();
             _userService = new UserService();
             _roomRepository = new RoomRepository();
+            _notificationService = new NotificationService();
             _appointments = _appointmentRepository.Load();
             _users = _userService.Users;
             _rooms = _roomRepository.Load();
@@ -61,10 +63,39 @@ namespace Hospital.Service
             return false;
 		}
 
+  //      public List<Appointment> FilterNonUrgentAppointments()
+		//{
+  //          List<Appointment> appointments = new List<Appointment>();
+  //          foreach(Appointment appointment in _appointments)
+		//	{
+  //              Console.WriteLine(appointment.DateAppointment);
+		//		if (!appointment.Urgent && appointment.DateAppointment.Date >= DateTime.Now.Date)
+		//		{
+  //                  if (appointment.DateAppointment.Date == DateTime.Now.Date)
+  //                      if (appointment.StartTime.TimeOfDay < DateTime.Now.TimeOfDay)
+  //                          continue;
+  //                  appointments.Add(appointment);
+  //                  Console.WriteLine(appointment);
+		//		}
+		//	}
+  //          return appointments;
+		//}
+
+  //      public void FindLeastUrgentAppointment()
+		//{
+  //          List<Appointment> nonUrgentAppointments = FilterNonUrgentAppointments();
+  //          nonUrgentAppointments.Sort(delegate (Appointment x, Appointment y) { return x.StartTime.CompareTo(y.StartTime); });
+  //          foreach(Appointment app in nonUrgentAppointments)
+		//	{
+                
+  //              Console.WriteLine(app.PatientEmail + " " + app.DoctorEmail + " " +app.DateAppointment + " " + app.StartTime);
+		//	}
+		//}
+
         public void ScheduleUrgently(User patient, DoctorUser.Speciality speciality, int appointmentType)
 		{
             List<User> capableDoctors = _userService.FilterDoctors(speciality);
-            DateTime currentTime = DateTime.Now;
+            DateTime currentTime = DateTime.Now.AddMinutes(15);
             DateTime gapTime = DateTime.Now.AddHours(2);
 
             while(currentTime <= gapTime)
@@ -85,7 +116,12 @@ namespace Hospital.Service
                         _appointments.Add(newAppointment);
                         this.UpdateFile();
                         Console.WriteLine("\nUspesno obavljeno hitno zakazivanje\nSlanje obavestenja izabranom lekaru...");
-                        //TODO OBAVESTENJE
+                        
+                        //TODO citanje notifikacije
+                        Notification notification = new Notification(_notificationService.GetNewNotificationId(), doctor.Email,
+                            "Imate hitno zakazan termin u " + currentTime.ToString("HH:mm"), false);
+                        _notificationService.Notifications.Add(notification);
+                        _notificationService.UpdateFile();
                         return;
 					}
 				}

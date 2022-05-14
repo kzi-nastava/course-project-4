@@ -46,6 +46,7 @@
     <Compile Include="Model\Login.cs" />
     <Compile Include="Model\HealthRecord.cs" />
     <Compile Include="Model\MedicalRecord.cs" />
+    <Compile Include="Model\Notification.cs" />
     <Compile Include="Model\Prescription.cs" />
     <Compile Include="Model\Referral.cs" />
     <Compile Include="Model\Renovation.cs" />
@@ -62,6 +63,7 @@
     <Compile Include="Repository\EquipmentMovingRepository.cs" />
     <Compile Include="Repository\IngredientRepository.cs" />
     <Compile Include="Repository\MedicalRecordRepository.cs" />
+    <Compile Include="Repository\NotificationRepository.cs" />
     <Compile Include="Repository\PrescriptionRepository.cs" />
     <Compile Include="Repository\ReferralRepository.cs" />
     <Compile Include="Repository\RenovationRepository.cs" />
@@ -77,6 +79,7 @@
     <Compile Include="Service\EquipmentMovingService.cs" />
     <Compile Include="Service\IngredientService.cs" />
     <Compile Include="Service\MedicalRecordService.cs" />
+    <Compile Include="Service\NotificationService.cs" />
     <Compile Include="Service\PrescriptionService.cs" />
     <Compile Include="Service\ReferralService.cs" />
     <Compile Include="Service\RenovationService.cs" />
