@@ -237,8 +237,9 @@ namespace Hospital.PatientImplementation
                     {
                         appointmentForUpdate.AppointmentState = Appointment.State.UpdateRequest;
                         newAppointment = new Appointment(id, this._currentRegisteredUser.Email, doctorEmail, appointmentDate,
-                        startTime, startTime.AddMinutes(15), Appointment.State.UpdateRequest, Int32.Parse(fields[7]),
-                        Appointment.Type.Examination, false);
+                        appointmentStartTime, appointmentEndTime, Appointment.State.UpdateRequest, Int32.Parse(fields[7]),
+                        Appointment.Type.Examination, false, false);
+
 
                         this._requestService.Requests.Add(newAppointment);
                         this._requestService.UpdateFile();

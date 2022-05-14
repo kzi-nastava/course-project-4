@@ -27,5 +27,6 @@ namespace Hospital.Model
         }
 
         public Speciality SpecialityDoctor { get { return _speciality; }set { _speciality = value; } }
+
     }
 }

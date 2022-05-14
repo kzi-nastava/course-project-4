@@ -36,6 +36,65 @@ namespace Hospital.Service
             return this._appointments.Count + 1;
         }
 
+        public bool IsDoctorFree(User doctor, DateTime startTime)
+		{
+            foreach(Appointment appointment in _appointments)
+			{
+                if (appointment.DoctorEmail == doctor.Email && appointment.DateAppointment.Date == DateTime.Now.Date
+                    && CheckOverlapTime(appointment, startTime))
+                    return false;
+			}
+            return true;
+		}
+
+        public bool CheckOverlapTime(Appointment appointment, DateTime startTime)
+		{
+            DateTime endTime = startTime.AddMinutes(60);
+            if ((startTime <= appointment.StartTime) && (appointment.EndTime <= endTime))
+                return true;
+            else if ((appointment.StartTime <= endTime) && (endTime <= appointment.EndTime))
+                return true;
+            else if ((appointment.StartTime <= startTime) && (startTime <= appointment.EndTime))
+                return true;
+            else if ((appointment.StartTime <= startTime) && (endTime <= appointment.EndTime))
+                return true;
+            return false;
+		}
+
+        public void ScheduleUrgently(User patient, DoctorUser.Speciality speciality, int appointmentType)
+		{
+            List<User> capableDoctors = _userService.FilterDoctors(speciality);
+            DateTime currentTime = DateTime.Now;
+            DateTime gapTime = DateTime.Now.AddHours(2);
+
+            while(currentTime <= gapTime)
+			{
+                foreach(User doctor in capableDoctors)
+				{
+                    if(IsDoctorFree(doctor, currentTime))
+					{
+                        Room freeRoom = FindFreeRoom(currentTime, currentTime);
+                        DateTime endTime;
+                        if (appointmentType == 1)
+                            endTime = currentTime.AddMinutes(15);
+                        else
+                            endTime = currentTime.AddMinutes(60);
+                        Appointment newAppointment = new Appointment(GetNewAppointmentId().ToString(), patient.Email, doctor.Email,
+                            currentTime, currentTime, endTime, Appointment.State.Created,
+                            Int32.Parse(freeRoom.Id), (Appointment.Type)appointmentType, false, true);
+                        _appointments.Add(newAppointment);
+                        this.UpdateFile();
+                        Console.WriteLine("\nUspesno obavljeno hitno zakazivanje\nSlanje obavestenja izabranom lekaru...");
+                        //TODO OBAVESTENJE
+                        return;
+					}
+				}
+                currentTime = currentTime.AddMinutes(15);
+			}
+            //TODO  SVE ZAUZETO
+
+		}
+
         public User FindFreeDoctor(DoctorUser.Speciality speciality, Appointment newAppointment)
 		{
             List<User> allDoctors = _userService.FilterDoctors(speciality);
@@ -203,7 +262,7 @@ namespace Hospital.Service
                 {
 
                     lines[i] = id + "," + fields[1] + "," + fields[2] + "," + fields[3] + "," + fields[4] + "," + fields[5]
-                        + "," + (int)Appointment.State.Deleted + "," + fields[7] + "," + fields[8] + "," + fields[9];
+                        + "," + (int)Appointment.State.Deleted + "," + fields[7] + "," + fields[8] + "," + fields[9]+","+fields[10];
                     Console.WriteLine("Uspesno ste obrisali termin!");
                     
                 }
@@ -263,7 +322,7 @@ namespace Hospital.Service
             {
                 line = appointment.AppointmentId + "," + appointment.PatientEmail + "," + appointment.DoctorEmail + "," + appointment.DateAppointment.ToString("MM/dd/yyyy") +
                     "," + appointment.StartTime.ToString("HH:mm") + "," + appointment.EndTime.ToString("HH:mm") + "," +
-                    (int)appointment.AppointmentState + "," + appointment.RoomNumber + "," + (int)appointment.TypeOfTerm + "," +  appointment.AppointmentPerformed;
+                    (int)appointment.AppointmentState + "," + appointment.RoomNumber + "," + (int)appointment.TypeOfTerm + "," +  appointment.AppointmentPerformed + "," + appointment.Urgent;
                 lines.Add(line);
             }
             File.WriteAllLines(filePath, lines.ToArray());
@@ -283,7 +342,7 @@ namespace Hospital.Service
                 {
 
                     lines[i] = id + "," + fields[1] + "," + fields[2] + "," + fields[3] + "," + fields[4] + "," + fields[5]
-                        + "," + (int)Appointment.State.Updated + "," + fields[7] + "," + fields[8] + ",true";
+                        + "," + (int)Appointment.State.Updated + "," + fields[7] + "," + fields[8] + ",true,"+ fields[10];
                 }
             }
             // saving changes
