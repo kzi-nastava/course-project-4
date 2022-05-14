@@ -47,7 +47,7 @@ namespace Hospital.Service
             return false;
         }
 
-        public bool Create(string id, DateTime startDate, DateTime endDate, string roomId, Renovation.Type type)
+        public bool CreateRenovation(string id, DateTime startDate, DateTime endDate, string roomId, Renovation.Type type)
         {
             if (IdExists(id) || endDate < startDate || !_roomService.IdExists(roomId) || ActiveRenovationExists(roomId)
                 || _appointmentService.OverlapingAppointmentExists(startDate, endDate, roomId))
@@ -60,12 +60,12 @@ namespace Hospital.Service
 
         public bool CreateSimpleRenovation(string id, DateTime startDate, DateTime endDate, string roomId)
         {
-            return Create(id, startDate, endDate, roomId, Renovation.Type.SimpleRenovation);
+            return CreateRenovation(id, startDate, endDate, roomId, Renovation.Type.SimpleRenovation);
         }
 
         public bool CreateSplitRenovation(string id, DateTime startDate, DateTime endDate, string roomId)
         {
-            return Create(id, startDate, endDate, roomId, Renovation.Type.SplitRenovation);
+            return CreateRenovation(id, startDate, endDate, roomId, Renovation.Type.SplitRenovation);
         }
 
         public bool CreateMergeRenovation(string id, DateTime startDate, DateTime endDate, string roomId, string otherRoomId)
@@ -81,6 +81,32 @@ namespace Hospital.Service
             return true;
         }
 
+        private void SplitRoom(string roomId)
+        {
+            Room roomBefore = _roomService.GetRoomById(roomId);
+            _equipmentService.ChangeRoom(roomBefore.Id, roomBefore.Id + "_1");
+
+            _roomService.DeleteRoom(roomBefore.Id);
+            _roomService.CreateRoom(roomBefore.Id + "_1", roomBefore.Name + " 1", roomBefore.RoomType);
+            _roomService.CreateRoom(roomBefore.Id + "_2", roomBefore.Name + " 2", roomBefore.RoomType);
+        }
+
+        private void MergeRooms(string roomId, string otherRoomId)
+        {
+            Room room1 = _roomService.GetRoomById(roomId);
+            Room room2 = _roomService.GetRoomById(otherRoomId);
+
+            string newId = room1.Id + "+" + room2.Id;
+            string newName = room1.Name + " + " + room2.Name;
+
+            _equipmentService.ChangeRoom(room1.Id, newId);
+            _equipmentService.ChangeRoom(room2.Id, newId);
+
+            _roomService.DeleteRoom(room1.Id);
+            _roomService.DeleteRoom(room2.Id);
+            _roomService.CreateRoom(newId, newName, room1.RoomType);
+        }
+
         public void Renovate()
         {
             foreach (Renovation renovation in _allRenovations)
@@ -91,30 +117,9 @@ namespace Hospital.Service
                 renovation.IsActive = false;
 
                 if (renovation.RenovationType == Renovation.Type.SplitRenovation)
-                {
-                    Room roomBefore = _roomService.GetRoomById(renovation.RoomId);
-                    _equipmentService.ChangeRoom(roomBefore.Id, roomBefore.Id + "_1");
-                    
-                    _roomService.DeleteRoom(roomBefore.Id);
-                    _roomService.CreateRoom(roomBefore.Id + "_1", roomBefore.Name + " 1", roomBefore.RoomType);
-                    _roomService.CreateRoom(roomBefore.Id + "_2", roomBefore.Name + " 2", roomBefore.RoomType);
-                }
+                    SplitRoom(renovation.RoomId);
                 else if (renovation.RenovationType == Renovation.Type.MergeRenovation)
-                {
-                    MergeRenovation mergeRenovation = (MergeRenovation)renovation;
-                    Room room1 = _roomService.GetRoomById(mergeRenovation.RoomId);
-                    Room room2 = _roomService.GetRoomById(mergeRenovation.OtherRoomId);
-
-                    string newId = room1.Id + "+" + room2.Id;
-                    string newName = room1.Name + " + " + room2.Name;
-
-                    _equipmentService.ChangeRoom(room1.Id, newId);
-                    _equipmentService.ChangeRoom(room2.Id, newId);
-
-                    _roomService.DeleteRoom(room1.Id);
-                    _roomService.DeleteRoom(room2.Id);
-                    _roomService.CreateRoom(newId, newName, room1.RoomType);
-                }
+                    MergeRooms(renovation.RoomId, ((MergeRenovation)renovation).OtherRoomId);
             }
             _renovationRepository.Save(_allRenovations);
         }

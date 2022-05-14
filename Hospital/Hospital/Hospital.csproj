@@ -37,7 +37,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.cs" />
+    <Compile Include="ManagerImplementation\EquipmentView.cs" />
     <Compile Include="ManagerImplementation\Manager.cs" />
+    <Compile Include="ManagerImplementation\RenovationView.cs" />
+    <Compile Include="ManagerImplementation\RoomView.cs" />
     <Compile Include="Model\DoctorUser.cs" />
     <Compile Include="Model\Drug.cs" />
     <Compile Include="Model\Equipment.cs" />
