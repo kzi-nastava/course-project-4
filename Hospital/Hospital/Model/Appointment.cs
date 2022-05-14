@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Hospital.Model
 {
-    class Appointment
+    public class Appointment
     {
         public enum State
         {

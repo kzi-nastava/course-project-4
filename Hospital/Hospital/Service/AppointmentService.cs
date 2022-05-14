@@ -10,7 +10,7 @@ using Hospital.Repository;
 
 namespace Hospital.Service
 {
-    class AppointmentService
+    public class AppointmentService
     {
         private AppointmentRepository _appointmentRepository;
         private UserRepository _userRepository;

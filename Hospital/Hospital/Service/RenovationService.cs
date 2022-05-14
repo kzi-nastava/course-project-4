@@ -17,7 +17,7 @@ namespace Hospital.Service
 
         public List<Renovation> AllRenovations { get { return _allRenovations; } }
 
-        RenovationService(RoomService roomService, AppointmentService appointmentService) 
+        public RenovationService(RoomService roomService, AppointmentService appointmentService) 
         {
             this._renovationRepository = new RenovationRepository();
             this._roomService = roomService;
