@@ -71,5 +71,16 @@ namespace Hospital.Service
             }
             Console.WriteLine("Uspesno ste izmenili zdravstveni karton!");
         }
+
+        public void DisplayOfPatientsHealthRecord(string patientEmail)
+        {
+            foreach (HealthRecord healthRecord in this._healthRecords)
+            {
+                if (healthRecord.EmailPatient.Equals(patientEmail))
+                {
+                    Console.WriteLine(healthRecord.ToString());
+                }
+            }
+        }
     }
 }
