@@ -10,9 +10,9 @@ namespace Hospital.Model
     {
         public enum Status
         {
-            Waiting = 0,
-            Accepted,
-            Rejected
+            Waiting = 1,
+            Accepted = 2,
+            Rejected = 3
 
         }
         private string _id;
