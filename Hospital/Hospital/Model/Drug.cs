@@ -8,16 +8,11 @@ namespace Hospital.Model
 {
     class Drug
     {
-        public enum StateDrug
-        {
-            Accepted = 1,
-            Rejected = 2,
-            InProcess = 3
-        }
+       
         private string _idDrug;
         private string _drugName;
         private List<Ingredient> _ingredients;
-        private StateDrug _stateDrug;
+      
 
 
         public string IdDrug { get { return _idDrug; } set { _idDrug = value; } }
@@ -26,17 +21,25 @@ namespace Hospital.Model
 
         public List<Ingredient> Ingredients { get { return _ingredients; } set { _ingredients = value; } }
 
-        public StateDrug DrugState { get { return _stateDrug; } set { _stateDrug = value; } }
-        public Drug(string idDrug, string drugName, List<Ingredient> ingredients, StateDrug stateDrug)
+      
+        public Drug(string idDrug, string drugName, List<Ingredient> ingredients)
         {
             this._idDrug = idDrug;
             this._drugName = drugName;
             this._ingredients = ingredients;
-            this._stateDrug = stateDrug;
         }
 
-      
-       
+        public override string ToString()
+        {
+            string ingredients = "";
+            foreach (Ingredient ingredient in this._ingredients)
+            {
+                ingredients += ingredient.Id + ";";
+            }
+            return this._idDrug + "," + this._drugName + "," + ingredients.Remove(ingredients.Length - 1);
+        }
+
+
     }
 
 }
