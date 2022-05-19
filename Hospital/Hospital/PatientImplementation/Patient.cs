@@ -31,7 +31,7 @@ namespace Hospital.PatientImplementation
             this._patientService = patientService;
             this._patientScheduling = patientScheduling;
             this._patientAnamnesis = patientAnamnesis;
-            patientService.RefreshPatientAppointments(this);
+            this._currentAppointments = patientService.RefreshPatientAppointments();
         }
 
         // methods
@@ -97,7 +97,7 @@ namespace Hospital.PatientImplementation
                 return;
 
             _patientService.ReadFileForDeleteAppointment(appointmentForDelete);
-            _patientService.RefreshPatientAppointments(this);
+            this._currentAppointments = _patientService.RefreshPatientAppointments();
             _patientService.AppendToActionFile("delete");
             this.AntiTrolMechanism();
         }
@@ -118,7 +118,7 @@ namespace Hospital.PatientImplementation
             }
 
             _patientService.ReadFileForUpdateAppointment(appointmentForUpdate, inputValues);
-            _patientService.RefreshPatientAppointments(this);
+            this._currentAppointments = _patientService.RefreshPatientAppointments();
             _patientService.AppendToActionFile("update");
             this.AntiTrolMechanism();
 
@@ -139,7 +139,7 @@ namespace Hospital.PatientImplementation
             Console.WriteLine("Uspesno ste kreirali nov pregled!");
 
             _patientService.AppointmentService.AppendNewAppointmentInFile(newAppointment);
-            _patientService.RefreshPatientAppointments(this);
+            this._currentAppointments = _patientService.RefreshPatientAppointments();
             _patientService.AppendToActionFile("create");
             this.AntiTrolMechanism(); 
         }
@@ -194,7 +194,7 @@ namespace Hospital.PatientImplementation
                 return;
 
             _patientService.AppointmentService.AppendNewAppointmentInFile(newAppointment);
-            _patientService.RefreshPatientAppointments(this);
+            this._currentAppointments = _patientService.RefreshPatientAppointments();
             _patientService.AppendToActionFile("create");
             this.AntiTrolMechanism();
         }

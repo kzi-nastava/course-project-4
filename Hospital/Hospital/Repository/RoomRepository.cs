@@ -28,8 +28,9 @@ namespace Hospital.Repository
                     string id = fields[0];
                     string name = fields[1];
                     Room.Type type = (Room.Type)int.Parse(fields[2]);
+                    bool deleted = bool.Parse(fields[3]);
                     
-                    Room room = new Room(id, name, type);
+                    Room room = new Room(id, name, type, deleted);
                     allRooms.Add(room);
                 }
             }
@@ -44,7 +45,7 @@ namespace Hospital.Repository
             for (int i = 0; i < lines.Length; i++)
             {
                 Room room = allRooms[i];
-                lines[i] = room.Id + "," + room.Name + "," + ((int)room.RoomType).ToString();
+                lines[i] = room.Id + "," + room.Name + "," + ((int)room.RoomType).ToString() + "," + room.IsDeleted;
             }
             
             File.WriteAllLines(s_filePath, lines);

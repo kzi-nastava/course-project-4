@@ -133,6 +133,24 @@ namespace Hospital.Service
             UpdateFile();
 		}
 
+        public List<User> FilterDoctors(DoctorUser.Speciality speciality)
+		{
+            List<User> allDoctors = new List<User>();
+            foreach(User user in _users)
+			{
+                if(user.UserRole == User.Role.Doctor)
+				{
+                    DoctorUser doctor = (DoctorUser)user;
+                    if(doctor.SpecialityDoctor == speciality)
+					{
+                        allDoctors.Add(user);
+					}
+                    
+				}
+			}
+            return allDoctors;
+		}
+
         public UserService()
         {
             _userRepository = new UserRepository();

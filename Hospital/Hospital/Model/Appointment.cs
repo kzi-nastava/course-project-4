@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Hospital.Model
 {
-    class Appointment
+    public class Appointment
     {
         public enum State
         {
@@ -32,6 +32,7 @@ namespace Hospital.Model
         private int _roomNumber;
         private Type _typeOfTerm;
         bool _appointmentPerformed;
+        bool _urgent;
 
         public string AppointmentId { get { return _id; } }
         public string PatientEmail { get { return _patientEmail;  } set { this._patientEmail = value; } }
@@ -43,10 +44,11 @@ namespace Hospital.Model
         public int RoomNumber { get { return _roomNumber; } set { _roomNumber = value; } }
         public Type TypeOfTerm { get { return _typeOfTerm;} }
         public bool AppointmentPerformed { get { return _appointmentPerformed; } set { _appointmentPerformed = value; } }
+        public bool Urgent { get { return _urgent; } }
         
 
         public Appointment(string id, string patientEmail, string doctorEmail,
-        DateTime dateAppointment, DateTime start, DateTime end, State state, int roomNumber, Type term, bool appointment)
+        DateTime dateAppointment, DateTime start, DateTime end, State state, int roomNumber, Type term, bool appointment, bool urgent)
         {
             this._id = id;
             this._patientEmail = patientEmail;
@@ -58,6 +60,7 @@ namespace Hospital.Model
             this._roomNumber = roomNumber;
             this._typeOfTerm = term;
             this._appointmentPerformed = appointment;
+            this._urgent = urgent;
         }
 
         public override string ToString()
@@ -65,7 +68,8 @@ namespace Hospital.Model
             return this._id + "," + this._patientEmail + "," + this._doctorEmail + "," + 
                 this.DateAppointment.ToString("MM/dd/yyyy") + "," + this._startTime.ToString("HH:mm") + "," + 
                 this._endTime.ToString("HH:mm") + "," + (int)this.AppointmentState
-                + "," + this._roomNumber + "," + (int)this.TypeOfTerm + "," + "false";
+                + "," + this._roomNumber + "," + (int)this.TypeOfTerm + "," + this._appointmentPerformed + "," + this._urgent;
+
         }
 
         public string DisplayOfPatientAppointment()

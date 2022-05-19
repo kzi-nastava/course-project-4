@@ -27,6 +27,35 @@ namespace Hospital.Service
 			return this._referrals.Count + 1;
 		}
 
+		public string AppointmentType(Referral referral)
+		{
+			if (referral.TypeProp == Appointment.Type.Examination)
+			{
+				return "Pregled";
+			}
+			return "Operacija";
+		}
+
+		public string SpecialityToString(DoctorUser.Speciality speciality)
+		{
+			if(speciality == DoctorUser.Speciality.Cardiologist)
+			{
+				return "Kardiologija";
+			}else if(speciality == DoctorUser.Speciality.Neurologist)
+			{
+				return "Neurologija";
+			}else if(speciality == DoctorUser.Speciality.Pediatrician)
+			{
+				return "Pedijatrija";
+			}else if(speciality == DoctorUser.Speciality.Psychologist)
+			{
+				return "Psihologija";
+			}else if(speciality == DoctorUser.Speciality.General){
+				return "Opsta praksa";
+			}
+			return "Hirurgija";
+		}
+
 		public List<Referral> FilterUnused()
 		{
 			List<Referral> unusedReferrals = new List<Referral>();
