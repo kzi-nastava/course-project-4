@@ -37,9 +37,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.cs" />
+    <Compile Include="DoctorImplementation\DoctorIssuingPrescription.cs" />
+    <Compile Include="DoctorImplementation\DoctorPerformingAppointment.cs" />
+    <Compile Include="DoctorImplementation\DoctorReferral.cs" />
+    <Compile Include="DoctorImplementation\DoctorSchedule.cs" />
     <Compile Include="ManagerImplementation\Manager.cs" />
     <Compile Include="Model\DoctorUser.cs" />
     <Compile Include="Model\Drug.cs" />
+    <Compile Include="Model\DrugProposal.cs" />
     <Compile Include="Model\Equipment.cs" />
     <Compile Include="Model\EquipmentMoving.cs" />
     <Compile Include="Model\Ingredient.cs" />
@@ -57,6 +62,7 @@
     <Compile Include="PatientImplementation\PatientSchedulingAppointment.cs" />
     <Compile Include="PatientImplementation\PatientService.cs" />
     <Compile Include="PatientImplementation\Patient.cs" />
+    <Compile Include="Repository\DrugProposalRepository.cs" />
     <Compile Include="Repository\DrugRepository.cs" />
     <Compile Include="Repository\EquipmentMovingRepository.cs" />
     <Compile Include="Repository\IngredientRepository.cs" />
@@ -71,6 +77,7 @@
     <Compile Include="Repository\RoomRepository.cs" />
     <Compile Include="Repository\UserRepository.cs" />
     <Compile Include="SecretaryImplementation\Secretary.cs" />
+    <Compile Include="Service\DrugProposalService.cs" />
     <Compile Include="Service\DrugService.cs" />
     <Compile Include="Service\EquipmentMovingService.cs" />
     <Compile Include="Service\IngredientService.cs" />
