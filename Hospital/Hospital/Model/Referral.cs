@@ -32,7 +32,6 @@ namespace Hospital.Model
 		public string Patient { get { return this._patientEmail; } }
 
 		public string Doctor { get { return this._doctorEmail; }  }
-
 		public DoctorUser.Speciality DoctorSpeciality { get { return _speciality; } set { _speciality = value; } }
 
 		public Appointment.Type TypeProp { get { return this._typeOfAppointment; } }
