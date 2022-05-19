@@ -43,12 +43,11 @@ namespace Hospital.Model
         public override string ToString()
         {
             string ingredients = "";
-            foreach(Ingredient ingredient in this.Ingredients)
+            foreach(Ingredient ingredient in this._ingredients)
             {
                 ingredients += ingredient.Id + ";";
-            }
-            //dodati funkciju da ukloni ; sa kraja
-            return this._id + "*" + this._drugName + "*" + ingredients + "*" + (int)this._status + "*" + this._comment;
+            }         
+            return this._id + "*" + this._drugName + "*" + ingredients.Remove(ingredients.Length - 1) + "*" + (int)this.ProposalStatus + "*" + this._comment;
         }
 
     }

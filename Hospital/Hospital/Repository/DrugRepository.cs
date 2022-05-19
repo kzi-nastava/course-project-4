@@ -36,8 +36,8 @@ namespace Hospital.Repository
                     {
                         ingredients.Add(_ingredientService.Get(id));
                     }
-                    Drug.StateDrug state = (Drug.StateDrug)int.Parse(fields[3]);
-                    Drug newDrug = new Drug(idDrug, idName, ingredients, state);
+                    
+                    Drug newDrug = new Drug(idDrug, idName, ingredients);
                     allDrugs.Add(newDrug);
                 }
             }

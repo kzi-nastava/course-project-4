@@ -61,6 +61,10 @@ namespace Hospital.DoctorImplementation
                 }
                 else if (choice.Equals("7"))
                 {
+                    this.DrugManagement();
+                }
+                else if (choice.Equals("8"))
+                {
                     this.LogOut();
                 }
                 else
@@ -80,9 +84,16 @@ namespace Hospital.DoctorImplementation
             Console.WriteLine("4. Obrisi sopstveni pregled/operaciju");
             Console.WriteLine("5. Ispitivanje sopstvenog rasporeda");
             Console.WriteLine("6. Izvodjenje pregleda");
-            Console.WriteLine("7. Odjava");
+            Console.WriteLine("7. Upravljanje lekovima");
+            Console.WriteLine("8. Odjava");
             Console.Write(">> ");
 
+        }
+
+        private void DrugManagement()
+        {
+            DrugVerification drugVerification = new DrugVerification();
+            drugVerification.DisplayDrugsForVerification();
         }
         private void PerformingAppointment()
         {

@@ -41,6 +41,7 @@
     <Compile Include="DoctorImplementation\DoctorPerformingAppointment.cs" />
     <Compile Include="DoctorImplementation\DoctorReferral.cs" />
     <Compile Include="DoctorImplementation\DoctorSchedule.cs" />
+    <Compile Include="DoctorImplementation\DrugVerification.cs" />
     <Compile Include="ManagerImplementation\EquipmentView.cs" />
     <Compile Include="ManagerImplementation\Manager.cs" />
     <Compile Include="ManagerImplementation\RenovationView.cs" />
