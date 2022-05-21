@@ -9,7 +9,7 @@ using Microsoft.VisualBasic.FileIO;
 
 namespace Hospital.Repository
 {
-    class IngredientRepository
+    public class IngredientRepository
     {
         private static string s_filePath = @"..\..\Data\ingredients.csv";
 

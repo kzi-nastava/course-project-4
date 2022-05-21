@@ -8,11 +8,10 @@ using Hospital.Model;
 
 namespace Hospital.Service
 {
-    class IngredientService
+    public class IngredientService
     {
         private IngredientRepository _ingredientRepository;
         private List<Ingredient> _ingredients;
-
 
         public IngredientService()
         {
