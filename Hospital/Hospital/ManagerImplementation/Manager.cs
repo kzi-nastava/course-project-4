@@ -19,11 +19,13 @@ namespace Hospital.ManagerImplementation
         private AppointmentService _appointmentService;
         private RenovationService _renovationService;
         private IngredientService _ingredientService;
+        private DrugProposalService _drugProposalService;
 
         private RoomView _roomView;
         private EquipmentView _equipmentView;
         private RenovationView _renovationView;
         private IngredientView _ingredientView;
+        private DrugView _drugView;
 
         public Manager(User currentRegisteredManager)
         {
@@ -34,11 +36,13 @@ namespace Hospital.ManagerImplementation
             this._appointmentService = new AppointmentService();
             this._renovationService = new RenovationService(_roomService, _appointmentService, _equipmentService);
             this._ingredientService = new IngredientService();
+            this._drugProposalService = new DrugProposalService();
 
             this._roomView = new RoomView(_roomService);
             this._equipmentView = new EquipmentView(_roomService, _equipmentService, _equipmentMovingService);
             this._renovationView = new RenovationView(_roomService, _appointmentService, _renovationService);
             this._ingredientView = new IngredientView(_ingredientService);
+            this._drugView = new DrugView(_ingredientService, _drugProposalService);
         }
 
         public void ManagerMenu() 
@@ -56,7 +60,8 @@ namespace Hospital.ManagerImplementation
                 Console.WriteLine("6. Zakazivanje renoviranja");
                 Console.WriteLine("7. Izvrsi renoviranja");
                 Console.WriteLine("8. Upravljanje sastojcima");
-                Console.WriteLine("9. Odjava");
+                Console.WriteLine("9. Predlozi lek");
+                Console.WriteLine("10. Odjava");
                 Console.Write(">> ");
                 choice = Console.ReadLine();
 
@@ -77,6 +82,8 @@ namespace Hospital.ManagerImplementation
                 else if (choice.Equals("8"))
                     _ingredientView.ManageIngredients();
                 else if (choice.Equals("9"))
+                    _drugView.ProposeDrug();
+                else if (choice.Equals("10"))
                     this.LogOut();
             } while (true);
         } 
