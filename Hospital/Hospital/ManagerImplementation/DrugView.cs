@@ -100,5 +100,35 @@ namespace Hospital.ManagerImplementation
 
             _drugProposalService.CreateDrugProposal(id, drugName, ingredients);
         }
+
+        private void PrintDrugProposal(DrugProposal drugProposal)
+        {
+            Console.WriteLine($"\nOdbijen predlog (id: {drugProposal.Id}, naziv leka: {drugProposal.DrugName})");
+            Console.WriteLine("Sastojci:");
+            foreach (Ingredient ingredient in drugProposal.Ingredients)
+            {
+                Console.WriteLine($"Id: {ingredient.Id}, naziv sastojka: {ingredient.IngredientName}");
+            }
+            Console.WriteLine("Komentar: " + drugProposal.Comment);
+        }
+
+        public void ListRejectedDrugProposals()
+        {
+            List<DrugProposal> proposals = _drugProposalService.GetRejectedDrugProposals();
+            foreach (DrugProposal proposal in proposals)
+                PrintDrugProposal(proposal);
+        }
+
+        public void ReviewRejectedDrugProposal()
+        {
+            Console.WriteLine("Unesite izmenjene podatke o odbijenom leku");
+            Console.WriteLine("------------------");
+            
+            string id = EnterExistingId();
+            string drugName = EnterDrugName();
+            List<Ingredient> ingredients = EnterIngredients();
+
+            _drugProposalService.ReviewDrugProposal(id, drugName, ingredients);
+        }
     }
 }

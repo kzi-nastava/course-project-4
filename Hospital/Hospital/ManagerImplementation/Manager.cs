@@ -61,7 +61,9 @@ namespace Hospital.ManagerImplementation
                 Console.WriteLine("7. Izvrsi renoviranja");
                 Console.WriteLine("8. Upravljanje sastojcima");
                 Console.WriteLine("9. Predlozi lek");
-                Console.WriteLine("10. Odjava");
+                Console.WriteLine("10. Pregledaj odbijene lekove");
+                Console.WriteLine("11. Izmeni podatke o odbijenom leku");
+                Console.WriteLine("12. Odjava");
                 Console.Write(">> ");
                 choice = Console.ReadLine();
 
@@ -84,6 +86,10 @@ namespace Hospital.ManagerImplementation
                 else if (choice.Equals("9"))
                     _drugView.ProposeDrug();
                 else if (choice.Equals("10"))
+                    _drugView.ListRejectedDrugProposals();
+                else if (choice.Equals("11"))
+                    _drugView.ReviewRejectedDrugProposal();
+                else if (choice.Equals("12"))
                     this.LogOut();
             } while (true);
         } 
