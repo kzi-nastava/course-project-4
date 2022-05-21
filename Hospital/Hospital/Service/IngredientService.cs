@@ -43,7 +43,38 @@ namespace Hospital.Service
                 }
             }
             return false;
+        }
+        public bool IdExists(string id)
+        {
+            return Get(id) != null;
+        }
 
+        public bool CreateIngredient(string id, string name)
+        {
+            if (IdExists(id))
+                return false;
+            Ingredient ingredient = new Ingredient(id, name);
+            _ingredients.Add(ingredient);
+            _ingredientRepository.Save(_ingredients);
+            return true;
+        }
+
+        public bool UpdateIngredient(string id, string name)
+        {
+            if (!IdExists(id))
+                return false;
+            DeleteIngredient(id);
+            CreateIngredient(id, name);
+            return true;
+        }
+
+        public bool DeleteIngredient(string id)
+        {
+            if (!IdExists(id))
+                return false;
+            _ingredients.Remove(Get(id));
+            _ingredientRepository.Save(_ingredients);
+            return true;
         }
     }
 }
