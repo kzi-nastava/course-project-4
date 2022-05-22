@@ -4,45 +4,46 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Hospital.Model;
-using Hospital.Service;
 using Microsoft.VisualBasic.FileIO;
+using Hospital.Service;
 
 namespace Hospital.Repository
 {
-    class DrugRepository
+    class DrugProposalRepository
     {
         private IngredientService _ingredientService;
 
-        public DrugRepository()
+        public DrugProposalRepository()
         {
             _ingredientService = new IngredientService();
         }
 
-        public List<Drug> Load()
+
+        public List<DrugProposal> Load()
         {
-            List<Drug> allDrugs = new List<Drug>();
-            using (TextFieldParser parser = new TextFieldParser(@"..\..\Data\drugs.csv"))
+            List<DrugProposal> allDrugProposals = new List<DrugProposal>();
+            using (TextFieldParser parser = new TextFieldParser(@"..\..\Data\drugProposals.csv"))
             {
                 parser.TextFieldType = FieldType.Delimited;
-                parser.SetDelimiters(",");
+                parser.SetDelimiters("*");
                 while (!parser.EndOfData)
                 {
                     string[] fields = parser.ReadFields();
-                    string idDrug = fields[0];
-                    string idName = fields[1];
+                    string idProposal = fields[0];
+                    string drugName = fields[1];
                     List<string> ingredientIds = fields[2].Split(';').ToList();
                     List<Ingredient> ingredients = new List<Ingredient>();
                     foreach (string id in ingredientIds)
                     {
                         ingredients.Add(_ingredientService.Get(id));
                     }
-                    
-                    Drug newDrug = new Drug(idDrug, idName, ingredients);
-                    allDrugs.Add(newDrug);
+                    DrugProposal.Status status = (DrugProposal.Status)int.Parse(fields[3]);
+                    string comment = fields[4];
+                    DrugProposal newDrugProposal = new DrugProposal(idProposal, drugName, ingredients, status, comment);
+                    allDrugProposals.Add(newDrugProposal);
                 }
             }
-            return allDrugs;
+            return allDrugProposals;
         }
     }
 }
-

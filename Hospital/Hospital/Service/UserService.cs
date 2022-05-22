@@ -156,5 +156,18 @@ namespace Hospital.Service
             _userRepository = new UserRepository();
             _users = _userRepository.Load();
         }
+
+        public void DisplayOfPatientData(string patientEmail)
+        {
+            foreach (User user in this._users)
+            {
+                if (user.Email.Equals(patientEmail))
+                {
+                    Console.WriteLine("Ime: " + user.Name + "\n" + "Prezime: " + user.Surname + "\n");
+
+                }
+            }
+
+        }
     }
 }

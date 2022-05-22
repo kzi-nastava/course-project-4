@@ -20,11 +20,7 @@ namespace Hospital.DoctorImplementation
         List<HealthRecord> healthRecords;
         List<Appointment> allMyAppointments;
         User currentRegisteredDoctor;
-        MedicalRecordService medicalRecordService = new MedicalRecordService();
-        PrescriptionService prescriptionService = new PrescriptionService();
-        IngredientService ingredientService = new IngredientService();
         
-
         public Doctor(User currentRegisteredDoctor)
         {
             this.currentRegisteredDoctor = currentRegisteredDoctor;
@@ -66,6 +62,10 @@ namespace Hospital.DoctorImplementation
                 }
                 else if (choice.Equals("7"))
                 {
+                    this.DrugManagement();
+                }
+                else if (choice.Equals("8"))
+                {
                     this.LogOut();
                 }
                 else
@@ -85,372 +85,23 @@ namespace Hospital.DoctorImplementation
             Console.WriteLine("4. Obrisi sopstveni pregled/operaciju");
             Console.WriteLine("5. Ispitivanje sopstvenog rasporeda");
             Console.WriteLine("6. Izvodjenje pregleda");
-            Console.WriteLine("7. Odjava");
+            Console.WriteLine("7. Upravljanje lekovima");
+            Console.WriteLine("8. Odjava");
             Console.Write(">> ");
 
         }
+
+        private void DrugManagement()
+        {
+            DrugVerification drugVerification = new DrugVerification();
+            drugVerification.DisplayDrugsForVerification();
+        }
         private void PerformingAppointment()
         {
-            List<Appointment> appointmentsForPerformanse = TodaysAppointments();
-            if (appointmentsForPerformanse.Count != 0)
-            {
-                this.PrintTodaysAppointments(appointmentsForPerformanse);
-                string choice;
-                do
-                {
-                    do
-                    {
-                        Console.WriteLine("Unesite redni broj pacijenta kojeg želite da pregledate: ");
-                        choice = Console.ReadLine();
-
-                    } while (!appointmentService.IsIntegerValid(choice));
-                } while (Int32.Parse(choice) > appointmentsForPerformanse.Count);
-                Appointment appointmentOfSelected = appointmentsForPerformanse[Int32.Parse(choice) - 1];
-
-                DisplayOfPatientData(appointmentOfSelected.PatientEmail);
-                DisplayOfPatientsHealthRecord(appointmentOfSelected.PatientEmail);
-                EnteringAnamnesis(appointmentOfSelected);
-
-                return;
-            }
-            else
-            {
-                Console.WriteLine("Svi pregledi su obavljeni!");
-            }
-            
+            DoctorPerformingAppointment doctorPerforming = new DoctorPerformingAppointment(appointmentService, healthRecords, healthRecordService,currentRegisteredDoctor,allMyAppointments,userService);
+            doctorPerforming.PerformingAppointment();
         }
-
-        private void WritingReferral(Appointment appointment, string anamnesis)
-        {
-            string choice;
-            do
-            {
-                Console.WriteLine("Da li želite da izdate uput pacijentu? \n1) DA\n2) NE\nUnesite 1 ili 2.");
-                choice = Console.ReadLine();
-                if (choice.Equals("1"))
-                {
-                    this.ChooseDoctor(appointment,anamnesis);
-                }
-                else if (choice.Equals("2"))
-                {
-                    return;
-                }
-            } while (!choice.Equals("1") && !choice.Equals("2"));
-           
-
-        }
-
-        private void ChooseDoctor(Appointment appointment,string anamnesis)
-        {
-            string choice;
-            do
-            {
-                Console.WriteLine("Izaberite:  \n1) odredjeni doktor \n2) po specijalnosti\nUnesite 1 ili 2.");
-                choice = Console.ReadLine();
-                if (choice.Equals("1"))
-                {
-                    this.ReferralToSpecificDoctor(appointment, anamnesis);
-                  
-                }
-                else if (choice.Equals("2"))
-                {
-                    this.ReferralToSelectedSpeciality(appointment,anamnesis);
-                   
-                }
-            } while (!choice.Equals("1") && !choice.Equals("2"));
-
-            
-
-        }
-        private void ReferralToSpecificDoctor(Appointment appointment, string anamnesis)
-        {
-            string doctor;
-            List<DoctorUser> doctors = userService.GetDoctors();
-            this.PrintDoctors(doctors);
-            do
-            {
-                Console.WriteLine("Unesite redni broj doktora: ");
-                doctor = Console.ReadLine();
-            } while (Int32.Parse(doctor) > doctors.Count);
-            DoctorUser doctorUser = doctors[Int32.Parse(doctor) - 1];
-            Appointment.Type type = GetTypeAppointment();
-            Referral newReferral = new Referral(referralService.GetNewReferralId().ToString(), appointment.PatientEmail,doctorUser.Email, doctorUser.SpecialityDoctor, type, false);
-            referralService.Referrals.Add(newReferral);
-            referralService.UpdateFile();
-            Console.WriteLine("Uspesno ste uneli uput!");
-
-            //updating medical record
-            MedicalRecord newMedicalRecord = new MedicalRecord(appointment.AppointmentId, anamnesis, newReferral.Id);
-            medicalRecordService.MedicalRecords.Add(newMedicalRecord);
-            medicalRecordService.UpdateFile();
-
-
-        }
-
-        private void ReferralToSelectedSpeciality(Appointment appointment, string anamnesis)
-        {
-            string speciality;
-            this.PrintSpecialities();
-            do
-            {
-                Console.WriteLine("Unesite redni broj specijalnosti: ");
-                speciality = Console.ReadLine();
-
-            } while (Int32.Parse(speciality) > Enum.GetNames(typeof(DoctorUser.Speciality)).Length);
-            Appointment.Type type = GetTypeAppointment();
-            DoctorUser.Speciality specialitySelected = (DoctorUser.Speciality)int.Parse(speciality);
-            Referral newReferral = new Referral(referralService.GetNewReferralId().ToString(), appointment.PatientEmail, "null", specialitySelected, type, false);
-            referralService.Referrals.Add(newReferral);
-            referralService.UpdateFile();
-            Console.WriteLine("Uspesno ste uneli uput!");
-
-            //updating medical record
-            MedicalRecord newMedicalRecord = new MedicalRecord(appointment.AppointmentId, anamnesis, newReferral.Id);
-            medicalRecordService.MedicalRecords.Add(newMedicalRecord);
-            medicalRecordService.UpdateFile();
-
-
-        }
-
-        private Appointment.Type GetTypeAppointment()
-        {
-            string choice;
-            do
-            {
-                Console.WriteLine("Uput za: \n1. Pregled\n2.Operaciju\n>>");
-                choice = Console.ReadLine();
-                if (choice.Equals("1"))
-                {
-                    return (Appointment.Type)int.Parse(choice);
-                }
-                return (Appointment.Type)int.Parse(choice);
-            } while (!choice.Equals("1") || !choice.Equals("2"));
-
-
-
-        }
-        private void PrintDoctors(List<DoctorUser> doctors)
-        {
-            int serialNumber = 1;
-            Console.WriteLine(String.Format("|{0,5}|{1,20}|{2,20}|", "Br.", "Doktor", "Specijalnost"));
-            foreach(DoctorUser doctor in doctors)
-            {
-                Console.WriteLine(String.Format("|{0,5}|{1,20}|{2,20}|", serialNumber, doctor.Name +" " + doctor.Surname, doctor.SpecialityDoctor));
-                serialNumber += 1;
-
-            }
-        }
-
-        private void PrintSpecialities()
-        {
-            int serialNumber = 1;
-            Console.WriteLine(String.Format("|{0,5}|{1,11}|", "Br.", "Specijalnost"));
-            foreach (DoctorUser.Speciality speciality in Enum.GetValues(typeof(DoctorUser.Speciality)))
-            {
-                Console.WriteLine(String.Format("|{0,5}|{1,11}|", serialNumber, speciality));
-                serialNumber += 1;
-            }
-
-        }
-
-        
-
-        private void IssuingPrescription(Appointment appointment, HealthRecord healthRecord)
-        {
-            string choice;
-            do
-            {
-                Console.WriteLine("Da li želite da izdate recept pacijentu? \n1) DA\n2) NE\nUnesite 1 ili 2.");
-                choice = Console.ReadLine();
-                if (choice.Equals("1"))
-                {
-                    this.WritingPrescription(appointment, healthRecord);
-                    Console.WriteLine("Uspesno ste upisali recept!");
-
-                }
-                else if (choice.Equals("2"))
-                {
-                    return;
-                }
-            } while (!choice.Equals("1") && !choice.Equals("2"));
-
-        }
-
-        private void WritingPrescription(Appointment appointment, HealthRecord healthRecord)
-        {
-            string drug, startConsuming, dose, timeOfconsuming;
-            do
-            {
-                do
-                {
-                    Console.WriteLine("Unesite naziv leka: ");
-                    drug = Console.ReadLine();
-                } while (!prescriptionService.IsDrugValid(drug));
-                do
-                {
-                    Console.WriteLine("Unesite vreme kada pacijent treba da krene da pije lek (HH:mm): ");
-                    startConsuming = Console.ReadLine();
-                } while (!appointmentService.IsTimeFormValid(startConsuming));
-                do
-                {
-                    Console.WriteLine("Koliko puta na dan treba da pije: ");
-                    dose = Console.ReadLine();
-                } while (!appointmentService.IsIntegerValid(dose));
-                do
-                {
-                    Console.WriteLine("Da li da pije:\n1)Tokom obroka\n2)Posle obroka\n3)Pre obroka\n4)Nije bitno\n>> ");
-                    timeOfconsuming = Console.ReadLine();
-                } while (!prescriptionService.IsTimeOfConsumingValid(timeOfconsuming));
-            } while (!prescriptionService.CheckAllergicToDrug(healthRecord, drug));
-
-            //saving precription
-            Prescription newPrescription = new Prescription(appointment.AppointmentId, prescriptionService.GetIdDrug(drug), DateTime.ParseExact(startConsuming, "HH:mm", CultureInfo.InvariantCulture),Int32.Parse(dose), (Prescription.TimeOfConsuming)int.Parse(timeOfconsuming));
-            prescriptionService.Prescriptions.Add(newPrescription);
-            prescriptionService.UpdateFile();
-        }
-
-
-      
-
-        private void EnteringAnamnesis(Appointment appointment)
-        {
-            string anamnesisInput;
-            Console.WriteLine("Unesite anamnezu: ");
-            anamnesisInput = Console.ReadLine();
-
-            //the examination was performed
-            appointmentService.PerformAppointment(appointment);
-            appointmentService.UpdateFile();
-
-            Console.WriteLine("Uspešno ste uneli anamnezu.");
-
-            //updating health record
-            this.UpdatingHealthRecord(appointment);
-            this.WritingReferral(appointment,anamnesisInput);
-            
-
-
-        }
-
-        private void UpdatingHealthRecord(Appointment appointment)
-        {
-            foreach (HealthRecord healthRecord in this.healthRecords)
-            {
-                if (healthRecord.EmailPatient.Equals(appointment.PatientEmail))
-                {
-                    this.IssuingPrescription(appointment, healthRecord);
-                    this.UpdatingSelectedHealthRecord(healthRecord);
-
-                }
-            }
-        }
-
-        private void DisplayOfPatientData(string patientEmail)
-        {
-            foreach (User user in userService.Users)
-            {
-                if (user.Email.Equals(patientEmail))
-                {
-                    Console.WriteLine("Ime: " + user.Name + "\n" + "Prezime: " + user.Surname + "\n");
-
-                }
-            }
-
-        }
-
-        private void DisplayOfPatientsHealthRecord(string patientEmail)
-        {
-            foreach (HealthRecord healthRecord in this.healthRecords)
-            {
-                if (healthRecord.EmailPatient.Equals(patientEmail))
-                {
-                    Console.WriteLine(healthRecord.ToString());
-                }
-            }
-        }
-
-        private void PrintTodaysAppointments(List<Appointment> appointmentsForPerformanse)
-        {
-            int serialNumberAppointment = 1;
-            Console.WriteLine(String.Format("|{0,5}|{1,10}|{2,10}|{3,10}|{4,10}|{5,10}|{6,10}", "Br.", "Pacijent", "Datum", "Pocetak", "Kraj", "Soba", "Vrsta termina"));
-            foreach (Appointment appointment in appointmentsForPerformanse)
-            {
-                Console.WriteLine(appointment.ToStringDisplayForDoctor(serialNumberAppointment));
-                serialNumberAppointment += 1;
-            }
-            Console.WriteLine();
-        }
-
-        private List<Appointment> TodaysAppointments()
-        {
-            string dateNow = DateTime.Now.ToString("MM/dd/yyyy");
-            DateTime parseDateNow = DateTime.ParseExact(dateNow, "MM/dd/yyyy", CultureInfo.InvariantCulture);
-            List<Appointment> appointmentsForPerformanse = new List<Appointment>();
-            foreach (Appointment appointmentOwn in this.allMyAppointments)
-            {
-                if (appointmentOwn.DoctorEmail.Equals(currentRegisteredDoctor.Email) && (appointmentOwn.DateAppointment == parseDateNow)
-                    && (appointmentOwn.AppointmentState != Appointment.State.Deleted) && (appointmentOwn.AppointmentPerformed == false))
-                {
-                    appointmentsForPerformanse.Add(appointmentOwn);
-                }
-
-            }
-            return appointmentsForPerformanse;
-
-        }
-
-
-        private void UpdatingSelectedHealthRecord(HealthRecord healthRecordSelected)
-        {
-            string selectionOfUpdates;
-            do
-            {
-
-                Console.WriteLine("Da li želite da ažurirate zdravstveni karton pacijenta? \n1) DA\n2) NE\nUnesite 1 ili 2.");
-                selectionOfUpdates = Console.ReadLine();
-                if (selectionOfUpdates.Equals("1"))
-                {
-                    this.PrintItemsToChangeHealthRecord(healthRecordSelected);
-                }
-                else if (selectionOfUpdates.Equals("2"))
-                {
-                    return;
-                }
-            } while (!selectionOfUpdates.Equals("1") && !selectionOfUpdates.Equals("2"));
-
-
-        }
-
-        private void PrintItemsToChangeHealthRecord(HealthRecord healthRecordSelected)
-        {
-            string patientHeightInput, patientWeightInput, previousIllnessesInput, allergenInput, bloodTypeInput;
-            do
-            {
-                Console.WriteLine("Unesite visinu: ");
-                patientHeightInput = Console.ReadLine();
-
-            } while (!appointmentService.IsIntegerValid(patientHeightInput));
-            do
-            {
-                Console.WriteLine("Unesite težinu: ");
-                patientWeightInput = Console.ReadLine();
-            } while (!appointmentService.IsDoubleValid(patientWeightInput));
-            Console.WriteLine("Unesite prethodne bolesti: ");
-            previousIllnessesInput = Console.ReadLine();
-            do
-            {
-                Console.WriteLine("Unesite alergenu: ");
-                allergenInput = Console.ReadLine();
-            } while (!ingredientService.IsIngredientNameValid(allergenInput));
-            Console.WriteLine("Unesite krvnu grupu: ");
-            bloodTypeInput = Console.ReadLine();
-
-            HealthRecord newHealthRecord = new HealthRecord(healthRecordSelected.IdHealthRecord, healthRecordSelected.EmailPatient, Int32.Parse(patientHeightInput), double.Parse(patientWeightInput), previousIllnessesInput, allergenInput, bloodTypeInput);
-            healthRecordService.UpdateHealthRecord(newHealthRecord);
-            healthRecordService.UpdateHealthRecordFile();
-        }
-
-
+ 
         private void ExaminingOwnSchedule()
         {
             string dateAppointment;
@@ -459,91 +110,11 @@ namespace Hospital.DoctorImplementation
                 Console.WriteLine("Unesite željeni datum: ");
                 dateAppointment = Console.ReadLine();
             } while (!appointmentService.IsDateFormValid(dateAppointment));
-            this.ReadOwnAppointmentSpecificDate(DateTime.ParseExact(dateAppointment, "MM/dd/yyyy", CultureInfo.InvariantCulture));
+            DoctorSchedule doctorSchedule = new DoctorSchedule(appointmentService, healthRecords, allMyAppointments, currentRegisteredDoctor);
+            doctorSchedule.ReadOwnAppointmentSpecificDate(DateTime.ParseExact(dateAppointment, "MM/dd/yyyy", CultureInfo.InvariantCulture));
 
         }
 
-
-
-
-        private void ReadOwnAppointmentSpecificDate(DateTime dateSchedule)
-        {
-            DateTime dateForNextThreeDays = dateSchedule.AddDays(3);
-            List<Appointment> appointmentsOfParticularDay = AppointmentForSelectedDate(dateSchedule,dateForNextThreeDays);
-            Console.WriteLine("Raspored za datum od " + dateSchedule.Month + "/" + dateSchedule.Day + "/" + dateSchedule.Year + " do " + dateForNextThreeDays.Month + "/" + dateForNextThreeDays.Day + "/" + dateForNextThreeDays.Year);    
-            if (appointmentsOfParticularDay.Count != 0)
-            {
-                int serialNumberAppointment = 1;
-                Console.WriteLine(String.Format("|{0,5}|{1,10}|{2,10}|{3,10}|{4,10}|{5,10}|{6,10}", "Br.", "Pacijent", "Datum", "Pocetak", "Kraj", "Soba", "Vrsta termina"));
-                foreach (Appointment appointmentOwn in  appointmentsOfParticularDay)
-                {
-                   
-                    Console.WriteLine(appointmentOwn.ToStringDisplayForDoctor(serialNumberAppointment));
-                    serialNumberAppointment += 1;
-               
-                }
-            }
-            else
-            {
-                Console.WriteLine("Nemate zakazanih termina za izabrani datum");
-            }
-            this.AccessToHealthRecord(appointmentsOfParticularDay); 
-        }
-
-        private void AccessToHealthRecord(List<Appointment> appointmentsOfParticularDay)
-        {
-            string choice, serialNumberOfHealthRecord;
-            Appointment appointmentOfSelectedPatient;
-            do
-            {
-                Console.WriteLine("Da li želite da pristupite zdravstvenom kartonu od nekog pacijenta? \n1) DA\n2) NE\nUnesite 1 ili 2.");
-                choice = Console.ReadLine();
-                if (choice.Equals("1"))
-                {
-                    do
-                    {
-                        do
-                        {
-                            Console.WriteLine("Unesite redni broj pacijenta čiji zdravstveni karton želite da pogledate: ");
-                            serialNumberOfHealthRecord = Console.ReadLine();
-
-                        } while (!appointmentService.IsIntegerValid(serialNumberOfHealthRecord));
-                    } while (Int32.Parse(serialNumberOfHealthRecord) > appointmentsOfParticularDay.Count);
-                    appointmentOfSelectedPatient = appointmentsOfParticularDay[Int32.Parse(serialNumberOfHealthRecord) - 1];
-                    this.PrintPatientsHealthRecord(appointmentOfSelectedPatient.PatientEmail);
-                }
-                else if (choice.Equals("2"))
-                {
-                    return;
-                }
-            } while (!choice.Equals("1") && !choice.Equals("2"));
-
-        }
-
-        private void PrintPatientsHealthRecord(String patientEmail)
-        {
-            foreach (HealthRecord healthRecord in this.healthRecords)
-            {
-                if (healthRecord.EmailPatient.Equals(patientEmail))
-                {
-                    Console.WriteLine(healthRecord.ToString());
-                }
-            }
-
-        }
-
-        private List<Appointment> AppointmentForSelectedDate(DateTime selectedDate, DateTime dateForNextThreeDays)
-        {
-            List<Appointment> appointmentsOfParticularDay = new List<Appointment>();
-            foreach (Appointment appointmentOwn in this.allMyAppointments)
-            {
-                if (appointmentOwn.DoctorEmail.Equals(currentRegisteredDoctor.Email) && (appointmentOwn.DateAppointment >= selectedDate) && (appointmentOwn.DateAppointment <= dateForNextThreeDays))
-                {
-                    appointmentsOfParticularDay.Add(appointmentOwn);
-                }
-            }
-            return appointmentsOfParticularDay;
-        }
 
         private void ReadOwnAppointment()
         {
@@ -577,7 +148,7 @@ namespace Hospital.DoctorImplementation
             return false;
         }
 
-        private void CreateOwnAppointment()
+        public void CreateOwnAppointment()
         { 
             string typeOfTerm;
             Appointment newAppointment;
@@ -753,9 +324,6 @@ namespace Hospital.DoctorImplementation
         }
 
 
-
-
-
         private void DeleteOwnAppointment()
         {
             if (this.allMyAppointments.Count != 0)
@@ -785,12 +353,6 @@ namespace Hospital.DoctorImplementation
            
         }
 
-    
-
-       
-
-        
-
         private void UpdateOwnAppointment()
         {
             if (this.allMyAppointments.Count != 0)
@@ -806,7 +368,6 @@ namespace Hospital.DoctorImplementation
                     } while (!appointmentService.IsIntegerValid(numberAppointment));
                 } while (Int32.Parse(numberAppointment) > this.allMyAppointments.Count);
                 Appointment appointmentForUpdate = this.allMyAppointments[Int32.Parse(numberAppointment) - 1];
-                Console.WriteLine(appointmentForUpdate.ToString());
                 Appointment newAppointment;
                 if (appointmentForUpdate.TypeOfTerm == Appointment.Type.Examination)
                 {
@@ -825,9 +386,6 @@ namespace Hospital.DoctorImplementation
             {
                 Console.WriteLine("\nJos uvek nemate zakazan termin!");
             }
-            
-
-
         }
         private void LogOut()
         {
