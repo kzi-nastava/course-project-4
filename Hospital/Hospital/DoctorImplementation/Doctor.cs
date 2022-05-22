@@ -16,7 +16,6 @@ namespace Hospital.DoctorImplementation
         AppointmentService appointmentService = new AppointmentService();
         UserService userService = new UserService();
         ReferralService referralService = new ReferralService();
-        PatientService helper;
         HealthRecordService healthRecordService = new HealthRecordService();
         List<HealthRecord> healthRecords;
         List<Appointment> allMyAppointments;
@@ -26,10 +25,9 @@ namespace Hospital.DoctorImplementation
         IngredientService ingredientService = new IngredientService();
         
 
-        public Doctor(User currentRegisteredDoctor, PatientService helper)
+        public Doctor(User currentRegisteredDoctor)
         {
             this.currentRegisteredDoctor = currentRegisteredDoctor;
-            this.helper = helper;
             allMyAppointments = appointmentService.GetDoctorAppointment(currentRegisteredDoctor);
             healthRecords = healthRecordService.HealthRecords;
 
