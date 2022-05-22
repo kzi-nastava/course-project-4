@@ -17,6 +17,25 @@ namespace Hospital.ManagerImplementation
             this._roomService = roomService;
         }
 
+        public void ManageRooms()
+        {
+            Console.WriteLine("1. Kreiraj sobu");
+            Console.WriteLine("2. Pregledaj sobe");
+            Console.WriteLine("3. Izmeni sobu");
+            Console.WriteLine("4. Obrisi sobu");
+            Console.Write(">> ");
+            string choice = Console.ReadLine();
+
+            if (choice.Equals("1"))
+                CreateRoom();
+            else if (choice.Equals("2"))
+                ListRooms();
+            else if (choice.Equals("3"))
+                UpdateRoom();
+            else if (choice.Equals("4"))
+                DeleteRoom();
+        }
+
         private string EnterRoomId(bool existing)
         {
             Console.Write("Unesite broj sobe: ");
@@ -114,7 +133,6 @@ namespace Hospital.ManagerImplementation
 
         public void DeleteRoom()
         {
-            Console.Write("Unesite broj sobe: ");
             string id = EnterExistingRoomId();
             _roomService.DeleteRoom(id);
         }
