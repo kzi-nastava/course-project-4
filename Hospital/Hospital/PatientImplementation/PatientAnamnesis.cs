@@ -16,7 +16,7 @@ namespace Hospital.PatientImplementation
         HealthRecordService _healthRecordService = new HealthRecordService(); // loading all health records
         UserRepository _userRepository = new UserRepository();
         List<User> _allUsers;
-        User _currentRegisteredUser;
+        Patient _currentRegisteredUser;
 
         public AppointmentService AppointmentService { get { return _appointmentService; } }
 
@@ -24,9 +24,9 @@ namespace Hospital.PatientImplementation
 
         public HealthRecordService HealthRecordService { get { return _healthRecordService; } }
 
-        public PatientAnamnesis(User user)
+        public PatientAnamnesis(Patient patient)
         {
-            this._currentRegisteredUser = user;
+            this._currentRegisteredUser = patient;
             this._allUsers = _userRepository.Load();
         }
 

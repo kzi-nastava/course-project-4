@@ -19,8 +19,7 @@ namespace Hospital.PatientImplementation
         RequestService _requestService;
         AppointmentService _appointmentService = new AppointmentService();  // loading all appointments
         List<Appointment> _allAppointments;
-        List<User> _allUsers;
-        User _currentRegisteredUser;
+        Patient _currentRegisteredUser;
 
         // getters
         public List<Appointment> Appointments { get { return _allAppointments; } }
@@ -29,11 +28,10 @@ namespace Hospital.PatientImplementation
 
         public AppointmentService AppointmentService { get { return _appointmentService; } }
 
-        public PatientService(User user, List<User> allUsers)
+        public PatientService(Patient patient)
         {
             _requestService = new RequestService(_appointmentService);
-            this._currentRegisteredUser = user;
-            this._allUsers = allUsers;
+            this._currentRegisteredUser = patient;
             _allAppointments = _appointmentService.AppointmentRepository.Load();
         }
 
@@ -58,13 +56,13 @@ namespace Hospital.PatientImplementation
             return patientCurrentAppointment;
         }
 
-        public List<Appointment> FindAppointmentsForDeleteAndUpdate(Patient currentlyRegisteredPatient)
+        public List<Appointment> FindAppointmentsForDeleteAndUpdate()
         {
             this._appointmentService.TableHeaderForPatient();
             Console.WriteLine();
 
             List<Appointment> appointmentsForChange = new List<Appointment>();
-            foreach (Appointment appointment in currentlyRegisteredPatient.PatientAppointments) 
+            foreach (Appointment appointment in _currentRegisteredUser.PatientAppointments) 
             {
                 if (appointment.AppointmentState != Appointment.State.UpdateRequest &&
                     appointment.AppointmentState != Appointment.State.DeleteRequest && 
@@ -87,18 +85,20 @@ namespace Hospital.PatientImplementation
             return false;
         }
 
-        public string[] InputValuesForAppointment()
+        public string[] InputValuesForAppointment(string doctorEmail)
         {
             string[] inputValues = new string[3];
 
-            string doctorEmail;
             string newDate;
             string newStartTime;
 
             do
             {
-                Console.Write("\nUnesite email doktora: ");
-                doctorEmail = Console.ReadLine();
+                if (doctorEmail.Equals(""))
+                {
+                    Console.Write("\nUnesite email doktora: ");
+                    doctorEmail = Console.ReadLine();
+                }
                 Console.Write("Unesite datum (MM/dd/yyyy): ");
                 newDate = Console.ReadLine();
                 Console.Write("Unesite vreme pocetka pregleda (HH:mm): ");
@@ -163,9 +163,9 @@ namespace Hospital.PatientImplementation
             File.AppendAllText(filePath, newAction.ToString());
         }
 
-        public Appointment PickAppointmentForDeleteOrUpdate(Patient patient)
+        public Appointment PickAppointmentForDeleteOrUpdate()
         {
-            List<Appointment> appointmentsForChange = this.FindAppointmentsForDeleteAndUpdate(patient);
+            List<Appointment> appointmentsForChange = this.FindAppointmentsForDeleteAndUpdate();
 
             if (appointmentsForChange.Count == 0)
                 return null;
