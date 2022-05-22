@@ -16,6 +16,8 @@ namespace Hospital.PatientImplementation
         PatientService _patientService;
         PatientSchedulingAppointment _patientScheduling;
         PatientAnamnesis _patientAnamnesis;
+        PatientDoctorSearch _doctorSearch;
+        PatientDoctorSurvey _doctorSurvey;
         List<Appointment> _currentAppointments; 
 
         public string Email { get { return _email; } }
@@ -23,15 +25,18 @@ namespace Hospital.PatientImplementation
         {
             get { return _currentAppointments; }
             set { _currentAppointments = value; }
-        } 
+        }
+        public PatientDoctorSurvey PatientDoctorSurvey { get { return _doctorSurvey; } }
 
-        public Patient(string email, PatientService patientService, PatientSchedulingAppointment patientScheduling, PatientAnamnesis patientAnamnesis)
+        public Patient(string email, PatientSchedulingAppointment patientScheduling)
         {
             this._email = email;
-            this._patientService = patientService;
+            this._patientService = new PatientService(this);
             this._patientScheduling = patientScheduling;
-            this._patientAnamnesis = patientAnamnesis;
-            this._currentAppointments = patientService.RefreshPatientAppointments();
+            this._patientAnamnesis = new PatientAnamnesis(this);
+            this._currentAppointments = this._patientService.RefreshPatientAppointments();
+            this._doctorSearch = new PatientDoctorSearch(this);
+            this._doctorSurvey = new PatientDoctorSurvey(this);
         }
 
         // methods
@@ -49,7 +54,8 @@ namespace Hospital.PatientImplementation
                 Console.WriteLine("4. Obrisi pregled");
                 Console.WriteLine("5. Preporuka termina pregleda");
                 Console.WriteLine("6. Pregled i pretraga anamneza");
-                Console.WriteLine("7. Odjava");
+                Console.WriteLine("7. Pretrazi doktora");
+                Console.WriteLine("8. Odjava");
                 Console.Write(">> ");
                 choice = Console.ReadLine();
 
@@ -57,7 +63,7 @@ namespace Hospital.PatientImplementation
                 if (choice.Equals("1"))
                     this.ReadOwnAppointments();
                 else if (choice.Equals("2"))
-                    this.SchedulingAppointment();
+                    this.SchedulingAppointment("");
                 else if (choice.Equals("3"))
                     this.UpdateAppointment();
                 else if (choice.Equals("4"))
@@ -67,6 +73,8 @@ namespace Hospital.PatientImplementation
                 else if (choice.Equals("6"))
                     this.AnamnesisSearch();
                 else if (choice.Equals("7"))
+                    this.DoctorSearch();
+                else if (choice.Equals("8"))
                     this.LogOut();
             } while (true);
         }
@@ -91,7 +99,7 @@ namespace Hospital.PatientImplementation
 
         private void DeleteAppointment() 
         {
-            Appointment appointmentForDelete = _patientService.PickAppointmentForDeleteOrUpdate(this);
+            Appointment appointmentForDelete = _patientService.PickAppointmentForDeleteOrUpdate();
 
             if (appointmentForDelete == null)
                 return;
@@ -104,12 +112,12 @@ namespace Hospital.PatientImplementation
 
         private void UpdateAppointment()
         {
-            Appointment appointmentForUpdate = _patientService.PickAppointmentForDeleteOrUpdate(this);
+            Appointment appointmentForUpdate = _patientService.PickAppointmentForDeleteOrUpdate();
 
             if (appointmentForUpdate == null)
                 return;
 
-            string[] inputValues = _patientService.InputValuesForAppointment();
+            string[] inputValues = _patientService.InputValuesForAppointment("");
 
             if (!_patientScheduling.IsAppointmentFree(appointmentForUpdate.AppointmentId, inputValues))
             {
@@ -124,9 +132,9 @@ namespace Hospital.PatientImplementation
 
         }
 
-        private void SchedulingAppointment()
+        public void SchedulingAppointment(string doctorEmail)
         {
-            string[] inputValues = _patientService.InputValuesForAppointment();
+            string[] inputValues = _patientService.InputValuesForAppointment(doctorEmail);
 
             if (!_patientScheduling.IsAppointmentFree("0", inputValues))
             {
@@ -202,6 +210,27 @@ namespace Hospital.PatientImplementation
         private void AnamnesisSearch()
         {
             _patientAnamnesis.MainMenuForSearch();
+        }
+
+        private void DoctorSearch()
+        {
+            string choice;
+            Console.Write("\nPretraga doktora po");
+            do
+            {
+                Console.WriteLine("\n1. Imenu");
+                Console.WriteLine("2. Prezimenu");
+                Console.WriteLine("3. Uzoj oblasti");
+                Console.Write(">> ");
+                choice = Console.ReadLine();
+
+                if (choice.Equals("1"))
+                    _doctorSearch.FindDoctorsByName();
+                else if (choice.Equals("2"))
+                    _doctorSearch.FindDoctorsBySurname();
+                else if (choice.Equals("3"))
+                    _doctorSearch.FindDoctorsBySpeciality();
+            } while (choice != "1" && choice != "2" && choice != "3");
         }
 
         private void LogOut()
