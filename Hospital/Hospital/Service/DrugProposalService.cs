@@ -9,7 +9,7 @@ using System.IO;
 
 namespace Hospital.Service
 {
-    class DrugProposalService
+    public class DrugProposalService
     {
         private DrugProposalRepository _drugProposalRepository;
         private List<DrugProposal> _drugProposals;
@@ -38,12 +38,12 @@ namespace Hospital.Service
             File.WriteAllLines(filePath, lines.ToArray());
         }
 
-        public List<DrugProposal> WaitingStatusDrugProposals()
+        public List<DrugProposal> GetDrugProposalsByStatus(DrugProposal.Status status)
         {
             List<DrugProposal> proposals = new List<DrugProposal>();
-            foreach(DrugProposal drugProposal in this._drugProposals)
+            foreach (DrugProposal drugProposal in this._drugProposals)
             {
-                if(drugProposal.ProposalStatus == DrugProposal.Status.Waiting)
+                if (drugProposal.ProposalStatus == status)
                 {
                     proposals.Add(drugProposal);
                 }
@@ -51,7 +51,17 @@ namespace Hospital.Service
             return proposals;
         }
 
-        public void  UpdateDrugProposal(DrugProposal drugProposalForChange)
+        public List<DrugProposal> WaitingStatusDrugProposals()
+        {
+            return GetDrugProposalsByStatus(DrugProposal.Status.Waiting);
+        }
+
+        public List<DrugProposal> GetRejectedDrugProposals() 
+        {
+            return GetDrugProposalsByStatus(DrugProposal.Status.Rejected);
+        }
+
+        public void UpdateDrugProposal(DrugProposal drugProposalForChange)
         {
             foreach(DrugProposal drugProposal in this._drugProposals)
             {
@@ -61,6 +71,47 @@ namespace Hospital.Service
                     drugProposal.Comment = drugProposalForChange.Comment;
                 }
             }
+        }
+
+        public DrugProposal Get(string id)
+        {
+            foreach (DrugProposal drugProposal in _drugProposals)
+            {
+                if (drugProposal.Id.Equals(id))
+                    return drugProposal;
+            }
+            return null;
+        }
+        public bool IdExists(string id)
+        {
+            return Get(id) != null;
+        }
+
+        public bool CreateDrugProposal(string id, string drugName, List<Ingredient> ingredients)
+        {
+            if (IdExists(id))
+                return false;
+            DrugProposal drugProposal = new DrugProposal(id, drugName, ingredients, DrugProposal.Status.Waiting, "");
+            _drugProposals.Add(drugProposal);
+            UpdateDrugProposalFile();
+            return true;
+        }
+
+        public bool ReviewDrugProposal(string id, string drugName, List<Ingredient> ingredients)
+        {
+            if (!IdExists(id) || Get(id).ProposalStatus != DrugProposal.Status.Rejected)
+                return false;
+            foreach (DrugProposal proposal in _drugProposals) 
+            {
+                if (proposal.Id.Equals(id))
+                {
+                    proposal.DrugName = drugName;
+                    proposal.Ingredients = ingredients;
+                    proposal.ProposalStatus = DrugProposal.Status.Waiting;
+                }
+            }
+            UpdateDrugProposalFile();
+            return true;
         }
     }
 }

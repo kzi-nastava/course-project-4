@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Hospital.Model
 {
-    class DrugProposal
+    public class DrugProposal
     {
         public enum Status
         {

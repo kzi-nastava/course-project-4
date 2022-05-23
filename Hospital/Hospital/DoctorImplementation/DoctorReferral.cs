@@ -32,11 +32,12 @@ namespace Hospital.DoctorImplementation
                 {
                     this.ChooseDoctor(appointment, anamnesis);
                 }
-                else if (choice.Equals("2"))
-                {
-                    return;
-                }
+                
             } while (!choice.Equals("1") && !choice.Equals("2"));
+
+            
+            DynamicEquipmentRecords dynamicEquipmentRecords = new DynamicEquipmentRecords();
+            dynamicEquipmentRecords.DisplayAmountOfDynamicEquipments(appointment.RoomNumber.ToString());
 
 
         }
@@ -60,6 +61,7 @@ namespace Hospital.DoctorImplementation
                 }
             } while (!choice.Equals("1") && !choice.Equals("2"));
 
+           
 
 
         }
