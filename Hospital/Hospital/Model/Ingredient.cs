@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Hospital.Model
 {
-    class Ingredient
+    public class Ingredient
     {
         private string _id;
         private string _ingredientName;

@@ -18,10 +18,14 @@ namespace Hospital.ManagerImplementation
         private EquipmentMovingService _equipmentMovingService;
         private AppointmentService _appointmentService;
         private RenovationService _renovationService;
+        private IngredientService _ingredientService;
+        private DrugProposalService _drugProposalService;
 
         private RoomView _roomView;
         private EquipmentView _equipmentView;
         private RenovationView _renovationView;
+        private IngredientView _ingredientView;
+        private DrugView _drugView;
 
         public Manager(User currentRegisteredManager)
         {
@@ -31,9 +35,14 @@ namespace Hospital.ManagerImplementation
             this._equipmentMovingService = new EquipmentMovingService(_equipmentService, _roomService);
             this._appointmentService = new AppointmentService();
             this._renovationService = new RenovationService(_roomService, _appointmentService, _equipmentService);
+            this._ingredientService = new IngredientService();
+            this._drugProposalService = new DrugProposalService();
+
             this._roomView = new RoomView(_roomService);
             this._equipmentView = new EquipmentView(_roomService, _equipmentService, _equipmentMovingService);
             this._renovationView = new RenovationView(_roomService, _appointmentService, _renovationService);
+            this._ingredientView = new IngredientView(_ingredientService);
+            this._drugView = new DrugView(_ingredientService, _drugProposalService);
         }
 
         public void ManagerMenu() 
@@ -43,41 +52,44 @@ namespace Hospital.ManagerImplementation
             Console.Write("------------------");
             do
             {
-                Console.WriteLine("\n1. Kreiraj sobu");
-                Console.WriteLine("2. Pregledaj sobe");
-                Console.WriteLine("3. Izmeni sobu");
-                Console.WriteLine("4. Obrisi sobu");
-                Console.WriteLine("5. Pretraga opreme");
-                Console.WriteLine("6. Filtriranje opreme");
-                Console.WriteLine("7. Zakazi premestanje opreme");
-                Console.WriteLine("8. Pokreni premestanje opreme");
-                Console.WriteLine("9. Zakazivanje renoviranja");
-                Console.WriteLine("10. Izvrsi renoviranja");
-                Console.WriteLine("11. Odjava");
+                Console.WriteLine("\n1. Upravljanje sobama");
+                Console.WriteLine("2. Pretraga opreme");
+                Console.WriteLine("3. Filtriranje opreme");
+                Console.WriteLine("4. Zakazi premestanje opreme");
+                Console.WriteLine("5. Pokreni premestanje opreme");
+                Console.WriteLine("6. Zakazivanje renoviranja");
+                Console.WriteLine("7. Izvrsi renoviranja");
+                Console.WriteLine("8. Upravljanje sastojcima");
+                Console.WriteLine("9. Predlozi lek");
+                Console.WriteLine("10. Pregledaj odbijene lekove");
+                Console.WriteLine("11. Izmeni podatke o odbijenom leku");
+                Console.WriteLine("12. Odjava");
                 Console.Write(">> ");
                 choice = Console.ReadLine();
 
                 if (choice.Equals("1"))
-                    _roomView.CreateRoom();
+                    _roomView.ManageRooms();
                 else if (choice.Equals("2"))
-                    _roomView.ListRooms();
-                else if (choice.Equals("3"))
-                    _roomView.UpdateRoom();
-                else if (choice.Equals("4"))
-                    _roomView.DeleteRoom();
-                else if (choice.Equals("5"))
                     _equipmentView.SearchEquipment();
-                else if (choice.Equals("6"))
+                else if (choice.Equals("3"))
                     _equipmentView.FilterEquipment();
-                else if (choice.Equals("7"))
+                else if (choice.Equals("4"))
                     _equipmentView.ScheduleEquipmentMoving();
-                else if (choice.Equals("8"))
+                else if (choice.Equals("5"))
                     _equipmentView.MoveEquipment();
-                else if (choice.Equals("9"))
+                else if (choice.Equals("6"))
                     _renovationView.ScheduleRenovation();
-                else if (choice.Equals("10"))
+                else if (choice.Equals("7"))
                     _renovationView.Renovate();
+                else if (choice.Equals("8"))
+                    _ingredientView.ManageIngredients();
+                else if (choice.Equals("9"))
+                    _drugView.ProposeDrug();
+                else if (choice.Equals("10"))
+                    _drugView.ListRejectedDrugProposals();
                 else if (choice.Equals("11"))
+                    _drugView.ReviewRejectedDrugProposal();
+                else if (choice.Equals("12"))
                     this.LogOut();
             } while (true);
         } 
