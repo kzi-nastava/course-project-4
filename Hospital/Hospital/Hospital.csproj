@@ -42,6 +42,7 @@
     <Compile Include="DoctorImplementation\DoctorReferral.cs" />
     <Compile Include="DoctorImplementation\DoctorSchedule.cs" />
     <Compile Include="DoctorImplementation\DrugVerification.cs" />
+    <Compile Include="DoctorImplementation\DynamicEquipmentRecords.cs" />
     <Compile Include="ManagerImplementation\DrugView.cs" />
     <Compile Include="ManagerImplementation\EquipmentView.cs" />
     <Compile Include="ManagerImplementation\IngredientView.cs" />
@@ -52,6 +53,7 @@
     <Compile Include="Model\DoctorUser.cs" />
     <Compile Include="Model\Drug.cs" />
     <Compile Include="Model\DrugProposal.cs" />
+    <Compile Include="Model\DynamicRoomEquipment.cs" />
     <Compile Include="Model\Equipment.cs" />
     <Compile Include="Model\EquipmentMoving.cs" />
     <Compile Include="Model\Ingredient.cs" />
@@ -68,6 +70,7 @@
     <Compile Include="DoctorImplementation\Doctor.cs" />
     <Compile Include="Model\Appointment.cs" />
     <Compile Include="Model\User.cs" />
+    <Compile Include="Model\Warehouse.cs" />
     <Compile Include="PatientImplementation\PatientDoctorSearch.cs" />
     <Compile Include="PatientImplementation\PatientAnamnesis.cs" />
     <Compile Include="PatientImplementation\PatientDoctorSurvey.cs" />
@@ -77,6 +80,7 @@
     <Compile Include="Repository\DoctorSurveyRepository.cs" />
     <Compile Include="Repository\DrugProposalRepository.cs" />
     <Compile Include="Repository\DrugRepository.cs" />
+    <Compile Include="Repository\DynamicRoomEquipmentRepository.cs" />
     <Compile Include="Repository\EquipmentMovingRepository.cs" />
     <Compile Include="Repository\IngredientRepository.cs" />
     <Compile Include="Repository\MedicalRecordRepository.cs" />
@@ -91,10 +95,12 @@
     <Compile Include="Repository\RequestRepository.cs" />
     <Compile Include="Repository\RoomRepository.cs" />
     <Compile Include="Repository\UserRepository.cs" />
+    <Compile Include="Repository\WarehouseRepository.cs" />
     <Compile Include="SecretaryImplementation\Secretary.cs" />
     <Compile Include="Service\DoctorSurveyService.cs" />
     <Compile Include="Service\DrugProposalService.cs" />
     <Compile Include="Service\DrugService.cs" />
+    <Compile Include="Service\DynamicRoomEquipmentService.cs" />
     <Compile Include="Service\EquipmentMovingService.cs" />
     <Compile Include="Service\IngredientService.cs" />
     <Compile Include="Service\MedicalRecordService.cs" />
@@ -109,6 +115,7 @@
     <Compile Include="Service\RequestService.cs" />
     <Compile Include="Service\RoomService.cs" />
     <Compile Include="Service\UserService.cs" />
+    <Compile Include="Service\WarehouseService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\" />
