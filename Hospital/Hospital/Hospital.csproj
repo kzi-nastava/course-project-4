@@ -37,6 +37,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.cs" />
+    <Compile Include="DoctorImplementation\DoctorDaysOff.cs" />
     <Compile Include="DoctorImplementation\DoctorIssuingPrescription.cs" />
     <Compile Include="DoctorImplementation\DoctorPerformingAppointment.cs" />
     <Compile Include="DoctorImplementation\DoctorReferral.cs" />
@@ -62,6 +63,7 @@
     <Compile Include="Model\Prescription.cs" />
     <Compile Include="Model\Referral.cs" />
     <Compile Include="Model\Renovation.cs" />
+    <Compile Include="Model\RequestForDaysOff.cs" />
     <Compile Include="Model\Room.cs" />
     <Compile Include="Model\UserAction.cs" />
     <Compile Include="DoctorImplementation\Doctor.cs" />
@@ -82,6 +84,7 @@
     <Compile Include="Repository\PrescriptionRepository.cs" />
     <Compile Include="Repository\ReferralRepository.cs" />
     <Compile Include="Repository\RenovationRepository.cs" />
+    <Compile Include="Repository\RequestForDaysOffRepository.cs" />
     <Compile Include="Repository\UserActionRepository.cs" />
     <Compile Include="Repository\AppointmentRepository.cs" />
     <Compile Include="Repository\EquipmentRepository.cs" />
@@ -101,6 +104,7 @@
     <Compile Include="Service\PrescriptionService.cs" />
     <Compile Include="Service\ReferralService.cs" />
     <Compile Include="Service\RenovationService.cs" />
+    <Compile Include="Service\RequestForDaysOffService.cs" />
     <Compile Include="Service\UserActionService.cs" />
     <Compile Include="Service\AppointmentService.cs" />
     <Compile Include="Service\EquipmentService.cs" />

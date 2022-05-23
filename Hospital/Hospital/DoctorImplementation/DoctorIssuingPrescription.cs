@@ -44,6 +44,7 @@ namespace Hospital.DoctorImplementation
 
         private void WritingPrescription(Appointment appointment, HealthRecord healthRecord)
         {
+            int tryInt;
             string drug, startConsuming, dose, timeOfconsuming;
             do
             {
@@ -61,7 +62,7 @@ namespace Hospital.DoctorImplementation
                 {
                     Console.WriteLine("Koliko puta na dan treba da pije: ");
                     dose = Console.ReadLine();
-                } while (!appointmentService.IsIntegerValid(dose));
+                } while (!int.TryParse(dose, out tryInt));
                 do
                 {
                     Console.WriteLine("Da li da pije:\n1)Tokom obroka\n2)Posle obroka\n3)Pre obroka\n4)Nije bitno\n>> ");

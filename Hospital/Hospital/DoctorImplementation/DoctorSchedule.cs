@@ -66,6 +66,7 @@ namespace Hospital.DoctorImplementation
 
         private void AccessToHealthRecord(List<Appointment> appointmentsOfParticularDay)
         {
+            int temp;
             string choice, serialNumberOfHealthRecord;
             Appointment appointmentOfSelectedPatient;
             do
@@ -81,7 +82,7 @@ namespace Hospital.DoctorImplementation
                             Console.WriteLine("Unesite redni broj pacijenta čiji zdravstveni karton želite da pogledate: ");
                             serialNumberOfHealthRecord = Console.ReadLine();
 
-                        } while (!appointmentService.IsIntegerValid(serialNumberOfHealthRecord));
+                        } while (!int.TryParse(serialNumberOfHealthRecord, out temp));
                     } while (Int32.Parse(serialNumberOfHealthRecord) > appointmentsOfParticularDay.Count);
                     appointmentOfSelectedPatient = appointmentsOfParticularDay[Int32.Parse(serialNumberOfHealthRecord) - 1];
                     this.PrintPatientsHealthRecord(appointmentOfSelectedPatient.PatientEmail);
