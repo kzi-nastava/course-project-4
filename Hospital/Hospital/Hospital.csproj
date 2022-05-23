@@ -44,10 +44,13 @@
     <Compile Include="DoctorImplementation\DoctorSchedule.cs" />
     <Compile Include="DoctorImplementation\DrugVerification.cs" />
     <Compile Include="DoctorImplementation\DynamicEquipmentRecords.cs" />
+    <Compile Include="ManagerImplementation\DrugView.cs" />
     <Compile Include="ManagerImplementation\EquipmentView.cs" />
+    <Compile Include="ManagerImplementation\IngredientView.cs" />
     <Compile Include="ManagerImplementation\Manager.cs" />
     <Compile Include="ManagerImplementation\RenovationView.cs" />
     <Compile Include="ManagerImplementation\RoomView.cs" />
+    <Compile Include="Model\DoctorSurvey.cs" />
     <Compile Include="Model\DoctorUser.cs" />
     <Compile Include="Model\Drug.cs" />
     <Compile Include="Model\DrugProposal.cs" />
@@ -70,10 +73,13 @@
     <Compile Include="Model\Appointment.cs" />
     <Compile Include="Model\User.cs" />
     <Compile Include="Model\Warehouse.cs" />
+    <Compile Include="PatientImplementation\PatientDoctorSearch.cs" />
     <Compile Include="PatientImplementation\PatientAnamnesis.cs" />
+    <Compile Include="PatientImplementation\PatientDoctorSurvey.cs" />
     <Compile Include="PatientImplementation\PatientSchedulingAppointment.cs" />
     <Compile Include="PatientImplementation\PatientService.cs" />
     <Compile Include="PatientImplementation\Patient.cs" />
+    <Compile Include="Repository\DoctorSurveyRepository.cs" />
     <Compile Include="Repository\DrugProposalRepository.cs" />
     <Compile Include="Repository\DrugRepository.cs" />
     <Compile Include="Repository\DynamicRoomEquipmentRepository.cs" />
@@ -94,6 +100,7 @@
     <Compile Include="Repository\UserRepository.cs" />
     <Compile Include="Repository\WarehouseRepository.cs" />
     <Compile Include="SecretaryImplementation\Secretary.cs" />
+    <Compile Include="Service\DoctorSurveyService.cs" />
     <Compile Include="Service\DrugProposalService.cs" />
     <Compile Include="Service\DrugService.cs" />
     <Compile Include="Service\DynamicRoomEquipmentService.cs" />

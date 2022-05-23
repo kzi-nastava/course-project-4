@@ -15,6 +15,7 @@ namespace Hospital.DoctorImplementation
     {
         AppointmentService appointmentService = new AppointmentService();
         UserService userService = new UserService();
+        ReferralService referralService = new ReferralService();
         HealthRecordService healthRecordService = new HealthRecordService();
         List<HealthRecord> healthRecords;
         List<Appointment> allMyAppointments;
