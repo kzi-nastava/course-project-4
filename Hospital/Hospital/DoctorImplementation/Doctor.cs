@@ -58,13 +58,20 @@ namespace Hospital.DoctorImplementation
                 }
                 else if (choice.Equals("6"))
                     {
-                    this.PerformingAppointment();
+                    DoctorPerformingAppointment doctorPerforming = new DoctorPerformingAppointment(appointmentService, healthRecords, healthRecordService, currentRegisteredDoctor, allMyAppointments, userService);
+                    doctorPerforming.PerformingAppointment();
                 }
                 else if (choice.Equals("7"))
                 {
-                    this.DrugManagement();
+                    DrugVerification drugVerification = new DrugVerification();
+                    drugVerification.DisplayDrugsForVerification();
                 }
                 else if (choice.Equals("8"))
+                {
+                    DoctorDaysOff doctorDaysOff = new DoctorDaysOff(currentRegisteredDoctor);
+                    doctorDaysOff.MenuForDaysOff();
+                }
+                else if (choice.Equals("9"))
                 {
                     this.LogOut();
                 }
@@ -86,22 +93,12 @@ namespace Hospital.DoctorImplementation
             Console.WriteLine("5. Ispitivanje sopstvenog rasporeda");
             Console.WriteLine("6. Izvodjenje pregleda");
             Console.WriteLine("7. Upravljanje lekovima");
-            Console.WriteLine("8. Odjava");
+            Console.WriteLine("8. Zahtevi za slobodne dane");
+            Console.WriteLine("9. Odjava");
             Console.Write(">> ");
 
         }
 
-        private void DrugManagement()
-        {
-            DrugVerification drugVerification = new DrugVerification();
-            drugVerification.DisplayDrugsForVerification();
-        }
-        private void PerformingAppointment()
-        {
-            DoctorPerformingAppointment doctorPerforming = new DoctorPerformingAppointment(appointmentService, healthRecords, healthRecordService,currentRegisteredDoctor,allMyAppointments,userService);
-            doctorPerforming.PerformingAppointment();
-        }
- 
         private void ExaminingOwnSchedule()
         {
             string dateAppointment;
