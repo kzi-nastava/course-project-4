@@ -31,6 +31,7 @@ namespace Hospital.DoctorImplementation
 
         public void PerformingAppointment()
         {
+            int temp;
             List<Appointment> appointmentsForPerformanse = TodaysAppointments();
             if (appointmentsForPerformanse.Count != 0)
             {
@@ -43,7 +44,7 @@ namespace Hospital.DoctorImplementation
                         Console.WriteLine("Unesite redni broj pacijenta kojeg želite da pregledate: ");
                         choice = Console.ReadLine();
 
-                    } while (!appointmentService.IsIntegerValid(choice));
+                    } while (!int.TryParse(choice, out temp));
                 } while (Int32.Parse(choice) > appointmentsForPerformanse.Count);
                 Appointment appointmentOfSelected = appointmentsForPerformanse[Int32.Parse(choice) - 1];
 
@@ -150,18 +151,20 @@ namespace Hospital.DoctorImplementation
 
         private void PrintItemsToChangeHealthRecord(HealthRecord healthRecordSelected)
         {
+            int temp;
+            double convertDouble;
             string patientHeightInput, patientWeightInput, previousIllnessesInput, allergenInput, bloodTypeInput;
             do
             {
                 Console.WriteLine("Unesite visinu: ");
                 patientHeightInput = Console.ReadLine();
 
-            } while (!appointmentService.IsIntegerValid(patientHeightInput));
+            } while (!int.TryParse(patientHeightInput, out temp));
             do
             {
                 Console.WriteLine("Unesite težinu: ");
                 patientWeightInput = Console.ReadLine();
-            } while (!appointmentService.IsDoubleValid(patientWeightInput));
+            } while (!double.TryParse(patientWeightInput,out convertDouble));
             Console.WriteLine("Unesite prethodne bolesti: ");
             previousIllnessesInput = Console.ReadLine();
             do

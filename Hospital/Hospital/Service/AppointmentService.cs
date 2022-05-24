@@ -317,8 +317,8 @@ namespace Hospital.Service
             }
             return true;
         }
-       
-        public bool IsRoomNumberValid(string roomNumber)
+    
+    public bool IsRoomNumberValid(string roomNumber)
         {
             foreach(Room room in _rooms)
             {
@@ -332,65 +332,6 @@ namespace Hospital.Service
 
         }
 
-        public bool IsIntegerValid(string number)
-        {
-            bool isNumeric = true;
-            foreach (char c in number)
-            {
-                if (!Char.IsNumber(c))
-                {
-                    isNumeric = false;
-                    Console.WriteLine("Unesite validnu radnju!");
-                    break;
-                }
-            }
-            return isNumeric;
-        }
-
-        public bool IsDoubleValid(string number)
-
-        {
-            if (double.TryParse(number, out double doubleNumber) && !Double.IsNaN(doubleNumber) && !Double.IsInfinity(doubleNumber))
-            {
-                return true;
-
-            }
-            return false;
-        }
-
-        public void DeleteAppointment(Appointment appointmentForDelete)
-        {
-            string filePath = @"..\..\Data\appointments.csv";
-            string[] lines = File.ReadAllLines(filePath);
-           
-            for (int i = 0; i < lines.Length; i++)
-            {
-                string[] fields = lines[i].Split(new[] { ',' });
-                string id = fields[0];
-
-                if (id.Equals(appointmentForDelete.AppointmentId))
-                {
-
-                    lines[i] = id + "," + fields[1] + "," + fields[2] + "," + fields[3] + "," + fields[4] + "," + fields[5]
-                        + "," + (int)Appointment.State.Deleted + "," + fields[7] + "," + fields[8] + "," + fields[9]+","+fields[10];
-                    Console.WriteLine("Uspesno ste obrisali termin!");
-                    
-                }
-            }
-            // saving changes
-            File.WriteAllLines(filePath, lines);
-
-            // update list with all appointments
-
-            foreach(Appointment appointment in this._appointments)
-            {
-                if (appointment.AppointmentId.Equals(appointmentForDelete.AppointmentId))
-                {
-                    appointment.AppointmentState = Appointment.State.Deleted;
-                }
-            }
-        }
-
         public void UpdateAppointment(Appointment appointmentChange)
         {
             foreach(Appointment updateAppointment in this._appointments)
@@ -402,7 +343,7 @@ namespace Hospital.Service
                     updateAppointment.DateAppointment = appointmentChange.DateAppointment;
                     updateAppointment.StartTime = appointmentChange.StartTime;
                     updateAppointment.EndTime = appointmentChange.EndTime;
-                    updateAppointment.AppointmentState = Appointment.State.Updated;
+                    updateAppointment.AppointmentState = appointmentChange.AppointmentState;
                     updateAppointment.RoomNumber = appointmentChange.RoomNumber;
                     updateAppointment.AppointmentPerformed = appointmentChange.AppointmentPerformed;
                 }

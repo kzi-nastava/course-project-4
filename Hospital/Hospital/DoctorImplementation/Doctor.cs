@@ -215,6 +215,7 @@ namespace Hospital.DoctorImplementation
 
         private Appointment PrintItemsToEnterOperation(string typeOfTerm)
         {
+            int temp;
             string patientEmail, newDate, newStartTime, newRoomNumber, newDurationOperation;
             DateTime dateOfAppointment, startTime, newEndTime;
             int roomNumber;
@@ -238,7 +239,7 @@ namespace Hospital.DoctorImplementation
                 Console.WriteLine("Koliko će trajati operacija (u minutima): ");
                 newDurationOperation = Console.ReadLine();
 
-            } while (!appointmentService.IsIntegerValid(newDurationOperation));
+            } while (!int.TryParse(newDurationOperation, out temp));
             do
             {
                 Console.WriteLine("Unesite broj sobe: ");
@@ -255,6 +256,7 @@ namespace Hospital.DoctorImplementation
 
         private Appointment PrintItemsToChangeOperation(Appointment appontment)
         {
+            int temp;
             string patientEmail, newDate, newStartTime, newRoomNumber, newDurationOperation;
             DateTime dateOfAppointment, startTime, newEndTime;
             int roomNumber;
@@ -278,7 +280,7 @@ namespace Hospital.DoctorImplementation
                 Console.WriteLine("Koliko će trajati operacija (u minutima): ");
                 newDurationOperation = Console.ReadLine();
 
-            } while (!appointmentService.IsIntegerValid(newDurationOperation));
+            } while (!int.TryParse(newDurationOperation, out temp));
             do
             {
                 Console.WriteLine("Unesite broj sobe: ");
@@ -288,7 +290,7 @@ namespace Hospital.DoctorImplementation
             startTime = DateTime.ParseExact(newStartTime, "HH:mm", CultureInfo.InvariantCulture);
             newEndTime = startTime.AddMinutes(Int32.Parse(newDurationOperation));
             roomNumber = Int32.Parse(newRoomNumber);
-            return new Appointment(appontment.AppointmentId, patientEmail, currentRegisteredDoctor.Email, dateOfAppointment, startTime, newEndTime, Appointment.State.Created, roomNumber, appontment.TypeOfTerm, false, appontment.Urgent);
+            return new Appointment(appontment.AppointmentId, patientEmail, currentRegisteredDoctor.Email, dateOfAppointment, startTime, newEndTime, Appointment.State.Updated, roomNumber, appontment.TypeOfTerm, false, appontment.Urgent);
         }
 
         private Appointment PrintItemsToChangeExamination(Appointment appointment)
@@ -320,12 +322,13 @@ namespace Hospital.DoctorImplementation
             startTime = DateTime.ParseExact(newStartTime, "HH:mm", CultureInfo.InvariantCulture);
             newEndTime = startTime.AddMinutes(15);
             roomNumber = Int32.Parse(newRoomNumber);
-            return new Appointment(appointment.AppointmentId, patientEmail, currentRegisteredDoctor.Email, dateOfAppointment, startTime, newEndTime, Appointment.State.Created, roomNumber, appointment.TypeOfTerm, false, appointment.Urgent);
+            return new Appointment(appointment.AppointmentId, patientEmail, currentRegisteredDoctor.Email, dateOfAppointment, startTime, newEndTime, Appointment.State.Updated, roomNumber, appointment.TypeOfTerm, false, appointment.Urgent);
         }
 
 
         private void DeleteOwnAppointment()
         {
+            int temp;
             if (this.allMyAppointments.Count != 0)
             {
                 this.ReadOwnAppointment();
@@ -336,11 +339,12 @@ namespace Hospital.DoctorImplementation
                     {
                         Console.WriteLine("Unesite redni broj koji želite da obrišete: ");
                         numberAppointment = Console.ReadLine();
-                    } while (!appointmentService.IsIntegerValid(numberAppointment));
+                    } while (!int.TryParse(numberAppointment, out temp));
                 } while (Int32.Parse(numberAppointment) > this.allMyAppointments.Count);
 
                 Appointment appointmentForDelete = this.allMyAppointments[Int32.Parse(numberAppointment) - 1];
-                appointmentService.DeleteAppointment(appointmentForDelete);
+                appointmentForDelete.AppointmentState = Appointment.State.Deleted;
+                appointmentService.UpdateAppointment(appointmentForDelete);
                 appointmentService.UpdateFile();
                 this.allMyAppointments = appointmentService.GetDoctorAppointment(this.currentRegisteredDoctor);
                 Console.WriteLine("Uspesno ste obrisali termin!");
@@ -355,6 +359,7 @@ namespace Hospital.DoctorImplementation
 
         private void UpdateOwnAppointment()
         {
+            int tryInt;
             if (this.allMyAppointments.Count != 0)
             {
                 this.ReadOwnAppointment();
@@ -365,7 +370,7 @@ namespace Hospital.DoctorImplementation
                     {
                         Console.WriteLine("Unesite redni broj koji želite da promenite: ");
                         numberAppointment = Console.ReadLine();
-                    } while (!appointmentService.IsIntegerValid(numberAppointment));
+                    } while (!int.TryParse(numberAppointment, out tryInt));
                 } while (Int32.Parse(numberAppointment) > this.allMyAppointments.Count);
                 Appointment appointmentForUpdate = this.allMyAppointments[Int32.Parse(numberAppointment) - 1];
                 Appointment newAppointment;
@@ -377,6 +382,7 @@ namespace Hospital.DoctorImplementation
                 {
                     newAppointment = this.PrintItemsToChangeOperation(appointmentForUpdate);
                 }
+                
                 appointmentService.UpdateAppointment(newAppointment);
                 appointmentService.UpdateFile();
                 this.allMyAppointments = appointmentService.GetDoctorAppointment(this.currentRegisteredDoctor);
