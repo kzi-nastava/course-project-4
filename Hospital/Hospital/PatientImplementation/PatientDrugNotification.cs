@@ -33,6 +33,7 @@ namespace Hospital.PatientImplementation
             List<DateTime> drugTime = new List<DateTime>();
             foreach (Prescription prescription in _prescriptionService.Prescriptions)
             {
+                DateTime timeConsuming = prescription.StartConsuming;
                 foreach (Appointment appointment in _appointmentService.Appointments)
                 {
                     if (appointment.AppointmentId.Equals(prescription.IdAppointment)
@@ -41,7 +42,10 @@ namespace Hospital.PatientImplementation
                         int takingDifference = 24 / prescription.Dose;
                         drugTime.Add(prescription.StartConsuming);
                         for (int i = 1; i < prescription.Dose; i++)
-                            drugTime.Add(prescription.StartConsuming.AddHours(takingDifference));
+                        {
+                            timeConsuming = timeConsuming.AddHours(takingDifference);
+                            drugTime.Add(timeConsuming);
+                        }
                         idAndDrugTime.Add(prescription.IdDrug, drugTime);
                         drugTime = new List<DateTime>();
                     }
@@ -85,21 +89,27 @@ namespace Hospital.PatientImplementation
             bool isHours = true;
             if (timeNotification.Hour == 0)
                 isHours = false;
+
+            bool isTime = false;
             Dictionary<string, List<DateTime>> drugsNamesAndTime = this.FindDrugsNames();
             foreach (KeyValuePair<string, List<DateTime>> drug in drugsNamesAndTime)
             {
                 foreach (DateTime takingTime in drug.Value)
                 {
                     if (takingTime.TimeOfDay > DateTime.Now.TimeOfDay && DateTime.Now.AddHours(timeNotification.Hour) >= takingTime && isHours)
-                        Console.WriteLine("Treba da popijete " + drug.Key + "za " + takingTime.Subtract(DateTime.Now).ToString("HH:mm"));
-                    else if (takingTime.TimeOfDay > DateTime.Now.TimeOfDay && DateTime.Now.AddMinutes(timeNotification.Hour) >= takingTime && !isHours)
-                        Console.WriteLine("Treba da popijete " + drug.Key + "za " + takingTime.Subtract(DateTime.Now).ToString("HH:mm"));
-                    else
                     {
-                        Console.WriteLine("Jos uvek ne treba da popijete " + drug.Key);
-                        break;
+                        Console.WriteLine("Treba da popijete " + drug.Key + " za " + takingTime.Subtract(DateTime.Now).ToString(@"hh\:mm\:ss"));
+                        isTime = true;
+                    }
+                    else if (takingTime.TimeOfDay > DateTime.Now.TimeOfDay && DateTime.Now.AddMinutes(timeNotification.Hour) >= takingTime && !isHours)
+                    {
+                        Console.WriteLine("Treba da popijete " + drug.Key + " za " + takingTime.Subtract(DateTime.Now).ToString(@"hh\:mm\:ss"));
+                        isTime = true;
                     }
                 }
+                if (!isTime)
+                    Console.WriteLine("Jos uvek ne treba da popijete " + drug.Key);
+                isTime = false;
             }
         }
 
