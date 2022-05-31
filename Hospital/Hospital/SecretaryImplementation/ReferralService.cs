@@ -11,6 +11,7 @@ namespace Hospital.Service
 {
 	class ReferralService
 	{
+		private UserService _userService;
 		private ReferralRepository _referralRepository;
 		private List<Referral> _referrals;
 
@@ -18,6 +19,7 @@ namespace Hospital.Service
 
 		public ReferralService()
 		{
+			this._userService = new UserService();
 			this._referralRepository = new ReferralRepository();
 			_referrals = this._referralRepository.Load();
 		}
@@ -94,6 +96,56 @@ namespace Hospital.Service
 					UpdateFile();
 					break;
 				}
+			}
+		}
+
+		public Referral SelectReferral()
+		{
+			List<Referral> unusedReferrals = FilterUnused();
+			if (unusedReferrals.Count == 0)
+			{
+				Console.WriteLine("Trenutno nema neiskoriscenih uputa u sistemu.");
+				return null;
+			}
+			this.ShowReferrals(unusedReferrals);
+			Console.WriteLine("x. Odustani");
+			Console.WriteLine("-------------------------------------------------------------");
+			string referralIndexInput;
+			int referralIndex;
+			do
+			{
+				Console.WriteLine("Unesite redni broj uputa koji zelite da obradite.");
+				Console.Write(">>");
+				referralIndexInput = Console.ReadLine();
+				if (referralIndexInput == "x")
+				{
+					return null;
+				}
+			} while (!int.TryParse(referralIndexInput, out referralIndex) || referralIndex < 1 || referralIndex > unusedReferrals.Count);
+			return unusedReferrals[referralIndex - 1];
+		}
+
+		public void ShowReferrals(List<Referral> referrals)
+		{
+			int i = 1;
+			foreach (Referral referral in referrals)
+			{
+
+				if (referral.Doctor != "null")
+				{
+					Console.Write("{0}. Pacijent: {1} | Doktor: {2} | ", i,
+						_userService.GetUserFullName(referral.Patient), _userService.GetUserFullName(referral.Doctor));
+
+					i++;
+				}
+				else
+				{
+					Console.Write("{0}. Pacijent: {1} | Specijalnost: {2} | ", i,
+						_userService.GetUserFullName(referral.Patient), SpecialityToString(referral.DoctorSpeciality));
+					i++;
+				}
+				Console.WriteLine("Tip: " + AppointmentType(referral));
+
 			}
 		}
 	}
