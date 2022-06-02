@@ -47,13 +47,28 @@ namespace Hospital.Service
                 {
                     this._dynamicEquipments[i].AmountEquipment = amount;
 
-
                 }
             }
-           
-            
         }
 
-       
+  //      public void AddEquipmentAmount(string roomId, string equipmentId, int amount)
+		//{
+  //          for(int i = 0; i < this._dynamicEquipments.Count; i++)
+		//	{
+		//		if (this._dynamicEquipments[i].IdRoom.Equals(roomId))
+		//		{
+  //                  foreach(KeyValuePair<string, int> pair in this._dynamicEquipments[i].AmountEquipment)
+		//			{
+		//				if (pair.Key.Equals(equipmentId))
+		//				{
+  //                          this._dynamicEquipments[i].AmountEquipment[pair.Key] = pair.Value + amount;
+  //                          UpdateFile();
+  //                          return;
+
+  //                      }
+		//			}
+		//		}
+		//	}
+		//}
     }
 }

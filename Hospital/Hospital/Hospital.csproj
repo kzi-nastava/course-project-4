@@ -73,7 +73,7 @@
     <Compile Include="DoctorImplementation\Doctor.cs" />
     <Compile Include="Model\Appointment.cs" />
     <Compile Include="Model\User.cs" />
-    <Compile Include="Model\Warehouse.cs" />
+    <Compile Include="Model\DynamicEquipment.cs" />
     <Compile Include="PatientImplementation\PatientDoctorSearch.cs" />
     <Compile Include="PatientImplementation\PatientAnamnesis.cs" />
     <Compile Include="PatientImplementation\PatientDoctorSurvey.cs" />
@@ -102,6 +102,8 @@
     <Compile Include="Repository\RoomRepository.cs" />
     <Compile Include="Repository\UserRepository.cs" />
     <Compile Include="Repository\WarehouseRepository.cs" />
+    <Compile Include="SecretaryImplementation\DynamicEquipmentMovingService.cs" />
+    <Compile Include="SecretaryImplementation\DynamicEquipmentRequestService.cs" />
     <Compile Include="SecretaryImplementation\ReferralScheduleService.cs" />
     <Compile Include="SecretaryImplementation\ReferralService.cs" />
     <Compile Include="SecretaryImplementation\RequestService.cs" />

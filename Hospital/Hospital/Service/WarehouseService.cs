@@ -11,23 +11,24 @@ namespace Hospital.Service
     class WarehouseService
     {
         private WarehouseRepository _warehouseRepository;
-        private List<Warehouse> _warehouse;
+        private List<DynamicEquipment> _warehouseEquipment;
 
 
         public WarehouseService()
         {
             this._warehouseRepository = new WarehouseRepository();
-            this._warehouse = this._warehouseRepository.Load();
+            this._warehouseEquipment = this._warehouseRepository.Load();
         }
-
+        
+        public List<DynamicEquipment> WarehouseEquipment { get { return _warehouseEquipment; } }
 
         public string GetNameEquipment(string id)
         {
-            foreach(Warehouse equipment in this._warehouse)
+            foreach(DynamicEquipment equipment in this._warehouseEquipment)
             {
-                if (equipment.IdDynamicEquipment.Equals(id))
+                if (equipment.Id.Equals(id))
                 {
-                    return equipment.NameDynamicEquipment;
+                    return equipment.Name;
                 }
             }
             return "";

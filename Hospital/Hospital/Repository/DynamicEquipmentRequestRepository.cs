@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,11 +9,11 @@ using Microsoft.VisualBasic.FileIO;
 
 namespace Hospital.Repository
 {
-    class WarehouseRepository
-    {
-        public List<DynamicEquipment> Load()
-        {
-            List<DynamicEquipment> warehouse = new List<DynamicEquipment>();
+	class DynamicEquipmentRequestRepository
+	{
+		public List<DynamicEquipmentRequest> Load()
+		{
+            List<DynamicEquipmentRequest> requests = new List<DynamicEquipmentRequest>();
 
             using (TextFieldParser parser = new TextFieldParser(@"..\..\Data\warehouse.csv"))
             {
@@ -22,15 +23,14 @@ namespace Hospital.Repository
                 {
                     string[] fields = parser.ReadFields();
                     string id = fields[0];
-                    string name = fields[1];
-                    int amount = Int32.Parse(fields[2]);
-                    DynamicEquipment equipment = new DynamicEquipment(id, name, amount);
-                    warehouse.Add(equipment);
-
+                    int amount = Int32.Parse(fields[1]);
+                    DateTime addTime = DateTime.ParseExact(fields[2], "MM/dd/yyyy HH:MM", CultureInfo.InvariantCulture);
+                    DynamicEquipmentRequest request = new DynamicEquipmentRequest(id, amount, addTime);
+                    requests.Add(request);
                 }
             }
 
-            return warehouse;
+            return requests;
         }
-    }
+	}
 }
