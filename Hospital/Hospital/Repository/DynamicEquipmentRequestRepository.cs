@@ -15,7 +15,7 @@ namespace Hospital.Repository
 		{
             List<DynamicEquipmentRequest> requests = new List<DynamicEquipmentRequest>();
 
-            using (TextFieldParser parser = new TextFieldParser(@"..\..\Data\warehouse.csv"))
+            using (TextFieldParser parser = new TextFieldParser(@"..\..\Data\equipmentRequests.csv"))
             {
                 parser.TextFieldType = FieldType.Delimited;
                 parser.SetDelimiters(",");
@@ -24,7 +24,7 @@ namespace Hospital.Repository
                     string[] fields = parser.ReadFields();
                     string id = fields[0];
                     int amount = Int32.Parse(fields[1]);
-                    DateTime addTime = DateTime.ParseExact(fields[2], "MM/dd/yyyy HH:MM", CultureInfo.InvariantCulture);
+                    DateTime addTime = DateTime.ParseExact(fields[2], "MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture);
                     bool used = Convert.ToBoolean(fields[3]);
                     DynamicEquipmentRequest request = new DynamicEquipmentRequest(id, amount, addTime, used);
                     requests.Add(request);

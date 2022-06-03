@@ -25,6 +25,8 @@ namespace Hospital.Service
         }
         
         public List<DynamicEquipment> WarehouseEquipment { get { return _warehouseEquipment; } }
+        public List<DynamicEquipmentRequest> Requests { get { return _requests; } }
+        public DynamicEquipmentRequestRepository Repository { get { return _dynamicEquipmentRequestRepository; } }
 
         public void UpdateWarehouse()
 		{

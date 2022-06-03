@@ -110,7 +110,7 @@ namespace Hospital.SecretaryImplementation
 				}
 				else if(choice == "10")
 				{
-
+					MakeEquipmentRequest();
 				}
 				else if(choice == "11")
 				{
@@ -186,6 +186,11 @@ namespace Hospital.SecretaryImplementation
 		public void UrgentSchedule()
 		{
 			this._urgentScheduleService.SelectValuesForUrgentSchedule();
+		}
+
+		public void MakeEquipmentRequest()
+		{
+			this._dynamicEquipmentRequestService.SendRequestForProcurment();
 		}
 
 		public void LogOut()

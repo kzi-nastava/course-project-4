@@ -11,17 +11,13 @@ namespace Hospital.SecretaryImplementation
 {
 	class DynamicEquipmentRequestService
 	{
-		private DynamicEquipmentRequestRepository _repository;
 		private WarehouseService _warehouseService;
-		private List<DynamicEquipmentRequest> _requests;
 		private List<DynamicEquipment> _warehouseEquipment;
 
 		public DynamicEquipmentRequestService()
 		{
-			this._repository = new DynamicEquipmentRequestRepository();
 			this._warehouseService = new WarehouseService();
 			this._warehouseEquipment = _warehouseService.WarehouseEquipment;
-			this._requests = _repository.Load();
 		}
 		public List<DynamicEquipment> GetMissingEquipment()
 		{
@@ -90,8 +86,9 @@ namespace Hospital.SecretaryImplementation
 			List<DynamicEquipment> missingEquipment = GetMissingEquipment();
 			DynamicEquipment chosenEquipment = SelectEquipment(missingEquipment);
 			int amount = InputAmount();
-
-
+			DynamicEquipmentRequest request = new DynamicEquipmentRequest(chosenEquipment.Id, amount, DateTime.Now.AddHours(24), false);
+			_warehouseService.Requests.Add(request);
+			_warehouseService.Repository.UpdateFile();
 		}
 	}
 }
