@@ -130,6 +130,7 @@
     <Compile Include="Service\HealthRecordService.cs" />
     <Compile Include="Service\RoomService.cs" />
     <Compile Include="Service\UserService.cs" />
+    <Compile Include="Service\Utils.cs" />
     <Compile Include="Service\WarehouseService.cs" />
   </ItemGroup>
   <ItemGroup>

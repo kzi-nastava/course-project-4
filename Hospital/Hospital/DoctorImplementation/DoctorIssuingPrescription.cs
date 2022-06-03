@@ -77,7 +77,7 @@ namespace Hospital.DoctorImplementation
             {
                 Console.WriteLine("Unesite vreme kada pacijent treba da krene da pije lek (HH:mm): ");
                 startConsuming = Console.ReadLine();
-            } while (!appointmentService.IsTimeFormValid(startConsuming));
+            } while (!Utils.IsTimeFormValid(startConsuming));
             return startConsuming;
         }
 

@@ -67,5 +67,19 @@ namespace Hospital.Service
             _roomRepository.Save(_allRooms);
             return true;
         }
+
+        public bool IsRoomNumberValid(string roomNumber)
+        {
+            foreach (Room room in _allRooms)
+            {
+                if (room.Id.Equals(roomNumber))
+                {
+                    return true;
+                }
+            }
+            Console.WriteLine("Broj sobe ne postoji!");
+            return false;
+
+        }
     }
 }
