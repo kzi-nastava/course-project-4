@@ -18,7 +18,8 @@ namespace Hospital.PatientImplementation
         PatientAnamnesis _patientAnamnesis;
         PatientDoctorSearch _doctorSearch;
         PatientDoctorSurvey _doctorSurvey;
-        List<Appointment> _currentAppointments; 
+        List<Appointment> _currentAppointments;
+        PatientDrugNotification _drugNotification;
 
         public string Email { get { return _email; } }
         public List<Appointment> PatientAppointments
@@ -37,6 +38,7 @@ namespace Hospital.PatientImplementation
             this._currentAppointments = this._patientService.RefreshPatientAppointments();
             this._doctorSearch = new PatientDoctorSearch(this);
             this._doctorSurvey = new PatientDoctorSurvey(this);
+            this._drugNotification = new PatientDrugNotification(this);
         }
 
         // methods
@@ -55,7 +57,8 @@ namespace Hospital.PatientImplementation
                 Console.WriteLine("5. Preporuka termina pregleda");
                 Console.WriteLine("6. Pregled i pretraga anamneza");
                 Console.WriteLine("7. Pretrazi doktora");
-                Console.WriteLine("8. Odjava");
+                Console.WriteLine("8. Pogledaj obavestenja");
+                Console.WriteLine("9. Odjava");
                 Console.Write(">> ");
                 choice = Console.ReadLine();
 
@@ -75,6 +78,8 @@ namespace Hospital.PatientImplementation
                 else if (choice.Equals("7"))
                     this.DoctorSearch();
                 else if (choice.Equals("8"))
+                    this.DrugNotification();
+                else if (choice.Equals("9"))
                     this.LogOut();
             } while (true);
         }
@@ -231,6 +236,23 @@ namespace Hospital.PatientImplementation
                 else if (choice.Equals("3"))
                     _doctorSearch.FindDoctorsBySpeciality();
             } while (choice != "1" && choice != "2" && choice != "3");
+        }
+
+        private void DrugNotification()
+        {
+            this._drugNotification.InformPatientAboutDrug();
+            string choice;
+            Console.WriteLine("\nDa li zelite da izmenite vreme obavestenja?");
+            do
+            {
+                Console.WriteLine("\n1. DA       2. NE");
+                Console.Write(">> ");
+                choice = Console.ReadLine();
+                if (choice.Equals("1"))
+                    this._drugNotification.ChangeTimeNotification();
+                else if (choice.Equals("2"))
+                    return;
+            } while (choice != "1" && choice != "2");
         }
 
         private void LogOut()

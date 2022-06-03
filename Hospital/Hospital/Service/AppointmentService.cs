@@ -42,16 +42,16 @@ namespace Hospital.Service
 		{
             foreach(Appointment appointment in _appointments)
 			{
+                DateTime endTime = startTime.AddMinutes(60);
                 if (appointment.DoctorEmail == doctor.Email && appointment.DateAppointment.Date == DateTime.Now.Date
-                    && CheckOverlapTime(appointment, startTime))
+                    && CheckOverlapTime(appointment, startTime, endTime))
                     return false;
 			}
             return true;
 		}
 
-        public bool CheckOverlapTime(Appointment appointment, DateTime startTime)
+        public bool CheckOverlapTime(Appointment appointment, DateTime startTime, DateTime endTime)
 		{
-            DateTime endTime = startTime.AddMinutes(60);
             if ((startTime <= appointment.StartTime) && (appointment.EndTime <= endTime))
                 return true;
             else if ((appointment.StartTime <= endTime) && (endTime <= appointment.EndTime))
@@ -104,69 +104,8 @@ namespace Hospital.Service
 
         }
 
-		public void ScheduleUrgently(User patient, DoctorUser.Speciality speciality, int appointmentType)
-		{
-            List<User> capableDoctors = _userService.FilterDoctors(speciality);
-            DateTime currentTime = DateTime.Now.AddMinutes(15);
-            DateTime gapTime = DateTime.Now.AddHours(2);
-            Appointment newAppointment;
-
-            while(currentTime <= gapTime)
-			{
-                foreach(User doctor in capableDoctors)
-				{
-                    if(IsDoctorFree(doctor, currentTime))
-					{
-                        Room freeRoom = FindFreeRoom(currentTime, currentTime);
-                        DateTime endTime;
-                        if (appointmentType == 1)
-                            endTime = currentTime.AddMinutes(15);
-                        else
-                            endTime = currentTime.AddMinutes(60);
-                        newAppointment = new Appointment(GetNewAppointmentId().ToString(), patient.Email, doctor.Email,
-                            currentTime, currentTime, endTime, Appointment.State.Created,
-                            Int32.Parse(freeRoom.Id), (Appointment.Type)appointmentType, false, true);
-                        _appointments.Add(newAppointment);
-                        _appointmentRepository.Save(this._appointments);
-                        Console.WriteLine("\nUspesno obavljeno hitno zakazivanje\nSlanje obavestenja izabranom lekaru...");
-                        
-                        //TODO citanje notifikacije
-                        Notification notificaton = new Notification(_notificationService.GetNewNotificationId(), doctor.Email,
-                            "Imate hitno zakazan termin u " + currentTime.ToString("HH:mm"), false);
-                        _notificationService.Notifications.Add(notificaton);
-                        _notificationService.UpdateFile();
-                        return;
-					}
-				}
-                currentTime = currentTime.AddMinutes(15);
-			}
-            Appointment leastUrgent = FindLeastUrgentAppointment();
-            Appointment rescheduledAppointment;
-            do
-            {
-                rescheduledAppointment = RescheduleAppointment(leastUrgent);
-            } while (IsAppointmentFreeForDoctor(rescheduledAppointment));
-            UpdateAppointment(rescheduledAppointment);
-
-            newAppointment = new Appointment(GetNewAppointmentId().ToString(), patient.Email, capableDoctors[0].Email,
-                leastUrgent.DateAppointment, leastUrgent.StartTime, leastUrgent.StartTime.AddMinutes(45), Appointment.State.Created,
-                leastUrgent.RoomNumber, (Appointment.Type)appointmentType, false, true);
-            this.AddAppointment(newAppointment);
-            Notification notification = new Notification(_notificationService.GetNewNotificationId(), capableDoctors[0].Email,
-                           "Imate hitno zakazan termin u " + leastUrgent.StartTime.ToString("HH:mm"), false);
-            _notificationService.Notifications.Add(notification);
-            _notificationService.Notifications.Add(new Notification(_notificationService.GetNewNotificationId(), rescheduledAppointment.DoctorEmail,
-                           "Premesten vam je termin za " + rescheduledAppointment.DateAppointment.ToString("dd/MM/yyyy ") + rescheduledAppointment.StartTime.ToString("HH:mm"), false));
-            _notificationService.Notifications.Add(new Notification(_notificationService.GetNewNotificationId(), rescheduledAppointment.PatientEmail,
-                           "Premesten vam je termin za " + rescheduledAppointment.DateAppointment.ToString("dd/MM/yyyy ") + rescheduledAppointment.StartTime.ToString("HH:mm"), false));
-            _notificationService.UpdateFile();
-        }   
-
-
-
         public Appointment RescheduleAppointment(Appointment appointment)
 		{
-
             string date, startingTime;
             do
             {
@@ -190,7 +129,6 @@ namespace Hospital.Service
             {
                 endTime = startTime.AddMinutes(60);
             }
-
             string id = GetNewAppointmentId().ToString();
             Room freeRoom = FindFreeRoom(dateOfAppointment, startTime);
             if (freeRoom is null)
@@ -201,7 +139,6 @@ namespace Hospital.Service
 
             return new Appointment(id, appointment.PatientEmail, appointment.DoctorEmail, dateOfAppointment,
                 startTime, endTime, Appointment.State.Created, roomId, appointment.TypeOfTerm, false, false);
-
         }
 
         public User FindFreeDoctor(DoctorUser.Speciality speciality, Appointment newAppointment)
@@ -239,17 +176,17 @@ namespace Hospital.Service
             foreach (Appointment appointment in _appointments)
             {
                 if (appointment.DoctorEmail.Equals(newAppointment.DoctorEmail) && appointment.DateAppointment == newAppointment.DateAppointment
-                    && CheckOverlapTerms(appointment,newAppointment))
+                    && CheckOverlapTime(appointment,newAppointment.StartTime, newAppointment.EndTime))
                 {
                     Console.WriteLine("Termin je vec zauzet!");
                     return false;
                 }
-                if ((appointment.PatientEmail.Equals(newAppointment.PatientEmail)) && (appointment.DateAppointment == newAppointment.DateAppointment) && CheckOverlapTerms(appointment, newAppointment))
+                if ((appointment.PatientEmail.Equals(newAppointment.PatientEmail)) && (appointment.DateAppointment == newAppointment.DateAppointment) && CheckOverlapTime(appointment, newAppointment.StartTime, newAppointment.EndTime))
                 {
                     Console.WriteLine("Pacijent vec ima zakazan drugi pregled u ovom terminu!");
                     return false;
                 }
-                if((appointment.DateAppointment == newAppointment.DateAppointment) && (CheckOverlapTerms(appointment, newAppointment))&& (appointment.RoomNumber.Equals(newAppointment.RoomNumber)))
+                if((appointment.DateAppointment == newAppointment.DateAppointment) && (CheckOverlapTime(appointment, newAppointment.StartTime, newAppointment.EndTime))&& (appointment.RoomNumber.Equals(newAppointment.RoomNumber)))
                 {
                     Console.WriteLine("Soba u ovom terminu je zauzeta!");
                     return false;
@@ -258,24 +195,7 @@ namespace Hospital.Service
             return true;
         }
 
-        public bool CheckOverlapTerms(Appointment appointment, Appointment newAppointment)
-        {
-            if((newAppointment.StartTime<= appointment.StartTime) && (appointment.EndTime <= newAppointment.EndTime))
-            {
-                return true;
-            }else if ((appointment.StartTime <= newAppointment.EndTime) && (newAppointment.EndTime <= appointment.EndTime))
-            {
-                return true;
-            }else if((appointment.StartTime<=newAppointment.StartTime) && (newAppointment.StartTime <= appointment.EndTime)){
-                return true;
-            }
-            else if((appointment.StartTime <= newAppointment.StartTime) && (newAppointment.EndTime <= appointment.EndTime))
-            {
-                return true;
-            }
-            return false;
-        }
-        public bool IsPatientEmailValid(string patientEmail)
+		public bool IsPatientEmailValid(string patientEmail)
         {
             foreach(User user in _users)
             {
@@ -317,7 +237,7 @@ namespace Hospital.Service
             return true;
         }
     
-    public bool IsRoomNumberValid(string roomNumber)
+        public bool IsRoomNumberValid(string roomNumber)
         {
             foreach(Room room in _rooms)
             {

@@ -30,7 +30,7 @@ namespace Hospital.PatientImplementation
 
         public PatientService(Patient patient)
         {
-            _requestService = new RequestService(_appointmentService);
+            _requestService = new RequestService();
             this._currentRegisteredUser = patient;
             _allAppointments = _appointmentService.AppointmentRepository.Load();
         }

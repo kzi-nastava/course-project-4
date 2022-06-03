@@ -11,18 +11,19 @@ namespace Hospital.Service
 {
 	class RequestService
 	{
-		private AppointmentService appointmentService;
-		private RequestRepository requestRepository;
-		private UserService userService;
-		private List<Appointment> requests;
+		private AppointmentService _appointmentService;
+		private RequestRepository _requestRepository;
+		private UserService _userService;
+		private List<Appointment> _requests;
 
-		public List<Appointment> Requests { get { return this.requests; } }
+		public List<Appointment> Requests { get { return this._requests; } }
 
-		public RequestService(AppointmentService appointmentService) {
-			requestRepository = new RequestRepository();
-			requests = requestRepository.Load();
-			this.appointmentService = appointmentService;
-			this.userService = new UserService();
+		public RequestService()
+		{
+			_requestRepository = new RequestRepository();
+			_requests = _requestRepository.Load();
+			this._appointmentService = new AppointmentService();
+			this._userService = new UserService();
 		}
 
 		public string ToStringForFile(Appointment request)
@@ -37,7 +38,7 @@ namespace Hospital.Service
 		{
 			string filePath = @"..\..\Data\requests.csv";
 
-			if(requests.Count == 0)
+			if (_requests.Count == 0)
 			{
 				File.WriteAllText(filePath, string.Empty);
 
@@ -47,7 +48,7 @@ namespace Hospital.Service
 				List<string> lines = new List<String>();
 
 				string line;
-				foreach (Appointment request in requests)
+				foreach (Appointment request in _requests)
 				{
 					line = ToStringForFile(request);
 					lines.Add(line);
@@ -60,9 +61,9 @@ namespace Hospital.Service
 		public Appointment FindInitialAppointment(string id)
 		{
 			Appointment initialAppointment = null;
-			foreach(Appointment appointment in appointmentService.Appointments)
+			foreach (Appointment appointment in _appointmentService.Appointments)
 			{
-				if(id == appointment.AppointmentId)
+				if (id == appointment.AppointmentId)
 				{
 					initialAppointment = appointment;
 					break;
@@ -73,30 +74,32 @@ namespace Hospital.Service
 
 		public void DenyRequest(Appointment request)
 		{
-			requests.Remove(request);
+			_requests.Remove(request);
 			UpdateFile();
-			List<Appointment> allAppointments = appointmentService.Appointments;
-			foreach(Appointment appointment in allAppointments)
+			List<Appointment> allAppointments = _appointmentService.Appointments;
+			foreach (Appointment appointment in allAppointments)
 			{
-				if(appointment.AppointmentId == request.AppointmentId)
+				if (appointment.AppointmentId == request.AppointmentId)
 				{
 					appointment.AppointmentState = Appointment.State.Created;
 					break;
 				}
-					
+
 			}
-			appointmentService.Update();
+			this._appointmentService.Update();
 			
+
+
 		}
 
 		public void AcceptRequest(Appointment request)
 		{
-			requests.Remove(request);
+			_requests.Remove(request);
 			UpdateFile();
-			List<Appointment> allAppointments = appointmentService.Appointments;
-			foreach(Appointment appointment in allAppointments)
+			List<Appointment> allAppointments = _appointmentService.Appointments;
+			foreach (Appointment appointment in allAppointments)
 			{
-				if(appointment.AppointmentId == request.AppointmentId)
+				if (appointment.AppointmentId == request.AppointmentId)
 				{
 					if (request.AppointmentState == Appointment.State.DeleteRequest)
 						appointment.AppointmentState = Appointment.State.Deleted;
@@ -108,13 +111,14 @@ namespace Hospital.Service
 						appointment.EndTime = request.EndTime;
 						appointment.AppointmentState = Appointment.State.Updated;
 					}
-						
-						
+
+
 					break;
 				}
 			}
 
-			appointmentService.Update();
+			this._appointmentService.Update();
+		
 		}
 
 		public void ProcessRequest(Appointment request, int choice)
@@ -132,15 +136,42 @@ namespace Hospital.Service
 		public List<Appointment> FilterPending()
 		{
 			List<Appointment> pendingRequests = new List<Appointment>();
-			foreach(Appointment request in requests)
+			foreach (Appointment request in _requests)
 			{
-				if(request.DateAppointment > DateTime.Now)
+				if (request.DateAppointment > DateTime.Now)
 				{
 					pendingRequests.Add(request);
 				}
 			}
 			return pendingRequests;
-		} 
+		}
+
+		public Appointment SelectRequest()
+		{
+			List<Appointment> requests = FilterPending();
+			if (requests.Count == 0)
+			{
+				Console.WriteLine("Trenutno nema zahteva za obradu. ");
+				return null;
+			}
+			ShowRequests(requests);
+			Console.WriteLine("\nx. Odustani");
+			Console.WriteLine("--------------------------------------------");
+			string requestIndexInput;
+			int requestIndex;
+			do
+			{
+				Console.WriteLine("Unesite redni broj zahteva koji zelite da obradite");
+				Console.Write(">>");
+				requestIndexInput = Console.ReadLine();
+				if (requestIndexInput == "x")
+				{
+					return null;
+				}
+			} while (!int.TryParse(requestIndexInput, out requestIndex) || requestIndex < 1 || requestIndex > requests.Count);
+
+			return requests[requestIndex - 1];
+		}
 
 		public void ShowRequests(List<Appointment> requests)
 		{
@@ -152,20 +183,20 @@ namespace Hospital.Service
 				{
 					case (Appointment.State.UpdateRequest):
 						Appointment oldValuesAppointment = FindInitialAppointment(request.AppointmentId);
-						Console.Write("{0}. {1}, {2}->{3}, {4}->{5}, {6}->{7}, ", i + 1, userService.GetUserFullName(oldValuesAppointment.PatientEmail),
+						Console.Write("{0}. {1}, {2}->{3}, {4}->{5}, {6}->{7}, ", i + 1, _userService.GetUserFullName(oldValuesAppointment.PatientEmail),
 							oldValuesAppointment.DateAppointment.ToString("MM/dd/yyyy"), request.DateAppointment.ToString("MM/dd/yyyy"),
 							oldValuesAppointment.StartTime.ToString("HH:mm"), request.StartTime.ToString("HH:mm"),
 							oldValuesAppointment.EndTime.ToString("HH:mm"), request.EndTime.ToString("HH:mm"));
 						Console.Write("Izmena termina");
 						break;
 					case (Appointment.State.DeleteRequest):
-						Console.Write("{0}. {1}, {2}, {3}, {4}, ", i + 1, userService.GetUserFullName(request.PatientEmail), request.DateAppointment.ToString("MM/dd/yyyy"),
+						Console.Write("{0}. {1}, {2}, {3}, {4}, ", i + 1, _userService.GetUserFullName(request.PatientEmail), request.DateAppointment.ToString("MM/dd/yyyy"),
 							request.StartTime.ToString("HH:mm"), request.EndTime.ToString("HH:mm"));
 						Console.Write("Brisanje termina");
 						break;
 				}
 			}
-			
+
 		}
 	}
 }

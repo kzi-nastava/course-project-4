@@ -13,21 +13,21 @@ namespace Hospital.SecretaryImplementation
 {
 	class Secretary
 	{
-		private List<User> _patients;
-		private UserService _userService;
-		private HealthRecordService _healthRecordService;
-		private AppointmentService _appointmentService;
+		private PatientAccountService _patientAccountService;
 		private RequestService _requestService;
-		private ReferralService _referralService;
+		private ReferralScheduleService _referralScheduleService;
+		private UrgentScheduleService _urgentScheduleService;
+		private DynamicEquipmentMovingService _dynamicEquipmentMovingService;
+		private DynamicEquipmentRequestService _dynamicEquipmentRequestService;
 
 		public Secretary(UserService service)
 		{
-			this._userService = service;
-			this._patients = FilterPatients(service.Users);
-			this._healthRecordService = new HealthRecordService();
-			this._appointmentService = new AppointmentService();
-			this._requestService = new RequestService(_appointmentService);
-			this._referralService = new ReferralService();
+			this._patientAccountService = new PatientAccountService();
+			this._requestService = new RequestService();
+			this._referralScheduleService = new ReferralScheduleService();
+			this._urgentScheduleService = new UrgentScheduleService();
+			this._dynamicEquipmentMovingService = new DynamicEquipmentMovingService();
+			this._dynamicEquipmentRequestService = new DynamicEquipmentRequestService();
 		}
 
 		public void PrintSecretaryMenu()
@@ -43,6 +43,8 @@ namespace Hospital.SecretaryImplementation
 			Console.WriteLine("7. Pregled pristiglih zahteva za izmenu/brisanje pregleda");
 			Console.WriteLine("8. Zakazivanje pregleda/operacija na osnovu uputa");
 			Console.WriteLine("9. Hitno zakazivanje");
+			Console.WriteLine("10. Kreiranje zahteva za nabavku dinamicke opreme");
+			Console.WriteLine("11. Rasporedjivanje dinamicke opreme");
 			Console.WriteLine("x. Odjavi se");
 			Console.WriteLine("--------------------------------------------");
 			Console.Write(">>");
@@ -60,10 +62,10 @@ namespace Hospital.SecretaryImplementation
 				}
 				else if (choice == "2")
 				{
-					List<User> activePatients = FilterActivePatients();
-					if(activePatients.Count != 0)
+					List<User> activePatients = _patientAccountService.FilterActivePatients();
+					if (activePatients.Count != 0)
 					{
-						ShowPatients(activePatients);
+						_patientAccountService.ShowPatients(activePatients);
 					}
 					else
 					{
@@ -84,27 +86,35 @@ namespace Hospital.SecretaryImplementation
 				}
 				else if (choice == "6")
 				{
-					List<User> blockedPatients = FilterBlockedPatients();
+					List<User> blockedPatients = _patientAccountService.FilterBlockedPatients();
 					if (blockedPatients.Count != 0)
 					{
-						ShowPatients(blockedPatients);
+						_patientAccountService.ShowPatients(blockedPatients);
 					}
 					else
 					{
 						Console.WriteLine("Trenutno nema blokiranih pacijenata.");
 					}
 				}
-				else if(choice == "7")
+				else if (choice == "7")
 				{
 					AnswerRequest();
 				}
-				else if(choice == "8")
+				else if (choice == "8")
 				{
 					ScheduleAppointmentWithReferral();
 				}
-				else if(choice == "9")
+				else if (choice == "9")
 				{
 					UrgentSchedule();
+				}
+				else if (choice == "10")
+				{
+					MakeEquipmentRequest();
+				}
+				else if (choice == "11")
+				{
+
 				}
 				else if (choice == "x")
 				{
@@ -118,171 +128,24 @@ namespace Hospital.SecretaryImplementation
 
 		}
 
-		public List<User> FilterPatients(List<User> allUsers)
-		{
-			List<User> patients = new List<User>();
-			foreach (User user in allUsers)
-			{
-				if (user.UserRole == User.Role.Patient)
-				{
-					patients.Add(user);
-				}
-			}
-			return patients;
-		}
-
-		public List<User> FilterActivePatients()
-		{
-			List<User> activePatients = new List<User>();
-
-			foreach (User user in this._patients)
-			{
-				if (user.UserState == User.State.Active)
-				{
-					activePatients.Add(user);
-				}
-			}
-			return activePatients;
-		}
-
-		public List<User> FilterBlockedPatients()
-		{
-			List<User> blockedPatients = new List<User>();
-			foreach (User user in this._patients)
-			{
-				if (user.UserState == User.State.BlockedBySecretary || user.UserState == User.State.BlockedBySystem)
-				{
-					blockedPatients.Add(user);
-				}
-			}
-			return blockedPatients;
-		}
-
-		public void ShowPatients(List<User> patients)
-		{
-			for (int i = 0; i < patients.Count; i++)
-			{
-				User patient = patients[i];
-				Console.WriteLine("{0}. {1}", i + 1, patient.Name + " " + patient.Surname);
-			}
-		}
-
-		public User SelectPatient(List<User> patients)
-		{
-			if(patients.Count == 0)
-			{
-				Console.WriteLine("Trenutno nema pacijenata za prikazivanje");
-				return null;
-			}
-			ShowPatients(patients);
-			Console.WriteLine("x. Odustani");
-			Console.WriteLine("------------------------------------");
-			string patientIndexInput;
-			int patientIndex;
-			do
-			{
-				Console.WriteLine("Unesite redni broj pacijenta:");
-				Console.Write(">>");
-				patientIndexInput = Console.ReadLine();
-				if (patientIndexInput == "x")
-				{
-					return null;
-				}
-
-			} while (!int.TryParse(patientIndexInput, out patientIndex) || patientIndex < 1 || patientIndex > patients.Count);
-
-			return patients[patientIndex-1];
-		}
-
-		public void BlockPatient()
-		{
-			User patient = SelectPatient(FilterActivePatients());
-			if (patient is null)
-				return;
-
-			_userService.BlockOrUnblockUser(patient, true);
-			this._patients = FilterPatients(_userService.Users);
-
-			Console.WriteLine("\nPacijent " + patient.Name + " " + patient.Surname + " je uspesno blokiran.\n");
-		}
-
-
-		public void UnblockPatient()
-		{
-			User patient = SelectPatient(FilterBlockedPatients());
-			if (patient is null)
-				return;
-			_userService.BlockOrUnblockUser(patient, false);
-			this._patients = FilterPatients(_userService.Users);
-
-			Console.WriteLine("\nPacijent " + patient.Name + " " + patient.Surname + " je uspesno odblokiran.\n");
-
-		}
-
 		public void CreatePatientAccount()
-		{ 
-			Console.WriteLine("-------------------------------------");
-			Console.WriteLine("Unesite podatke o pacijentu");
-			Console.Write("Email: ");
-			var email = Console.ReadLine();
-			bool emailDuplicate = this._userService.IsEmailValid(email);
-			while (emailDuplicate)
-			{
-				Console.WriteLine("Vec postoji nalog sa ovom email adresom.");
-				Console.Write("Email: ");
-				email = Console.ReadLine();
-				emailDuplicate = this._userService.IsEmailValid(email);
-			}
-			Console.Write("Password: ");
-			var password = Console.ReadLine();
-			Console.Write("Ime: ");
-			var name = Console.ReadLine();
-			Console.Write("Prezime: ");
-			var surname = Console.ReadLine();
-
-			User newPatient = new User(User.Role.Patient, email, password, name, surname, User.State.Active);
-			this._userService.AddUser(newPatient);
-			this._patients.Add(newPatient);
-
-			
-
-			this._healthRecordService.CreateHealthRecord(newPatient);
-			Console.WriteLine("\nNalog za pacijenta " + name + " " + surname + " je uspesno kreiran.");
-		}
-
-		public void ChangePatientData(User patient)
 		{
-			Console.WriteLine("\nStari podaci\n---------------------------------------------");
-			Console.WriteLine("Ime: " + patient.Name);
-			Console.WriteLine("Prezime: " + patient.Surname);
-			Console.WriteLine("Email: " + patient.Email);
-			Console.WriteLine("Lozinka: " + patient.Password);
-			Console.WriteLine("---------------------------------------------\n\nNovi podaci");
-			Console.Write("Ime: ");
-			var newName = Console.ReadLine();
-			Console.Write("Prezime: ");
-			var newSurname = Console.ReadLine();
-			Console.Write("Lozinka: ");
-			var newPassword = Console.ReadLine();
-
-			patient.Name = newName;
-			patient.Surname = newSurname;
-			patient.Password = newPassword;
-
-			_userService.UpdateUserInfo(patient);
-
+			this._patientAccountService.CreatePatientAccount();
 		}
 
 		public void ChangePatientAccount()
 		{
-			User patient = SelectPatient(_patients);
-			if (patient is null)
-				return;
+			this._patientAccountService.ChangePatientAccount();
+		}
 
-			this.ChangePatientData(patient);
+		public void BlockPatient()
+		{
+			this._patientAccountService.BlockPatient();
+		}
 
-			Console.WriteLine("\nNalog pacijenta je uspesno izmenjen.");
-
+		public void UnblockPatient()
+		{
+			this._patientAccountService.UnblockPatient();
 		}
 
 		public int GetAction()
@@ -301,209 +164,33 @@ namespace Hospital.SecretaryImplementation
 			return actionIndex;
 		}
 
-		public Appointment SelectRequest()
-		{
-			List<Appointment> requests = _requestService.FilterPending();
-			if (requests.Count == 0)
-			{
-				Console.WriteLine("Trenutno nema zahteva za obradu. ");
-				return null;
-			}
-			_requestService.ShowRequests(requests);
-			Console.WriteLine("\nx. Odustani");
-			Console.WriteLine("--------------------------------------------");
-			string requestIndexInput;
-			int requestIndex;
-			do
-			{
-				Console.WriteLine("Unesite redni broj zahteva koji zelite da obradite");
-				Console.Write(">>");
-				requestIndexInput = Console.ReadLine();
-				if (requestIndexInput == "x")
-				{
-					return null;
-				}
-			} while (!int.TryParse(requestIndexInput, out requestIndex) || requestIndex < 1 || requestIndex > requests.Count);
-
-			return requests[requestIndex - 1];
-		}
-
-
 		public void AnswerRequest()
 		{
-			Appointment activeRequest = SelectRequest();
-			if(activeRequest is null)
+			Appointment activeRequest = _requestService.SelectRequest();
+			if (activeRequest is null)
 			{
 				return;
 			}
-			
+
 			int actionIndex = GetAction();
 
 			_requestService.ProcessRequest(activeRequest, actionIndex);
 			Console.WriteLine("\nZahtev je uspesno obradjen");
 		}
 
-		public void ShowReferrals(List<Referral> referrals)
-		{
-			int i = 1;
-			foreach (Referral referral in referrals)
-			{
-
-				if (referral.Doctor != "null")
-				{
-					Console.Write("{0}. Pacijent: {1} | Doktor: {2} | ", i,
-						_userService.GetUserFullName(referral.Patient), _userService.GetUserFullName(referral.Doctor));
-
-					i++;
-				}
-				else
-				{
-					Console.Write("{0}. Pacijent: {1} | Specijalnost: {2} | ", i,
-						_userService.GetUserFullName(referral.Patient),_referralService.SpecialityToString(referral.DoctorSpeciality));
-					i++;
-				}
-				Console.WriteLine("Tip: " + _referralService.AppointmentType(referral));
-	
-			}
-		}
-
-		public Referral SelectReferral()
-		{
-			List<Referral> unusedReferrals = _referralService.FilterUnused();
-			if (unusedReferrals.Count == 0)
-			{
-				Console.WriteLine("Trenutno nema neiskoriscenih uputa u sistemu.");
-				return null;
-			}
-			this.ShowReferrals(unusedReferrals);
-			Console.WriteLine("x. Odustani");
-			Console.WriteLine("-------------------------------------------------------------");
-			string referralIndexInput;
-			int referralIndex;
-			do
-			{
-				Console.WriteLine("Unesite redni broj uputa koji zelite da obradite.");
-				Console.Write(">>");
-				referralIndexInput = Console.ReadLine();
-				if (referralIndexInput == "x")
-				{
-					return null;
-				}
-			} while (!int.TryParse(referralIndexInput, out referralIndex) || referralIndex < 1 || referralIndex > unusedReferrals.Count);
-			return unusedReferrals[referralIndex - 1];
-		}
-
 		public void ScheduleAppointmentWithReferral()
 		{
-			Referral referral = SelectReferral();
-			if(referral is null)
-			{
-				return;
-			}
-			Appointment newAppointment;
-			if(referral.Doctor != "null")
-			{
-				do
-				{
-					newAppointment = Create(referral);
-				} while (!_appointmentService.IsAppointmentFreeForDoctor(newAppointment));
-
-			}
-			else
-			{
-				User freeDoctor;
-				do
-				{
-					newAppointment = Create(referral);
-					freeDoctor = _appointmentService.FindFreeDoctor(referral.DoctorSpeciality, newAppointment);
-				} while (freeDoctor is null);
-				newAppointment.DoctorEmail = freeDoctor.Email;
-				Console.WriteLine("Izabrani doktor: " + _userService.GetUserFullName(freeDoctor.Email));
-			}
-			Console.WriteLine("Uspesno zakazan pregled!");
-			this._appointmentService.AddAppointment(newAppointment);
-
-
-			_referralService.UseReferral(referral);
-
-		}
-
-		public Appointment Create(Referral referral)
-		{
-			string date, startingTime;
-			do
-			{
-				Console.WriteLine("Unesite datum (MM/dd/yyyy): ");
-				date = Console.ReadLine();
-			} while (!_appointmentService.IsDateFormValid(date));
-			do
-			{
-				Console.WriteLine("Unesite vreme pocetka pregleda/operacije (HH:mm): ");
-				startingTime = Console.ReadLine();
-			} while (!_appointmentService.IsTimeFormValid(startingTime));
-
-			DateTime dateOfAppointment = DateTime.ParseExact(date, "MM/dd/yyyy", CultureInfo.InvariantCulture);
-			DateTime startTime = DateTime.ParseExact(startingTime, "HH:mm", CultureInfo.InvariantCulture);
-			DateTime endTime;
-			if(referral.TypeProp == Appointment.Type.Examination)
-			{
-				endTime = startTime.AddMinutes(15);
-			}
-			else
-			{
-				endTime = startTime.AddMinutes(60);
-			}
-			
-			string id = _appointmentService.GetNewAppointmentId().ToString();
-			Room freeRoom = _appointmentService.FindFreeRoom(dateOfAppointment, startTime);
-			if(freeRoom is null)
-			{
-				return null;
-			}
-			int roomId = Int32.Parse(freeRoom.Id);
-
-			return new Appointment(id, referral.Patient, referral.Doctor, dateOfAppointment,
-				startTime, endTime, Appointment.State.Created, roomId, referral.TypeProp, false, false);
-
-		}
-
-		public DoctorUser.Speciality SelectSpeciality()
-		{
-			Console.WriteLine("");
-			var specialities = Enum.GetValues(typeof(DoctorUser.Speciality)).Cast<DoctorUser.Speciality>().ToList();
-			int i = 1;
-			foreach (DoctorUser.Speciality speciality in specialities)
-			{
-				Console.WriteLine("{0}. {1}", i, _referralService.SpecialityToString(speciality));
-				++i;
-			}
-			string indexInput;
-			int index;
-			do
-			{
-				Console.WriteLine("Unesite redni broj specijalizacije.");
-				Console.Write(">>");
-				indexInput = Console.ReadLine();
-				
-			} while (!int.TryParse(indexInput, out index) || index < 1 || index > specialities.Count());
-			return specialities[index - 1];
-
+			this._referralScheduleService.ScheduleAppointmentWithReferral();
 		}
 
 		public void UrgentSchedule()
 		{
-			User patient = SelectPatient(FilterActivePatients());
-			DoctorUser.Speciality speciality = SelectSpeciality();
-			Console.WriteLine("\nTip:\n1.Pregled\n2.Operacija");
-			string indexInput;
-			int index;
-			do
-			{
-				Console.Write(">>");
-				indexInput = Console.ReadLine();
-			} while (!int.TryParse(indexInput, out index) || index < 1 || index > 2);
-			_appointmentService.ScheduleUrgently(patient, speciality, index);
+			this._urgentScheduleService.SelectValuesForUrgentSchedule();
+		}
 
+		public void MakeEquipmentRequest()
+		{
+			this._dynamicEquipmentRequestService.SendRequestForProcurment();
 		}
 
 		public void LogOut()
