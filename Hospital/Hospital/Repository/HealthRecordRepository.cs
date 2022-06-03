@@ -2,6 +2,7 @@
 using Microsoft.VisualBasic.FileIO;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -35,6 +36,20 @@ namespace Hospital.Repository
                 }
             }
             return allMedicalRecords;
+        }
+        public void Save(List<HealthRecord> healthRecords)
+        {
+            string filePath = @"..\..\Data\healthRecords.csv";
+
+            List<string> lines = new List<String>();
+
+            string line;
+            foreach (HealthRecord healthRecord in healthRecords)
+            {
+                line = healthRecord.ToStringForFile();
+                lines.Add(line);
+            }
+            File.WriteAllLines(filePath, lines.ToArray());
         }
     }
 }

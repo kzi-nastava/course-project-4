@@ -23,18 +23,11 @@ namespace Hospital.Service
 
         public List<MedicalRecord> MedicalRecords { get { return _medicalRecords; } }
 
-        public void UpdateFile()
+        public void AddMedicalRecord(MedicalRecord medicalRecord)
         {
-            string filePath = @"..\..\Data\medicalRecords.csv";
-            List<string> lines = new List<String>();
-
-            string line;
-            foreach (MedicalRecord medicalRecord in _medicalRecords)
-            {
-                line = medicalRecord.IdAppointment + ";" + medicalRecord.Anamnesis + ";" + medicalRecord.ReferralToDoctor;
-                lines.Add(line);
-            }
-            File.WriteAllLines(filePath, lines.ToArray());
+            this._medicalRecords.Add(medicalRecord);
+            this._medicalRecordRepository.Save(this._medicalRecords);
         }
+
     }
 }

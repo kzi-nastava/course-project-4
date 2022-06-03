@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,6 +35,21 @@ namespace Hospital.Repository
                 }
             }
             return allPrecriptions;
+        }
+
+        public void Save(List<Prescription> prescriptions)
+        {
+            string filePath = @"..\..\Data\prescriptions.csv";
+            List<string> lines = new List<String>();
+
+            string line;
+            foreach (Prescription prescription in prescriptions)
+            {
+                line = prescription.IdAppointment + "," + prescription.IdDrug + "," + prescription.StartConsuming.ToString("HH:mm") + "," + prescription.Dose.ToString() +
+                    "," + (int)prescription.TimeConsuming;
+                lines.Add(line);
+            }
+            File.WriteAllLines(filePath, lines.ToArray());
         }
     }
 }

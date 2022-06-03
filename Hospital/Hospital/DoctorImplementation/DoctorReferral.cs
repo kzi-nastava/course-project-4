@@ -78,14 +78,12 @@ namespace Hospital.DoctorImplementation
             DoctorUser doctorUser = doctors[Int32.Parse(doctor) - 1];
             Appointment.Type type = GetTypeAppointment();
             Referral newReferral = new Referral(referralService.GetNewReferralId().ToString(), appointment.PatientEmail, doctorUser.Email, doctorUser.SpecialityDoctor, type, false);
-            referralService.Referrals.Add(newReferral);
-            referralService.UpdateFile();
+            referralService.AddReferral(newReferral);
             Console.WriteLine("Uspesno ste uneli uput!");
 
             //updating medical record
             MedicalRecord newMedicalRecord = new MedicalRecord(appointment.AppointmentId, anamnesis, newReferral.Id);
-            medicalRecordService.MedicalRecords.Add(newMedicalRecord);
-            medicalRecordService.UpdateFile();
+            medicalRecordService.AddMedicalRecord(newMedicalRecord);
 
 
         }
@@ -103,14 +101,12 @@ namespace Hospital.DoctorImplementation
             Appointment.Type type = GetTypeAppointment();
             DoctorUser.Speciality specialitySelected = (DoctorUser.Speciality)int.Parse(speciality);
             Referral newReferral = new Referral(referralService.GetNewReferralId().ToString(), appointment.PatientEmail, "null", specialitySelected, type, false);
-            referralService.Referrals.Add(newReferral);
-            referralService.UpdateFile();
+            referralService.AddReferral(newReferral);
             Console.WriteLine("Uspesno ste uneli uput!");
 
             //updating medical record
             MedicalRecord newMedicalRecord = new MedicalRecord(appointment.AppointmentId, anamnesis, newReferral.Id);
-            medicalRecordService.MedicalRecords.Add(newMedicalRecord);
-            medicalRecordService.UpdateFile();
+            medicalRecordService.AddMedicalRecord(newMedicalRecord);
 
 
         }

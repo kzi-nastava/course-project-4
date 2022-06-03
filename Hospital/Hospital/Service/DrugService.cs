@@ -30,19 +30,11 @@ namespace Hospital.Service
             return _drugs.Count + 1;
         }
 
-        public void UpdateDrugFile()
+        public void AddDrug(Drug drug)
         {
-            string filePath = @"..\..\Data\drugs.csv";
-
-            List<string> lines = new List<String>();
-
-            string line;
-            foreach (Drug drug in this._drugs)
-            {
-                line = drug.ToString();
-                lines.Add(line);
-            }
-            File.WriteAllLines(filePath, lines.ToArray());
+            this._drugs.Add(drug);
+            this._drugRepository.Save(this._drugs);
         }
+
     }
 }

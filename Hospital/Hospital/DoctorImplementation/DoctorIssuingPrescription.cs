@@ -41,39 +41,67 @@ namespace Hospital.DoctorImplementation
             } while (!choice.Equals("1") && !choice.Equals("2"));
 
         }
-
+    
         private void WritingPrescription(Appointment appointment, HealthRecord healthRecord)
         {
-            int tryInt;
-            string drug, startConsuming, dose, timeOfconsuming;
+            string drug, startConsuming, dose, timeOfCnsuming;
             do
             {
-                do
-                {
-                    Console.WriteLine("Unesite naziv leka: ");
-                    drug = Console.ReadLine();
-                } while (!prescriptionService.IsDrugValid(drug));
-                do
-                {
-                    Console.WriteLine("Unesite vreme kada pacijent treba da krene da pije lek (HH:mm): ");
-                    startConsuming = Console.ReadLine();
-                } while (!appointmentService.IsTimeFormValid(startConsuming));
-                do
-                {
-                    Console.WriteLine("Koliko puta na dan treba da pije: ");
-                    dose = Console.ReadLine();
-                } while (!int.TryParse(dose, out tryInt));
-                do
-                {
-                    Console.WriteLine("Da li da pije:\n1)Tokom obroka\n2)Posle obroka\n3)Pre obroka\n4)Nije bitno\n>> ");
-                    timeOfconsuming = Console.ReadLine();
-                } while (!prescriptionService.IsTimeOfConsumingValid(timeOfconsuming));
+                drug = this.EnterDrug();
+                startConsuming = this.EnterStartConsuming();
+                dose = this.EnterDose();
+                timeOfCnsuming = this.EnterTimeOfConsuming();           
             } while (!prescriptionService.CheckAllergicToDrug(healthRecord, drug));
 
             //saving precription
-            Prescription newPrescription = new Prescription(appointment.AppointmentId, prescriptionService.GetIdDrug(drug), DateTime.ParseExact(startConsuming, "HH:mm", CultureInfo.InvariantCulture), Int32.Parse(dose), (Prescription.TimeOfConsuming)int.Parse(timeOfconsuming));
-            prescriptionService.Prescriptions.Add(newPrescription);
-            prescriptionService.UpdateFile();
+            Prescription newPrescription = new Prescription(appointment.AppointmentId, prescriptionService.GetIdDrug(drug), DateTime.ParseExact(startConsuming, "HH:mm", CultureInfo.InvariantCulture), Int32.Parse(dose), (Prescription.TimeOfConsuming)int.Parse(timeOfCnsuming));
+            prescriptionService.AddPrescription(newPrescription);
+        }
+
+        private string EnterDrug()
+        {
+            string drug;
+            do
+            {
+                Console.WriteLine("Unesite naziv leka: ");
+                drug = Console.ReadLine();
+            } while (!prescriptionService.IsDrugValid(drug));
+            return drug;
+
+        }
+
+        private string EnterStartConsuming()
+        {
+            string startConsuming;
+            do
+            {
+                Console.WriteLine("Unesite vreme kada pacijent treba da krene da pije lek (HH:mm): ");
+                startConsuming = Console.ReadLine();
+            } while (!appointmentService.IsTimeFormValid(startConsuming));
+            return startConsuming;
+        }
+
+        private string EnterDose()
+        {
+            int tryIntConvert;
+            string dose;
+            do
+            {
+                Console.WriteLine("Koliko puta na dan treba da pije: ");
+                dose = Console.ReadLine();
+            } while (!int.TryParse(dose, out tryIntConvert));
+            return dose;
+        }
+
+        private string EnterTimeOfConsuming()
+        {
+            string timeOfConsuming;
+            do
+            {
+                Console.WriteLine("Da li da pije:\n1)Tokom obroka\n2)Posle obroka\n3)Pre obroka\n4)Nije bitno\n>> ");
+                timeOfConsuming = Console.ReadLine();
+            } while (!prescriptionService.IsTimeOfConsumingValid(timeOfConsuming));
+            return timeOfConsuming;
         }
     }
 }

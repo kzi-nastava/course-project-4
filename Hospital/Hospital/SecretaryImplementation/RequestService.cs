@@ -86,7 +86,9 @@ namespace Hospital.Service
 				}
 
 			}
-			_appointmentService.UpdateFile();
+			this._appointmentService.Update();
+			
+
 
 		}
 
@@ -115,7 +117,8 @@ namespace Hospital.Service
 				}
 			}
 
-			_appointmentService.UpdateFile();
+			this._appointmentService.Update();
+		
 		}
 
 		public void ProcessRequest(Appointment request, int choice)
