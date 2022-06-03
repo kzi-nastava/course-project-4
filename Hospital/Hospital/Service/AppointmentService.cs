@@ -103,6 +103,7 @@ namespace Hospital.Service
             return validAppointments[index - 1];
 
         }
+
         public Appointment RescheduleAppointment(Appointment appointment)
 		{
             string date, startingTime;
@@ -267,6 +268,8 @@ namespace Hospital.Service
                 }
                
             }
+            Update();
+            
         }
 
         public void PerformAppointment(Appointment performAppointment)
@@ -279,22 +282,6 @@ namespace Hospital.Service
                 }
             }
 
-        }
-
-        public void UpdateFile()
-		{
-            string filePath = @"..\..\Data\appointments.csv";
-            List<string> lines = new List<String>();
-
-            string line;
-            foreach (Appointment appointment in _appointments)
-            {
-                line = appointment.AppointmentId + "," + appointment.PatientEmail + "," + appointment.DoctorEmail + "," + appointment.DateAppointment.ToString("MM/dd/yyyy") +
-                    "," + appointment.StartTime.ToString("HH:mm") + "," + appointment.EndTime.ToString("HH:mm") + "," +
-                    (int)appointment.AppointmentState + "," + appointment.RoomNumber + "," + (int)appointment.TypeOfTerm + "," +  appointment.AppointmentPerformed + "," + appointment.Urgent;
-                lines.Add(line);
-            }
-            File.WriteAllLines(filePath, lines.ToArray());
         }
 
         public User IsDoctorExist(string doctorEmail)
@@ -312,6 +299,12 @@ namespace Hospital.Service
         {
             string filePath = @"..\..\Data\appointments.csv";
             File.AppendAllText(filePath, newAppointment.ToString() + "\n");
+        }
+
+        public void AddAppointment(Appointment appointment)
+        {
+            this._appointments.Add(appointment);
+            this._appointmentRepository.Save(this._appointments);
         }
 
         public Room FindFreeRoom(DateTime newDate, DateTime newStartTime)
@@ -338,7 +331,7 @@ namespace Hospital.Service
                 return freeRooms[0];
         }
 
-        public void TableHeaderForPatient()
+        public void TableHeaderForPatient() //treba premestiti u view
         {
             Console.WriteLine();
             Console.Write(String.Format("{0,3}|{1,10}|{2,10}|{3,10}|{4,10}|{5,10}|{6,10}|{7,10}",
@@ -358,6 +351,11 @@ namespace Hospital.Service
                     return true;
             }
             return false;
+        }
+
+        public void Update()
+        {
+            _appointmentRepository.Save(this._appointments);
         }
     }
 }

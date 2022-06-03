@@ -25,6 +25,13 @@ namespace Hospital.Service
             }
             return false;
         }
+
+
+        public void AddUser(User user)
+        {
+            this._users.Add(user);
+            this._userRepository.Save(this._users);
+        }
         public List<DoctorUser> GetDoctors()
         {
             List<DoctorUser> doctors = new List<DoctorUser>();
@@ -68,33 +75,6 @@ namespace Hospital.Service
                     return user;
             }
             return null;
-        }
-
-        public void UpdateFile()
-		{
-            string filePath = @"..\..\Data\users.csv";
-
-            List<string> lines = new List<String>();
-
-            string line;
-            foreach (User user in _users)
-            {
-                int role = (int)user.UserRole;
-                int state = (int)user.UserState;
-                if (user.UserRole.Equals(User.Role.Doctor))
-                {
-                    DoctorUser doctorUser = (DoctorUser)user;
-                    line = role.ToString() + "," + user.Email + "," + user.Password + "," + user.Name + "," + user.Surname + "," + state.ToString() + "," + (int)doctorUser.SpecialityDoctor ;
-                    lines.Add(line);
-                }
-                else{
-                    line = role.ToString() + "," + user.Email + "," + user.Password + "," + user.Name + "," + user.Surname + "," + state.ToString() + ",null";
-                    lines.Add(line);
-                }
-
-                
-            }
-            File.WriteAllLines(filePath, lines.ToArray());
         }
 
         public void BlockOrUnblockUser(User forUpdate, bool blocking)
@@ -168,6 +148,11 @@ namespace Hospital.Service
                 }
             }
 
+        }
+
+        private void UpdateFile()
+        {
+            this._userRepository.Save(this._users);
         }
     }
 }

@@ -45,7 +45,7 @@ namespace Hospital.DoctorImplementation
         private void EntryOfSpentEquipment(DynamicRoomEquipment equipment, string idRoom)
         {
             string amount;
-            int temp;
+            int tryIntConvert;
             Dictionary<string, int> remainingAmountAfterAppointment = new Dictionary<string, int>();
             foreach(KeyValuePair<string, int> pair in equipment.AmountEquipment)
             {
@@ -55,16 +55,18 @@ namespace Hospital.DoctorImplementation
                     {
                         Console.WriteLine("Unesite koliko ste potrosili " + warehouseService.GetNameEquipment(pair.Key)  + ": ");
                         amount = Console.ReadLine();
-                    } while (!int.TryParse(amount, out temp));
+                    } while (!int.TryParse(amount, out tryIntConvert));
 
                 } while (int.Parse(amount) > pair.Value);
 
                 remainingAmountAfterAppointment.Add(pair.Key, pair.Value - int.Parse(amount));
             }
             dynamicEquipmentService.UpdateDictionary(remainingAmountAfterAppointment, idRoom);
-            dynamicEquipmentService.UpdateFile();
             Console.WriteLine("Uspesno ste uneli svu potrosenu robu!");
 
         }
+
+       
+
     }
 }

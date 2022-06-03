@@ -32,6 +32,14 @@ namespace Hospital.DoctorImplementation
 
             } while (Int32.Parse(selectedDrugProposal) > drugProposalService.WaitingStatusDrugProposals().Count);
             DrugProposal drugProposalSelected = drugProposalService.WaitingStatusDrugProposals()[Int32.Parse(selectedDrugProposal) - 1];
+            string selectionOfUpdates = this.EnterSelectionOfUpdates();
+            this.VerifyDrugProposal(selectionOfUpdates, drugProposalSelected);
+
+
+        }
+
+        private string EnterSelectionOfUpdates()
+        {
             string selectionOfUpdates;
             do
             {
@@ -39,10 +47,7 @@ namespace Hospital.DoctorImplementation
                 selectionOfUpdates = Console.ReadLine();
 
             } while (!selectionOfUpdates.Equals("1") && !selectionOfUpdates.Equals("2"));
-
-            this.VerifyDrugProposal(selectionOfUpdates, drugProposalSelected);
-
-
+            return selectionOfUpdates;
         }
 
         private void VerifyDrugProposal(string choice, DrugProposal drugProposalSelected)
@@ -51,10 +56,8 @@ namespace Hospital.DoctorImplementation
             {
                 drugProposalSelected.ProposalStatus = DrugProposal.Status.Accepted;
                 drugProposalService.UpdateDrugProposal(drugProposalSelected);
-                drugProposalService.UpdateDrugProposalFile();
                 this.AddDrug(drugProposalSelected);
                 Console.WriteLine("Uspesno ste prihvatili lek!");
-
             }
             else
             {
@@ -64,7 +67,6 @@ namespace Hospital.DoctorImplementation
                 drugProposalSelected.Comment = comment;
                 drugProposalSelected.ProposalStatus = DrugProposal.Status.Rejected;
                 drugProposalService.UpdateDrugProposal(drugProposalSelected);
-                drugProposalService.UpdateDrugProposalFile();
                 Console.WriteLine("Uspesno ste odbili zahtev!");
             }
         }
@@ -72,8 +74,7 @@ namespace Hospital.DoctorImplementation
         private void AddDrug(DrugProposal drugProposal)
         {
             Drug newDrug = new Drug(drugService.GetNewDrugId().ToString(), drugProposal.DrugName, drugProposal.Ingredients);
-            drugService.Drugs.Add(newDrug);
-            drugService.UpdateDrugFile();
+            drugService.AddDrug(newDrug);
         }
         public void DisplayDrugsForVerification()
         {

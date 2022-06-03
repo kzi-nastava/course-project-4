@@ -23,20 +23,7 @@ namespace Hospital.Service
 
         public List<DrugProposal> DrugProposals { get { return _drugProposals; }set { _drugProposals = value; } }
 
-        public void UpdateDrugProposalFile()
-        {
-            string filePath = @"..\..\Data\drugProposals.csv";
-
-            List<string> lines = new List<String>();
-
-            string line;
-            foreach (DrugProposal drugProposal in this._drugProposals)
-            {
-                line = drugProposal.ToString();
-                lines.Add(line);
-            }
-            File.WriteAllLines(filePath, lines.ToArray());
-        }
+        
 
         public List<DrugProposal> GetDrugProposalsByStatus(DrugProposal.Status status)
         {
@@ -71,6 +58,12 @@ namespace Hospital.Service
                     drugProposal.Comment = drugProposalForChange.Comment;
                 }
             }
+            UpdateDrugProposalFile();
+        }
+
+        public void UpdateDrugProposalFile()
+        {
+            this._drugProposalRepository.Save(this._drugProposals);
         }
 
         public DrugProposal Get(string id)

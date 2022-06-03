@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -49,5 +50,34 @@ namespace Hospital.Repository
             }
             return this.users;
         }
+
+        public void Save(List<User> users)
+        {
+            string filePath = @"..\..\Data\users.csv";
+
+            List<string> lines = new List<String>();
+
+            string line;
+            foreach (User user in users)
+            {
+                int role = (int)user.UserRole;
+                int state = (int)user.UserState;
+                if (user.UserRole.Equals(User.Role.Doctor))
+                {
+                    DoctorUser doctorUser = (DoctorUser)user;
+                    line = role.ToString() + "," + user.Email + "," + user.Password + "," + user.Name + "," + user.Surname + "," + state.ToString() + "," + (int)doctorUser.SpecialityDoctor;
+                    lines.Add(line);
+                }
+                else
+                {
+                    line = role.ToString() + "," + user.Email + "," + user.Password + "," + user.Name + "," + user.Surname + "," + state.ToString() + ",null";
+                    lines.Add(line);
+                }
+
+
+            }
+            File.WriteAllLines(filePath, lines.ToArray());
+        }
+
     }
 }

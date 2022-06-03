@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Hospital.Model;
 using System.Globalization;
+using System.IO;
 
 namespace Hospital.Repository
 {
@@ -36,6 +37,21 @@ namespace Hospital.Repository
             }
 
             return requirements;
+        }
+
+        public void Save(List<RequestForDaysOff> requestsForDaysOff)
+        {
+            string filePath = @"..\..\Data\requestsForDaysOff.csv";
+            List<string> lines = new List<String>();
+
+            string line;
+            foreach (RequestForDaysOff request in requestsForDaysOff)
+            {
+                line = request.Id + ";" + request.EmailDoctor + ";" + request.StartDate.ToString("MM/dd/yyyy") +
+                    ";" + request.EndDate.ToString("MM/dd/yyyy") + ";" + request.ReasonRequired + ";" + (int)request.StateRequired + ";" + request.Urgen.ToString();
+                lines.Add(line);
+            }
+            File.WriteAllLines(filePath, lines.ToArray());
         }
     }
 }

@@ -63,7 +63,7 @@ namespace Hospital.SecretaryImplementation
 				else if (choice == "2")
 				{
 					List<User> activePatients = _patientAccountService.FilterActivePatients();
-					if(activePatients.Count != 0)
+					if (activePatients.Count != 0)
 					{
 						_patientAccountService.ShowPatients(activePatients);
 					}
@@ -96,7 +96,7 @@ namespace Hospital.SecretaryImplementation
 						Console.WriteLine("Trenutno nema blokiranih pacijenata.");
 					}
 				}
-				else if(choice == "7")
+				else if (choice == "7")
 				{
 					AnswerRequest();
 				}
@@ -167,11 +167,11 @@ namespace Hospital.SecretaryImplementation
 		public void AnswerRequest()
 		{
 			Appointment activeRequest = _requestService.SelectRequest();
-			if(activeRequest is null)
+			if (activeRequest is null)
 			{
 				return;
 			}
-			
+
 			int actionIndex = GetAction();
 
 			_requestService.ProcessRequest(activeRequest, actionIndex);

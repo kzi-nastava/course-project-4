@@ -31,7 +31,6 @@ namespace Hospital.DoctorImplementation
 
         public void PerformingAppointment()
         {
-            int temp;
             List<Appointment> appointmentsForPerformanse = TodaysAppointments();
             if (appointmentsForPerformanse.Count != 0)
             {
@@ -39,19 +38,13 @@ namespace Hospital.DoctorImplementation
                 string choice;
                 do
                 {
-                    do
-                    {
-                        Console.WriteLine("Unesite redni broj pacijenta kojeg želite da pregledate: ");
-                        choice = Console.ReadLine();
-
-                    } while (!int.TryParse(choice, out temp));
+                    choice = this.EnterChoice();
                 } while (Int32.Parse(choice) > appointmentsForPerformanse.Count);
                 Appointment appointmentOfSelected = appointmentsForPerformanse[Int32.Parse(choice) - 1];
 
                 userService.DisplayOfPatientData(appointmentOfSelected.PatientEmail);
                 healthRecordService.DisplayOfPatientsHealthRecord(appointmentOfSelected.PatientEmail);
                 this.EnteringAnamnesis(appointmentOfSelected);
-
                 return;
             }
             else
@@ -59,6 +52,19 @@ namespace Hospital.DoctorImplementation
                 Console.WriteLine("Svi pregledi su obavljeni!");
             }
 
+        }
+
+        private string EnterChoice()
+        {
+            string choice;
+            int tryIntConvert;
+            do
+            {
+                Console.WriteLine("Unesite redni broj pacijenta kojeg želite da pregledate: ");
+                choice = Console.ReadLine();
+
+            } while (!int.TryParse(choice, out tryIntConvert));
+            return choice;
         }
 
         private List<Appointment> TodaysAppointments()
@@ -102,7 +108,7 @@ namespace Hospital.DoctorImplementation
 
             //the examination was performed
             appointmentService.PerformAppointment(appointment);
-            appointmentService.UpdateFile();
+            appointmentService.Update();
 
             Console.WriteLine("Uspešno ste uneli anamnezu.");
 
@@ -151,33 +157,53 @@ namespace Hospital.DoctorImplementation
 
         private void PrintItemsToChangeHealthRecord(HealthRecord healthRecordSelected)
         {
-            int temp;
-            double convertDouble;
-            string patientHeightInput, patientWeightInput, previousIllnessesInput, allergenInput, bloodTypeInput;
+            string patientHeightInput = this.EnterPatientHeight();
+            string patientWeightInput = this.EnterPatientWeight();
+            Console.WriteLine("Unesite prethodne bolesti: ");
+            string previousIllnessesInput = Console.ReadLine();
+            string allergenInput = this.EnterAllergen();
+            Console.WriteLine("Unesite krvnu grupu: ");
+            string bloodTypeInput = Console.ReadLine();
+
+            HealthRecord newHealthRecord = new HealthRecord(healthRecordSelected.IdHealthRecord, healthRecordSelected.EmailPatient, Int32.Parse(patientHeightInput), double.Parse(patientWeightInput), previousIllnessesInput, allergenInput, bloodTypeInput);
+            healthRecordService.UpdateHealthRecord(newHealthRecord);
+        }
+
+        private string EnterPatientHeight()
+        {
+            string patientHeightInput;
+            int tryIntConvert;
             do
             {
                 Console.WriteLine("Unesite visinu: ");
                 patientHeightInput = Console.ReadLine();
 
-            } while (!int.TryParse(patientHeightInput, out temp));
+            } while (!int.TryParse(patientHeightInput, out tryIntConvert));
+            return patientHeightInput;
+        }
+
+        private string EnterPatientWeight()
+        {
+            string patientWeightInput;
+            double convertDouble;
             do
             {
                 Console.WriteLine("Unesite težinu: ");
                 patientWeightInput = Console.ReadLine();
-            } while (!double.TryParse(patientWeightInput,out convertDouble));
-            Console.WriteLine("Unesite prethodne bolesti: ");
-            previousIllnessesInput = Console.ReadLine();
+            } while (!double.TryParse(patientWeightInput, out convertDouble));
+            return patientWeightInput;
+
+        }
+
+        private string EnterAllergen()
+        {
+            string allergenInput;
             do
             {
                 Console.WriteLine("Unesite alergenu: ");
                 allergenInput = Console.ReadLine();
             } while (!ingredientService.IsIngredientNameValid(allergenInput));
-            Console.WriteLine("Unesite krvnu grupu: ");
-            bloodTypeInput = Console.ReadLine();
-
-            HealthRecord newHealthRecord = new HealthRecord(healthRecordSelected.IdHealthRecord, healthRecordSelected.EmailPatient, Int32.Parse(patientHeightInput), double.Parse(patientWeightInput), previousIllnessesInput, allergenInput, bloodTypeInput);
-            healthRecordService.UpdateHealthRecord(newHealthRecord);
-            healthRecordService.UpdateHealthRecordFile();
+            return allergenInput;
         }
     }
 }

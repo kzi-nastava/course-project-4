@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,6 +31,20 @@ namespace Hospital.Repository
                 }
             }
             return allMedicalRecords;
+        }
+
+        public void Save(List<MedicalRecord> medicalRecords)
+        {
+            string filePath = @"..\..\Data\medicalRecords.csv";
+            List<string> lines = new List<String>();
+
+            string line;
+            foreach (MedicalRecord medicalRecord in medicalRecords)
+            {
+                line = medicalRecord.IdAppointment + ";" + medicalRecord.Anamnesis + ";" + medicalRecord.ReferralToDoctor;
+                lines.Add(line);
+            }
+            File.WriteAllLines(filePath, lines.ToArray());
         }
 
     }
