@@ -148,10 +148,10 @@ namespace Hospital.SecretaryImplementation
 		public void CreatePatientAccount()
 		{
 			User newPatient = EnterNewUserData();
-			this._userService.Users.Add(newPatient);
+			this._userService.AddUser(newPatient);
 			this._patients.Add(newPatient);
 
-			this._userService.UpdateFile();
+			
 			this._healthRecordService.CreateHealthRecord(newPatient);
 		}
 

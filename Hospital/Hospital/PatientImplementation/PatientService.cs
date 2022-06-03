@@ -114,8 +114,8 @@ namespace Hospital.PatientImplementation
 
         public bool IsValidInput(string doctorEmail, string newDateAppointment, string newStartTime)
         {           
-            return (_appointmentService.IsDateFormValid(newDateAppointment) &&
-                _appointmentService.IsTimeFormValid(newStartTime) && _appointmentService.IsDoctorExist(doctorEmail)!=null);
+            return (Utils.IsDateFormValid(newDateAppointment) &&
+                Utils.IsTimeFormValid(newStartTime) && _appointmentService.IsDoctorExist(doctorEmail)!=null);
         }
 
         public List<UserAction> LoadMyCurrentActions(string registeredUserEmail)
@@ -292,7 +292,7 @@ namespace Hospital.PatientImplementation
                 startTime = Console.ReadLine();
                 Console.Write("Unesite vreme najkasnijeg moguceg pregleda (HH:mm): ");
                 endTime = Console.ReadLine();
-            } while (!(this.IsValidInput(doctorEmail, latestDate, startTime) && _appointmentService.IsTimeFormValid(endTime)
+            } while (!(this.IsValidInput(doctorEmail, latestDate, startTime) && Utils.IsTimeFormValid(endTime)
             && this.CompareTwoTimes(startTime, endTime)));
 
             inputValues[0] = doctorEmail;

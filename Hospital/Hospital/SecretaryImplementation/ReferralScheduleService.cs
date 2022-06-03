@@ -41,8 +41,7 @@ namespace Hospital.SecretaryImplementation
 				newAppointment = MakeAppointmentWithFreeDoctor(referral);
 			}
 			Console.WriteLine("Uspesno zakazan pregled!");
-			_appointmentService.Appointments.Add(newAppointment);
-			_appointmentService.UpdateFile();
+			_appointmentService.AddAppointment(newAppointment);
 			_referralService.UseReferral(referral);
 
 		}
@@ -68,12 +67,12 @@ namespace Hospital.SecretaryImplementation
 			{
 				Console.WriteLine("Unesite datum (MM/dd/yyyy): ");
 				date = Console.ReadLine();
-			} while (!_appointmentService.IsDateFormValid(date));
+			} while (!Utils.IsDateFormValid(date));
 			do
 			{
 				Console.WriteLine("Unesite vreme pocetka pregleda/operacije (HH:mm): ");
 				startingTime = Console.ReadLine();
-			} while (!_appointmentService.IsTimeFormValid(startingTime));
+			} while (!Utils.IsTimeFormValid(startingTime));
 
 			DateTime dateOfAppointment = DateTime.ParseExact(date, "MM/dd/yyyy", CultureInfo.InvariantCulture);
 			DateTime startTime = DateTime.ParseExact(startingTime, "HH:mm", CultureInfo.InvariantCulture);
