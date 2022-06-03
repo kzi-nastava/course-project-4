@@ -154,5 +154,18 @@ namespace Hospital.Service
         {
             this._userRepository.Save(this._users);
         }
+
+        public bool IsPatientEmailValid(string patientEmail)
+        {
+            foreach (User user in _users)
+            {
+                if ((user.Email == patientEmail) && (user.UserRole == User.Role.Patient) && user.UserState == User.State.Active)
+                {
+                    return true;
+                }
+            }
+            Console.WriteLine("Pacijent ne postoji!");
+            return false;
+        }
     }
 }

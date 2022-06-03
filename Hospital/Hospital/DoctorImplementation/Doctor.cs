@@ -19,6 +19,7 @@ namespace Hospital.DoctorImplementation
         List<HealthRecord> healthRecords;
         List<Appointment> allMyAppointments;
         User currentRegisteredDoctor;
+        RoomService roomService = new RoomService();
         
         public Doctor(User currentRegisteredDoctor)
         {
@@ -105,7 +106,7 @@ namespace Hospital.DoctorImplementation
             {
                 Console.WriteLine("Unesite željeni datum: ");
                 dateAppointment = Console.ReadLine();
-            } while (!appointmentService.IsDateFormValid(dateAppointment));
+            } while (!Utils.IsDateFormValid(dateAppointment));
             DoctorSchedule doctorSchedule = new DoctorSchedule(appointmentService, healthRecords, allMyAppointments, currentRegisteredDoctor);
             doctorSchedule.ReadOwnAppointmentSpecificDate(DateTime.ParseExact(dateAppointment, "MM/dd/yyyy", CultureInfo.InvariantCulture));
 
@@ -204,7 +205,7 @@ namespace Hospital.DoctorImplementation
             {
                 Console.WriteLine("Unesite broj sobe: ");
                 newRoomNumber = Console.ReadLine();
-            } while (!appointmentService.IsRoomNumberValid(newRoomNumber));
+            } while (!roomService.IsRoomNumberValid(newRoomNumber));
             return newRoomNumber;
         }
         private string EnterStartTime()
@@ -214,7 +215,7 @@ namespace Hospital.DoctorImplementation
             {
                 Console.WriteLine("Unesite vreme pocetka pregleda/operacije (HH:mm): ");
                 newStartTime = Console.ReadLine();
-            } while (!appointmentService.IsTimeFormValid(newStartTime));
+            } while (!Utils.IsTimeFormValid(newStartTime));
             return newStartTime;
 
         }
@@ -225,7 +226,7 @@ namespace Hospital.DoctorImplementation
             {
                 Console.WriteLine("Unesite datum (MM/dd/yyyy): ");
                 newDate = Console.ReadLine();
-            } while (!appointmentService.IsDateFormValid(newDate));
+            } while (!Utils.IsDateFormValid(newDate));
             return newDate;
         }
 
@@ -236,7 +237,7 @@ namespace Hospital.DoctorImplementation
             {
                 Console.WriteLine("Unesite email pacijenta: ");
                 patientEmail = Console.ReadLine();
-            } while (!appointmentService.IsPatientEmailValid(patientEmail));
+            } while (!userService.IsPatientEmailValid(patientEmail));
             return patientEmail;
         }
 

@@ -111,12 +111,12 @@ namespace Hospital.Service
             {
                 Console.WriteLine("Unesite datum (MM/dd/yyyy): ");
                 date = Console.ReadLine();
-            } while (!IsDateFormValid(date));
+            } while (!Utils.IsDateFormValid(date));
             do
             {
                 Console.WriteLine("Unesite vreme pocetka pregleda/operacije (HH:mm): ");
                 startingTime = Console.ReadLine();
-            } while (!IsTimeFormValid(startingTime));
+            } while (!Utils.IsTimeFormValid(startingTime));
 
             DateTime dateOfAppointment = DateTime.ParseExact(date, "MM/dd/yyyy", CultureInfo.InvariantCulture);
             DateTime startTime = DateTime.ParseExact(startingTime, "HH:mm", CultureInfo.InvariantCulture);
@@ -193,62 +193,6 @@ namespace Hospital.Service
                 }
             }
             return true;
-        }
-
-		public bool IsPatientEmailValid(string patientEmail)
-        {
-            foreach(User user in _users)
-            {
-                if((user.Email == patientEmail) && (user.UserRole == User.Role.Patient) && user.UserState == User.State.Active)
-                {
-                    return true;
-                }
-            }
-            Console.WriteLine("Pacijent ne postoji!");
-            return false;
-        }
-
-        public bool IsDateFormValid(string date)
-        {
-            DateTime checkDate;
-            bool validDate = DateTime.TryParseExact(date, "MM/dd/yyyy", DateTimeFormatInfo.InvariantInfo, DateTimeStyles.None, out checkDate);
-            if (!validDate)
-            {
-                Console.WriteLine("Nevalidan unos datuma");
-                return false;
-            }
-            else if (checkDate <= DateTime.Now)
-            {
-                Console.WriteLine("Uneli ste datum koji je prosao ili je danasnji.");
-                return false;
-            }
-            return true;
-        }
-
-        public bool IsTimeFormValid(string time)
-        {
-            TimeSpan checkTime;
-            bool validTime = TimeSpan.TryParse(time, out checkTime);
-            if (!validTime)
-            {
-                Console.WriteLine("Nevalidan unos vremena");
-                return false;
-            }
-            return true;
-        }
-    
-        public bool IsRoomNumberValid(string roomNumber)
-        {
-            foreach(Room room in _rooms)
-            {
-                if (room.Id.Equals(roomNumber))
-                {
-                    return true;
-                }
-            }
-            Console.WriteLine("Broj sobe ne postoji!");
-            return false;
-
         }
 
         public void UpdateAppointment(Appointment appointmentChange)
