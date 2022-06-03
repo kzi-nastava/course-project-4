@@ -25,12 +25,18 @@ namespace Hospital.Repository
                     string id = fields[0];
                     int amount = Int32.Parse(fields[1]);
                     DateTime addTime = DateTime.ParseExact(fields[2], "MM/dd/yyyy HH:MM", CultureInfo.InvariantCulture);
-                    DynamicEquipmentRequest request = new DynamicEquipmentRequest(id, amount, addTime);
+                    bool used = Convert.ToBoolean(fields[3]);
+                    DynamicEquipmentRequest request = new DynamicEquipmentRequest(id, amount, addTime, used);
                     requests.Add(request);
                 }
             }
 
             return requests;
         }
+
+        public void UpdateFile()
+		{
+            //TODO
+		}
 	}
 }

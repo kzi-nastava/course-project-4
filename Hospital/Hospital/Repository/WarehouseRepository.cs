@@ -32,5 +32,10 @@ namespace Hospital.Repository
 
             return warehouse;
         }
+
+        public void UpdateFile()
+		{
+            //TODO
+		}
     }
 }

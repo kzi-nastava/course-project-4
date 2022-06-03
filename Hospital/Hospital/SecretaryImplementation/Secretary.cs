@@ -17,6 +17,8 @@ namespace Hospital.SecretaryImplementation
 		private RequestService _requestService;
 		private ReferralScheduleService _referralScheduleService;
 		private UrgentScheduleService _urgentScheduleService;
+		private DynamicEquipmentMovingService _dynamicEquipmentMovingService;
+		private DynamicEquipmentRequestService _dynamicEquipmentRequestService;
 
 		public Secretary(UserService service)
 		{
@@ -24,6 +26,8 @@ namespace Hospital.SecretaryImplementation
 			this._requestService = new RequestService();
 			this._referralScheduleService = new ReferralScheduleService();
 			this._urgentScheduleService = new UrgentScheduleService();
+			this._dynamicEquipmentMovingService = new DynamicEquipmentMovingService();
+			this._dynamicEquipmentRequestService = new DynamicEquipmentRequestService();
 		}
 
 		public void PrintSecretaryMenu()
@@ -39,6 +43,8 @@ namespace Hospital.SecretaryImplementation
 			Console.WriteLine("7. Pregled pristiglih zahteva za izmenu/brisanje pregleda");
 			Console.WriteLine("8. Zakazivanje pregleda/operacija na osnovu uputa");
 			Console.WriteLine("9. Hitno zakazivanje");
+			Console.WriteLine("10. Kreiranje zahteva za nabavku dinamicke opreme");
+			Console.WriteLine("11. Rasporedjivanje dinamicke opreme");
 			Console.WriteLine("x. Odjavi se");
 			Console.WriteLine("--------------------------------------------");
 			Console.Write(">>");
@@ -98,10 +104,17 @@ namespace Hospital.SecretaryImplementation
 				{
 					ScheduleAppointmentWithReferral();
 				}
-				////////////////////////////////////
 				else if(choice == "9")
 				{
 					UrgentSchedule();
+				}
+				else if(choice == "10")
+				{
+
+				}
+				else if(choice == "11")
+				{
+
 				}
 				else if (choice == "x")
 				{
