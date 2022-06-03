@@ -33,7 +33,6 @@ namespace Hospital.Service
                 {
                     this._dynamicEquipments[i].AmountEquipment = amount;
 
-
                 }
             }
             UpdateFile();
@@ -44,7 +43,6 @@ namespace Hospital.Service
         {
             this._equipmentRepository.Save(this._dynamicEquipments);
         }
-
 
     }
 }

@@ -104,15 +104,15 @@ namespace Hospital.SecretaryImplementation
 				{
 					ScheduleAppointmentWithReferral();
 				}
-				else if (choice == "9")
+				else if(choice == "9")
 				{
 					UrgentSchedule();
 				}
-				else if (choice == "10")
+				else if(choice == "10")
 				{
 					MakeEquipmentRequest();
 				}
-				else if (choice == "11")
+				else if(choice == "11")
 				{
 
 				}

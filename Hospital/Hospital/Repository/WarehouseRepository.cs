@@ -10,9 +10,9 @@ namespace Hospital.Repository
 {
     class WarehouseRepository
     {
-        public List<Warehouse> Load()
+        public List<DynamicEquipment> Load()
         {
-            List<Warehouse> warehouse = new List<Warehouse>();
+            List<DynamicEquipment> warehouse = new List<DynamicEquipment>();
 
             using (TextFieldParser parser = new TextFieldParser(@"..\..\Data\warehouse.csv"))
             {
@@ -24,16 +24,18 @@ namespace Hospital.Repository
                     string id = fields[0];
                     string name = fields[1];
                     int amount = Int32.Parse(fields[2]);
-                    Warehouse equipment = new Warehouse(id, name, amount);
+                    DynamicEquipment equipment = new DynamicEquipment(id, name, amount);
                     warehouse.Add(equipment);
-
-
-
 
                 }
             }
 
             return warehouse;
         }
+
+        public void UpdateFile()
+		{
+            //TODO
+		}
     }
 }
