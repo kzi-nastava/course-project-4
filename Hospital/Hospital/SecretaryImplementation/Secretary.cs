@@ -241,11 +241,10 @@ namespace Hospital.SecretaryImplementation
 			var surname = Console.ReadLine();
 
 			User newPatient = new User(User.Role.Patient, email, password, name, surname, User.State.Active);
-			this._userService.Users.Add(newPatient);
+			this._userService.AddUser(newPatient);
 			this._patients.Add(newPatient);
 
-			this._userService.UpdateFile();
-
+			
 
 			this._healthRecordService.CreateHealthRecord(newPatient);
 			Console.WriteLine("\nNalog za pacijenta " + name + " " + surname + " je uspesno kreiran.");
@@ -422,8 +421,7 @@ namespace Hospital.SecretaryImplementation
 				Console.WriteLine("Izabrani doktor: " + _userService.GetUserFullName(freeDoctor.Email));
 			}
 			Console.WriteLine("Uspesno zakazan pregled!");
-			_appointmentService.Appointments.Add(newAppointment);
-			_appointmentService.UpdateFile();
+			this._appointmentService.AddAppointment(newAppointment);
 
 
 			_referralService.UseReferral(referral);

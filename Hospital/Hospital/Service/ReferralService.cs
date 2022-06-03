@@ -70,19 +70,7 @@ namespace Hospital.Service
 			return unusedReferrals;
 		}
 
-		public void UpdateFile()
-		{
-			string filePath = @"..\..\Data\referrals.csv";
-			List<string> lines = new List<String>();
-
-			string line;
-			foreach (Referral referral in _referrals)
-			{
-				line = referral.Id + "," + referral.Patient + "," + referral.Doctor + "," + ((int)referral.DoctorSpeciality) + "," + ((int)referral.TypeProp) + "," + referral.Used;
-				lines.Add(line);
-			}
-			File.WriteAllLines(filePath, lines.ToArray());
-		}
+		
 
 		public void UseReferral(Referral usedReferral)
 		{
@@ -91,10 +79,16 @@ namespace Hospital.Service
 				if (referral.Id.Equals(usedReferral.Id))
 				{
 					referral.Used = true;
-					UpdateFile();
+					_referralRepository.Save(this._referrals);
 					break;
 				}
 			}
 		}
+
+		public void AddReferral(Referral referral)
+        {
+			this._referrals.Add(referral);
+			this._referralRepository.Save(this._referrals);
+        }
 	}
 }

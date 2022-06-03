@@ -28,14 +28,14 @@ namespace Hospital.DoctorImplementation
         public void MenuForDaysOff()
         {
             string choice;
-            int tryInt;
+            int tryIntConvert;
             do
             {
                 do
                 {
                     Console.WriteLine("Izaberite zeljanu radnju: \n1) Pregled zahteva za slobodne dane\n2) Podnesite zahtev za slobodne dane\n>>");
                     choice = Console.ReadLine();
-                } while (!int.TryParse(choice, out tryInt));
+                } while (!int.TryParse(choice, out tryIntConvert));
             } while (!choice.Equals("1") && !choice.Equals("2"));
 
             if (choice.Equals("1")){
@@ -50,30 +50,43 @@ namespace Hospital.DoctorImplementation
         private void SubmitRequestForDaysOff()
         {
             string desiredDate, numberOfDays;
-            int tryInt;
             DateTime startDate, endDate;
             bool urgent;
             do
             {
-                do
-                {
-                    Console.WriteLine("Unesite datum: ");
-                    desiredDate = Console.ReadLine();
-                } while (!requestForDaysOffService.IsDateValid(desiredDate));
+                desiredDate = this.EnterDate();
                 urgent = this.UrgencyCheckRequired();
-                do
-                {
-                    Console.WriteLine("Unesite broj dana: ");
-                    numberOfDays = Console.ReadLine();
-                } while (!int.TryParse(numberOfDays, out tryInt));
+                numberOfDays = this.EnterNumberOfDays();
                 startDate = DateTime.ParseExact(desiredDate, "MM/dd/yyyy", CultureInfo.InvariantCulture);
                 endDate = startDate.AddDays(int.Parse(numberOfDays));
             } while (!requestForDaysOffService.CheckingAvailabilityOfDoctor(startDate, endDate, currentRegisteredDoctor) && !this.CheckNumberOFDaysForUrgency(int.Parse(numberOfDays)));
             RequestForDaysOff.State state = this.GetState(urgent);
             RequestForDaysOff newRequest = new RequestForDaysOff(requestForDaysOffService.GetNewRequestId(), currentRegisteredDoctor.Email, startDate, endDate, EnteringReasonsForDaysOff(), state, urgent);
-            this.SaveRequest(newRequest);
+            requestForDaysOffService.AddRequest(newRequest);
         }
 
+        private string EnterNumberOfDays()
+        {
+            string numberOfDays;
+            int tryIntConvert;
+            do
+            {
+                Console.WriteLine("Unesite broj dana: ");
+                numberOfDays = Console.ReadLine();
+            } while (!int.TryParse(numberOfDays, out tryIntConvert));
+            return numberOfDays;
+
+        }
+        private string EnterDate()
+        {
+            string desiredDate;
+            do
+            {
+                Console.WriteLine("Unesite datum: ");
+                desiredDate = Console.ReadLine();
+            } while (!requestForDaysOffService.IsDateValid(desiredDate));
+            return desiredDate;
+        }
 
         private bool CheckNumberOFDaysForUrgency(int numberOfDays)
         {
@@ -95,13 +108,7 @@ namespace Hospital.DoctorImplementation
 
         }
 
-        private void SaveRequest(RequestForDaysOff request)
-        {
-            requestForDaysOffService.RequirementsForDaysOff.Add(request);
-            requestForDaysOffService.UpdateFile();
-            Console.WriteLine("Uspesno ste podneli zahtev!");
-        }
-
+       
         private string EnteringReasonsForDaysOff()
         {
             Console.WriteLine("Unesite razlog za slobodne dane: ");
@@ -110,7 +117,7 @@ namespace Hospital.DoctorImplementation
 
         private bool UrgencyCheckRequired()
         {
-            int tryInt;
+            int tryIntConvert;
             string choice;
             do
             {
@@ -118,7 +125,7 @@ namespace Hospital.DoctorImplementation
                 {
                     Console.WriteLine("Da li je zahtev hitan: \n1) DA\n2) NE\n>>");
                     choice = Console.ReadLine();
-                } while (!int.TryParse(choice, out tryInt));
+                } while (!int.TryParse(choice, out tryIntConvert));
             } while (!choice.Equals("1") && !choice.Equals("2"));
             if (choice.Equals("1"))
             {

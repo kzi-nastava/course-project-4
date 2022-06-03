@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Hospital.Model;
 using Microsoft.VisualBasic.FileIO;
 using Hospital.Service;
+using System.IO;
 
 namespace Hospital.Repository
 {
@@ -44,6 +45,21 @@ namespace Hospital.Repository
                 }
             }
             return allDrugProposals;
+        }
+
+        public void Save(List<DrugProposal> drugProposals)
+        {
+            string filePath = @"..\..\Data\drugProposals.csv";
+
+            List<string> lines = new List<String>();
+
+            string line;
+            foreach (DrugProposal drugProposal in drugProposals)
+            {
+                line = drugProposal.ToString();
+                lines.Add(line);
+            }
+            File.WriteAllLines(filePath, lines.ToArray());
         }
     }
 }

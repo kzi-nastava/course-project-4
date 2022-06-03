@@ -30,20 +30,7 @@ namespace Hospital.Service
 
         public List<RequestForDaysOff> RequirementsForDaysOff { get { return _requestsForDaysOff; } set { _requestsForDaysOff = value; } }
 
-        public void UpdateFile()
-        {
-            string filePath = @"..\..\Data\requestsForDaysOff.csv";
-            List<string> lines = new List<String>();
-
-            string line;
-            foreach (RequestForDaysOff request in this._requestsForDaysOff)
-            {
-                line = request.Id + ";" + request.EmailDoctor + ";" + request.StartDate.ToString("MM/dd/yyyy") +
-                    ";" + request.EndDate.ToString("MM/dd/yyyy") + ";" + request.ReasonRequired + ";" + (int)request.StateRequired + ";" + request.Urgen.ToString();
-                lines.Add(line);
-            }
-            File.WriteAllLines(filePath, lines.ToArray());
-        }
+       
         public string GetNewRequestId()
         {
             return (this._requestsForDaysOff.Count + 1).ToString();
@@ -81,6 +68,12 @@ namespace Hospital.Service
             }
             return true;
 
+        }
+
+        public void AddRequest(RequestForDaysOff request)
+        {
+            this._requestsForDaysOff.Add(request);
+            this._requestForDaysOffRepository.Save(this._requestsForDaysOff);
         }
 
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -33,6 +34,20 @@ namespace Hospital.Repository
             }
 
             return allReferrals;
+        }
+
+        public void Save(List<Referral> referrals)
+        {
+            string filePath = @"..\..\Data\referrals.csv";
+            List<string> lines = new List<String>();
+
+            string line;
+            foreach (Referral referral in referrals)
+            {
+                line = referral.Id + "," + referral.Patient + "," + referral.Doctor + "," + ((int)referral.DoctorSpeciality) + "," + ((int)referral.TypeProp) + "," + referral.Used;
+                lines.Add(line);
+            }
+            File.WriteAllLines(filePath, lines.ToArray());
         }
     }
 }

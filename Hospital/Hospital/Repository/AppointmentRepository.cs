@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -41,6 +42,22 @@ namespace Hospital.Repository
             }
 
             return allApointments;
+        }
+
+        public void Save(List<Appointment> appointments)
+        {
+            string filePath = @"..\..\Data\appointments.csv";
+            List<string> lines = new List<String>();
+
+            string line;
+            foreach (Appointment appointment in appointments)
+            {
+                line = appointment.AppointmentId + "," + appointment.PatientEmail + "," + appointment.DoctorEmail + "," + appointment.DateAppointment.ToString("MM/dd/yyyy") +
+                    "," + appointment.StartTime.ToString("HH:mm") + "," + appointment.EndTime.ToString("HH:mm") + "," +
+                    (int)appointment.AppointmentState + "," + appointment.RoomNumber + "," + (int)appointment.TypeOfTerm + "," + appointment.AppointmentPerformed + "," + appointment.Urgent;
+                lines.Add(line);
+            }
+            File.WriteAllLines(filePath, lines.ToArray());
         }
     }
 }

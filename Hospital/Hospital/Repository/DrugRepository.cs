@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -42,6 +43,21 @@ namespace Hospital.Repository
                 }
             }
             return allDrugs;
+        }
+
+        public void Save(List<Drug> drugs)
+        {
+            string filePath = @"..\..\Data\drugs.csv";
+
+            List<string> lines = new List<String>();
+
+            string line;
+            foreach (Drug drug in drugs)
+            {
+                line = drug.ToString();
+                lines.Add(line);
+            }
+            File.WriteAllLines(filePath, lines.ToArray());
         }
     }
 }

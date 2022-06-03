@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Hospital.Model;
+using System.IO;
+
 namespace Hospital.Repository
 {
     class DynamicRoomEquipmentRepository
@@ -36,6 +38,22 @@ namespace Hospital.Repository
             }
 
             return allDynamicEquipment;
+        }
+
+        public void Save(List<DynamicRoomEquipment> dynamicEquipments)
+
+        {
+            string filePath = @"..\..\Data\dynamicRoomEquipments.csv";
+
+            List<string> lines = new List<String>();
+
+            string line;
+            foreach (DynamicRoomEquipment equipment in dynamicEquipments)
+            {
+                line = equipment.ToString();
+                lines.Add(line);
+            }
+            File.WriteAllLines(filePath, lines.ToArray());
         }
 
     }

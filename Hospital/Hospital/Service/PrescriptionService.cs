@@ -100,22 +100,11 @@ namespace Hospital.Service
             Console.WriteLine("Lek sa ovim nazivom ne postoji!");
             return false;
         }
-
-        public void UpdateFile()
+        public void AddPrescription(Prescription prescription)
         {
-            string filePath = @"..\..\Data\prescriptions.csv";
-            List<string> lines = new List<String>();
-
-            string line;
-            foreach (Prescription prescription in _prescriptions)
-            {
-                line = prescription.IdAppointment + "," + prescription.IdDrug + "," + prescription.StartConsuming.ToString("HH:mm") + "," + prescription.Dose.ToString() +
-                    "," + (int)prescription.TimeConsuming;
-                lines.Add(line);
-            }
-            File.WriteAllLines(filePath, lines.ToArray());
+            this._prescriptions.Add(prescription);
+            this._prescriptionRepository.Save(this._prescriptions);
         }
-
-
+        
     }
 }

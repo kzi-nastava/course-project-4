@@ -24,21 +24,7 @@ namespace Hospital.Service
 
         public List<DynamicRoomEquipment> DynamicEquipments { get { return _dynamicEquipments; } }
 
-        public void UpdateFile()
-        {
-            string filePath = @"..\..\Data\dynamicRoomEquipments.csv";
-
-            List<string> lines = new List<String>();
-
-            string line;
-            foreach (DynamicRoomEquipment equipment in this._dynamicEquipments)
-            {
-                line = equipment.ToString();
-                lines.Add(line);
-            }
-            File.WriteAllLines(filePath, lines.ToArray());
-        }
-
+       
         public void  UpdateDictionary(Dictionary<string, int> amount, string idRoom)
         {
             for(int i = 0; i < this._dynamicEquipments.Count; i++)
@@ -50,10 +36,15 @@ namespace Hospital.Service
 
                 }
             }
-           
+            UpdateFile();
             
         }
 
-       
+        public void UpdateFile()
+        {
+            this._equipmentRepository.Save(this._dynamicEquipments);
+        }
+
+
     }
 }
