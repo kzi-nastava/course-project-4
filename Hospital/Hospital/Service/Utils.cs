@@ -53,5 +53,14 @@ namespace Hospital.Service
         {
             return word.Substring(0, 1).ToUpper() + word.Substring(1).ToLower();
         }
+
+        public static bool IsTimeBetweenTwoTimes(DateTime time)
+        {
+            DateTime midnight = DateTime.ParseExact("00:00", "HH:mm", CultureInfo.InvariantCulture);
+            DateTime earliestTime = DateTime.ParseExact("06:00", "HH:mm", CultureInfo.InvariantCulture);
+            if (time.TimeOfDay >= midnight.TimeOfDay && time.TimeOfDay < earliestTime.TimeOfDay)
+                return true;
+            return false;
+        }
     }
 }

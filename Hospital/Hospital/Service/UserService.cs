@@ -17,6 +17,12 @@ namespace Hospital.Service
         public List<User> Users { get { return this._users; } }
         public UserRepository UsersRepository { get { return this._userRepository; } }
 
+        public UserService()
+        {
+            _userRepository = new UserRepository();
+            _users = _userRepository.Load();
+        }
+
         public bool IsEmailValid(string email)
         {
             foreach (User user in _users)
@@ -26,7 +32,6 @@ namespace Hospital.Service
             }
             return false;
         }
-
 
         public void AddUser(User user)
         {
@@ -130,13 +135,7 @@ namespace Hospital.Service
 				}
 			}
             return allDoctors;
-		}
-
-        public UserService()
-        {
-            _userRepository = new UserRepository();
-            _users = _userRepository.Load();
-        }
+		}     
 
         public void DisplayOfPatientData(string patientEmail)
         {
@@ -167,6 +166,15 @@ namespace Hospital.Service
             }
             Console.WriteLine("Pacijent ne postoji!");
             return false;
+        }
+
+        public List<User> AllDoctors()
+        {
+            List<User> allDoctors = new List<User>();
+            foreach (User user in _users)
+                if (user.UserRole == User.Role.Doctor)
+                    allDoctors.Add(user);
+            return allDoctors;
         }
     }
 }
