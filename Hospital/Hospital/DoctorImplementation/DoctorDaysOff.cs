@@ -56,10 +56,14 @@ namespace Hospital.DoctorImplementation
             {
                 desiredDate = this.EnterDate();
                 urgent = this.UrgencyCheckRequired();
-                numberOfDays = this.EnterNumberOfDays();
+                do
+                {
+                    numberOfDays = this.EnterNumberOfDays();
+                } while (!this.CheckNumberOFDaysForUrgency(int.Parse(numberOfDays), urgent));
                 startDate = DateTime.ParseExact(desiredDate, "MM/dd/yyyy", CultureInfo.InvariantCulture);
                 endDate = startDate.AddDays(int.Parse(numberOfDays));
-            } while (!requestForDaysOffService.CheckingAvailabilityOfDoctor(startDate, endDate, currentRegisteredDoctor) && !this.CheckNumberOFDaysForUrgency(int.Parse(numberOfDays)));
+            } while (!requestForDaysOffService.CheckingAvailabilityOfDoctor(startDate, endDate, currentRegisteredDoctor));
+
             RequestForDaysOff.State state = this.GetState(urgent);
             RequestForDaysOff newRequest = new RequestForDaysOff(requestForDaysOffService.GetNewRequestId(), currentRegisteredDoctor.Email, startDate, endDate, EnteringReasonsForDaysOff(), state, urgent);
             requestForDaysOffService.AddRequest(newRequest);
@@ -88,12 +92,15 @@ namespace Hospital.DoctorImplementation
             return desiredDate;
         }
 
-        private bool CheckNumberOFDaysForUrgency(int numberOfDays)
+        private bool CheckNumberOFDaysForUrgency(int numberOfDays, bool urgent)
         {
-            if (numberOfDays > 5)
+            if (urgent)
             {
-                Console.WriteLine("Za hitne zahteve ne moze vise od 5 dana.");
-                return false;
+                if (numberOfDays > 5)
+                {
+                    Console.WriteLine("Za hitne zahteve ne moze vise od 5 dana.");
+                    return false;
+                }
             }
             return true;
         }

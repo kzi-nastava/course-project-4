@@ -10,7 +10,7 @@ using Hospital.Service;
 
 namespace Hospital.ManagerImplementation
 {
-    public class Manager
+    public class Manager : IMenuView
     {
         private User _currentRegisteredManager;
         private RoomService _roomService;
@@ -93,11 +93,5 @@ namespace Hospital.ManagerImplementation
                     this.LogOut();
             } while (true);
         } 
-
-        private void LogOut()
-        {
-            Login loging = new Login();
-            loging.LogIn();
-        }
     }
 }

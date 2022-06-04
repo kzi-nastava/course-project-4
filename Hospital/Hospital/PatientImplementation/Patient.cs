@@ -10,7 +10,7 @@ using Hospital.Service;
 
 namespace Hospital.PatientImplementation
 {
-    class Patient
+    class Patient : IMenuView
     {
         private string _email;
         private PatientAppointmentsService _patientService;

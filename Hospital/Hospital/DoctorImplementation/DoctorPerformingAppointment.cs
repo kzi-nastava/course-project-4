@@ -96,10 +96,6 @@ namespace Hospital.DoctorImplementation
             }
             Console.WriteLine();
         }
-
-
-
-
         private void EnteringAnamnesis(Appointment appointment)
         {
             string anamnesisInput;
@@ -119,7 +115,6 @@ namespace Hospital.DoctorImplementation
 
 
         }
-
         private void UpdatingHealthRecord(Appointment appointment)
         {
             foreach (HealthRecord healthRecord in this.healthRecords)
@@ -133,7 +128,6 @@ namespace Hospital.DoctorImplementation
                 }
             }
         }
-
         private void UpdatingSelectedHealthRecord(HealthRecord healthRecordSelected)
         {
             string selectionOfUpdates;
@@ -154,7 +148,6 @@ namespace Hospital.DoctorImplementation
 
 
         }
-
         private void PrintItemsToChangeHealthRecord(HealthRecord healthRecordSelected)
         {
             string patientHeightInput = this.EnterPatientHeight();
@@ -168,7 +161,6 @@ namespace Hospital.DoctorImplementation
             HealthRecord newHealthRecord = new HealthRecord(healthRecordSelected.IdHealthRecord, healthRecordSelected.EmailPatient, Int32.Parse(patientHeightInput), double.Parse(patientWeightInput), previousIllnessesInput, allergenInput, bloodTypeInput);
             healthRecordService.UpdateHealthRecord(newHealthRecord);
         }
-
         private string EnterPatientHeight()
         {
             string patientHeightInput;
