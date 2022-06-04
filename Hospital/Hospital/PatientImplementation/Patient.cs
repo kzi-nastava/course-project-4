@@ -10,7 +10,7 @@ using Hospital.Service;
 
 namespace Hospital.PatientImplementation
 {
-    class Patient
+    class Patient : IMenuView
     {
         private string _email;
         private PatientAppointments _patientService;
@@ -194,11 +194,14 @@ namespace Hospital.PatientImplementation
             this._userActionService.ActionRepository.AppendToActionFile("create");
             this._userActionService.AntiTrolMechanism();
         }
+<<<<<<< Updated upstream
 
         public void LogOut()
         {
             Login loging = new Login();
             loging.LogIn();
         }
+=======
+>>>>>>> Stashed changes
     }
 }
