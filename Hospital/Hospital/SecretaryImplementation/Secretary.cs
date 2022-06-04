@@ -11,7 +11,7 @@ using Hospital.Service;
 
 namespace Hospital.SecretaryImplementation
 {
-	class Secretary
+	class Secretary : IMenuView
 	{
 		private PatientAccountService _patientAccountService;
 		private RequestService _requestService;
@@ -192,13 +192,6 @@ namespace Hospital.SecretaryImplementation
 		{
 			this._dynamicEquipmentRequestService.SendRequestForProcurment();
 		}
-
-		public void LogOut()
-		{
-			Login loging = new Login();
-			loging.LogIn();
-		}
-
 	}
 
 }

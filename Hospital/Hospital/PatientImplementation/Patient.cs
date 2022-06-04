@@ -10,7 +10,7 @@ using Hospital.Service;
 
 namespace Hospital.PatientImplementation
 {
-    class Patient
+    class Patient : IMenuView
     {
         string _email;
         PatientService _patientService;
@@ -254,11 +254,14 @@ namespace Hospital.PatientImplementation
                     return;
             } while (choice != "1" && choice != "2");
         }
+<<<<<<< Updated upstream
 
         private void LogOut()
         {
             Login loging = new Login();
             loging.LogIn();
         }
+=======
+>>>>>>> Stashed changes
     }
 }
