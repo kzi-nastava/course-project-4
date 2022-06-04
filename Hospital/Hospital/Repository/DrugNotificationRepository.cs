@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Globalization;
 using Microsoft.VisualBasic.FileIO;
+using System.IO;
 using Hospital.Model;
 
 namespace Hospital.Repository
@@ -30,5 +31,23 @@ namespace Hospital.Repository
 			}
 			return drugNotifications;
 		}
-	}
+
+		public void ChangeTimeNotification(string userEmail)
+		{
+			Console.Write("\nUnesite koliko vremena ranije zelite da dobije obavestenje: ");
+			string newTime = Console.ReadLine();
+
+			List<string> lines = new List<string>();
+			string line;
+			foreach (DrugNotification notification in this.Load())
+			{
+				if (notification.PatientEmail.Equals(userEmail))
+					line = notification.PatientEmail + "," + newTime;
+				else
+					line = notification.PatientEmail + "," + notification.TimeNotification.ToString("HH:mm");
+				lines.Add(line);
+			}
+			File.WriteAllLines(@"..\..\Data\drugNotification.csv", lines.ToArray());
+		}
+    }
 }
