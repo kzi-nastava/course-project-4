@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -33,9 +34,18 @@ namespace Hospital.Repository
             return warehouse;
         }
 
-        public void UpdateFile()
+        public void Save(List<DynamicEquipment> warehouseEquipment)
 		{
-            //TODO
-		}
+            string filePath = @"..\..\Data\warehouse.csv";
+            List<string> lines = new List<String>();
+
+            string line;
+            foreach (DynamicEquipment equipment in warehouseEquipment)
+            {
+                line = equipment.Id + "," + equipment.Name + "," + equipment.Amount;
+                lines.Add(line);
+            }
+            File.WriteAllLines(filePath, lines.ToArray());
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,6 +31,20 @@ namespace Hospital.Repository
 				}
 			}
 			return allNotifications;
+		}
+
+		public void Save(List<Notification> notifications)
+		{
+			string filePath = @"..\..\Data\notifications.csv";
+			List<string> lines = new List<String>();
+
+			string line;
+			foreach (Notification notification in notifications)
+			{
+				line = notification.Id + "," + notification.UserEmail + "," + notification.Content + "," + notification.Read;
+				lines.Add(line);
+			}
+			File.WriteAllLines(filePath, lines.ToArray());
 		}
 	}
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -42,5 +43,30 @@ namespace Hospital.Repository
 
             return allRequests;
         }
-    }
+
+		public void Save(List<Appointment> requests)
+		{
+            string filePath = @"..\..\Data\requests.csv";
+
+            if (requests.Count == 0)
+            {
+                File.WriteAllText(filePath, string.Empty);
+
+            }
+            else
+            {
+                List<string> lines = new List<String>();
+
+                string line;
+                foreach (Appointment request in requests)
+                {
+                    line = request.AppointmentId + "," + request.PatientEmail + "," + request.DoctorEmail + "," + request.DateAppointment.ToString("MM/dd/yyyy") +
+                        "," + request.StartTime.ToString("HH:mm") + "," + request.EndTime.ToString("HH:mm") + "," + (int)request.AppointmentState + ","
+                        + request.RoomNumber + "," + (int)request.TypeOfTerm + "," + "false";
+                    lines.Add(line);
+                }
+                File.WriteAllLines(filePath, lines.ToArray());
+            }
+        }
+	}
 }

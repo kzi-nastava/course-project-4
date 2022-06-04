@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,9 +35,20 @@ namespace Hospital.Repository
             return requests;
         }
 
-        public void UpdateFile()
+        public void Save(List<DynamicEquipmentRequest> equipmentRequests)
 		{
-            //TODO
-		}
+            string filePath = @"..\..\Data\equipmentRequests.csv";
+            List<string> lines = new List<String>();
+
+            string line;
+            foreach (DynamicEquipmentRequest request in equipmentRequests)
+            {
+                line = request.DynamicEquipmentId + "," + request.Amount.ToString() + ","
+                    + request.AddTime.ToString("MM/dd/yyyy HH:mm") + "," + request.Updated;
+                lines.Add(line);
+            }
+            File.WriteAllLines(filePath, lines.ToArray());
+
+        }
 	}
 }

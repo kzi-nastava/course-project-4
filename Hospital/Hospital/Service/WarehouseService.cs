@@ -26,7 +26,7 @@ namespace Hospital.Service
         
         public List<DynamicEquipment> WarehouseEquipment { get { return _warehouseEquipment; } }
         public List<DynamicEquipmentRequest> Requests { get { return _requests; } }
-        public DynamicEquipmentRequestRepository Repository { get { return _dynamicEquipmentRequestRepository; } }
+        public DynamicEquipmentRequestRepository DynamicEquipmentRequestRepository { get { return _dynamicEquipmentRequestRepository; } }
 
         public void UpdateWarehouse()
 		{
@@ -37,8 +37,8 @@ namespace Hospital.Service
                 AddRequestedAmount(request);
                 request.Updated = true;
 			}
-            _warehouseRepository.UpdateFile();
-            _dynamicEquipmentRequestRepository.UpdateFile();
+            _warehouseRepository.Save(_warehouseEquipment);
+            _dynamicEquipmentRequestRepository.Save(_requests);
         }
 
         public void AddRequestedAmount(DynamicEquipmentRequest request)

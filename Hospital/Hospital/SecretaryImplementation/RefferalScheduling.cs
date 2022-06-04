@@ -9,12 +9,12 @@ using Hospital.Service;
 
 namespace Hospital.SecretaryImplementation
 {
-	class ReferralScheduleService
+	class RefferalScheduling
 	{
 		private ReferralService _referralService;
 		private AppointmentService _appointmentService;
 
-		public ReferralScheduleService()
+		public RefferalScheduling()
 		{
 			this._appointmentService = new AppointmentService();
 			this._referralService = new ReferralService();
@@ -56,23 +56,35 @@ namespace Hospital.SecretaryImplementation
 				freeDoctor = _appointmentService.FindFreeDoctor(referral.DoctorSpeciality, newAppointment);
 			} while (freeDoctor is null);
 			newAppointment.DoctorEmail = freeDoctor.Email;
-			//Console.WriteLine("Izabrani doktor: " + _userService.GetUserFullName(freeDoctor.Email));
 			return newAppointment;
 		}
 
-		public Appointment CreateAppointment(Referral referral)
+		public string EnterDate()
 		{
-			string date, startingTime;
+			string date;
 			do
 			{
 				Console.WriteLine("Unesite datum (MM/dd/yyyy): ");
 				date = Console.ReadLine();
 			} while (!Utils.IsDateFormValid(date));
+			return date;
+		}
+
+		public string EnterStartingTime()
+		{
+			string startingTime;
 			do
 			{
 				Console.WriteLine("Unesite vreme pocetka pregleda/operacije (HH:mm): ");
 				startingTime = Console.ReadLine();
 			} while (!Utils.IsTimeFormValid(startingTime));
+			return startingTime;
+		}
+
+		public Appointment CreateAppointment(Referral referral)
+		{
+			string date = EnterDate();
+			string startingTime = EnterStartingTime();
 
 			DateTime dateOfAppointment = DateTime.ParseExact(date, "MM/dd/yyyy", CultureInfo.InvariantCulture);
 			DateTime startTime = DateTime.ParseExact(startingTime, "HH:mm", CultureInfo.InvariantCulture);

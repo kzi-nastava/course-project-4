@@ -14,18 +14,18 @@ namespace Hospital.SecretaryImplementation
 	class Secretary : IMenuView
 	{
 		private PatientAccountService _patientAccountService;
-		private RequestService _requestService;
-		private ReferralScheduleService _referralScheduleService;
-		private UrgentScheduleService _urgentScheduleService;
+		private RequestView _requestView;
+		private RefferalScheduling _referralScheduleService;
+		private UrgentSchedulingView _urgentSchedulingView;
 		private DynamicEquipmentMovingService _dynamicEquipmentMovingService;
 		private DynamicEquipmentRequestService _dynamicEquipmentRequestService;
 
 		public Secretary(UserService service)
 		{
 			this._patientAccountService = new PatientAccountService();
-			this._requestService = new RequestService();
-			this._referralScheduleService = new ReferralScheduleService();
-			this._urgentScheduleService = new UrgentScheduleService();
+			this._requestView = new RequestView();
+			this._referralScheduleService = new RefferalScheduling();
+			this._urgentSchedulingView = new UrgentSchedulingView();
 			this._dynamicEquipmentMovingService = new DynamicEquipmentMovingService();
 			this._dynamicEquipmentRequestService = new DynamicEquipmentRequestService();
 		}
@@ -65,7 +65,7 @@ namespace Hospital.SecretaryImplementation
 					List<User> activePatients = _patientAccountService.FilterActivePatients();
 					if (activePatients.Count != 0)
 					{
-						_patientAccountService.ShowPatients(activePatients);
+						PatientAccountView.ShowPatients(activePatients);
 					}
 					else
 					{
@@ -89,7 +89,7 @@ namespace Hospital.SecretaryImplementation
 					List<User> blockedPatients = _patientAccountService.FilterBlockedPatients();
 					if (blockedPatients.Count != 0)
 					{
-						_patientAccountService.ShowPatients(blockedPatients);
+						PatientAccountView.ShowPatients(blockedPatients);
 					}
 					else
 					{
@@ -166,7 +166,7 @@ namespace Hospital.SecretaryImplementation
 
 		public void AnswerRequest()
 		{
-			Appointment activeRequest = _requestService.SelectRequest();
+			Appointment activeRequest = _requestView.SelectRequest();
 			if (activeRequest is null)
 			{
 				return;
@@ -174,7 +174,7 @@ namespace Hospital.SecretaryImplementation
 
 			int actionIndex = GetAction();
 
-			_requestService.ProcessRequest(activeRequest, actionIndex);
+			_requestView._requestService.ProcessRequest(activeRequest, actionIndex);
 			Console.WriteLine("\nZahtev je uspesno obradjen");
 		}
 
@@ -185,7 +185,7 @@ namespace Hospital.SecretaryImplementation
 
 		public void UrgentSchedule()
 		{
-			this._urgentScheduleService.SelectValuesForUrgentSchedule();
+			this._urgentSchedulingView.SelectValuesForUrgentSchedule();
 		}
 
 		public void MakeEquipmentRequest()
