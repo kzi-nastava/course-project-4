@@ -38,6 +38,7 @@
   <ItemGroup>
     <Compile Include="App.cs" />
     <Compile Include="DoctorImplementation\DoctorDaysOff.cs" />
+    <Compile Include="DoctorImplementation\DoctorEnter.cs" />
     <Compile Include="DoctorImplementation\DoctorIssuingPrescription.cs" />
     <Compile Include="DoctorImplementation\DoctorPerformingAppointment.cs" />
     <Compile Include="DoctorImplementation\DoctorReferral.cs" />
@@ -58,6 +59,7 @@
     <Compile Include="Model\DynamicRoomEquipment.cs" />
     <Compile Include="Model\Equipment.cs" />
     <Compile Include="Model\EquipmentMoving.cs" />
+    <Compile Include="Model\IMenuView.cs" />
     <Compile Include="Model\Ingredient.cs" />
     <Compile Include="Model\Login.cs" />
     <Compile Include="Model\HealthRecord.cs" />
