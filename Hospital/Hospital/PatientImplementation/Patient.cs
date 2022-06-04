@@ -102,11 +102,5 @@ namespace Hospital.PatientImplementation
             Console.Write(String.Format("{0,3}|{1,10}|{2,10}|{3,10}|{4,10}|{5,10}|{6,10}|{7,10}",
                 "Br.", "Doktor", "Datum", "Pocetak", "Kraj", "Soba", "Tip", "Stanje"));
         }
-
-        public void LogOut()
-        {
-            Login loging = new Login();
-            loging.LogIn();
-        }
     }
 }
