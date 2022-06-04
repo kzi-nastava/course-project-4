@@ -11,23 +11,19 @@ namespace Hospital.PatientImplementation
 {
     class PatientAnamnesis
     {
-        AppointmentService _appointmentService = new AppointmentService();  // loading all appointments
-        MedicalRecordService _medicalRecordService = new MedicalRecordService(); // loading all medical records
-        HealthRecordService _healthRecordService = new HealthRecordService(); // loading all health records
-        UserRepository _userRepository = new UserRepository();
-        List<User> _allUsers;
-        Patient _currentRegisteredUser;
+        private AppointmentService _appointmentService;
+        private MedicalRecordService _medicalRecordService; 
+        private HealthRecordService _healthRecordService;
+        private UserService _userService;
+        private Patient _currentRegisteredUser;
 
-        public AppointmentService AppointmentService { get { return _appointmentService; } }
-
-        public MedicalRecordService MedicalRecordService { get { return _medicalRecordService; } }
-
-        public HealthRecordService HealthRecordService { get { return _healthRecordService; } }
-
-        public PatientAnamnesis(Patient patient)
+        public PatientAnamnesis(Patient patient, AppointmentService appointmentService, UserService userService)
         {
             this._currentRegisteredUser = patient;
-            this._allUsers = _userRepository.Load();
+            this._userService = userService;
+            this._appointmentService = appointmentService;
+            this._medicalRecordService = new MedicalRecordService();
+            this._healthRecordService = new HealthRecordService();
         }
 
         public void MainMenuForSearch()
@@ -76,7 +72,7 @@ namespace Hospital.PatientImplementation
         public List<Appointment> GetPerformedAppointmentForPatient()
         {
             List<Appointment> performedAppointment = new List<Appointment>();
-            this._appointmentService.TableHeaderForPatient();
+            this._currentRegisteredUser.TableHeaderForPatient();
             foreach (Appointment appointment in this._appointmentService.Appointments)
             {
                 if (appointment.PatientEmail.Equals(this._currentRegisteredUser.Email) && appointment.AppointmentPerformed)
@@ -196,7 +192,7 @@ namespace Hospital.PatientImplementation
 
         private void PrintAppointmentAndAnamnesis(List<Appointment> preformedAppointments)
         {
-            this._appointmentService.TableHeaderForPatient();
+            this._currentRegisteredUser.TableHeaderForPatient();
             for (int i = 0; i < preformedAppointments.Count; i++)
                 Console.Write("\n" + (i + 1) + ". " + preformedAppointments[i].DisplayOfPatientAppointment());
 
@@ -207,12 +203,12 @@ namespace Hospital.PatientImplementation
 
         private void SortBySpecialization(List<Appointment> preformedAppointments)
         {
-            this._userRepository.DoctorUsers.Sort((x, y) => x.SpecialityDoctor.CompareTo(y.SpecialityDoctor));
+            this._userService.UsersRepository.DoctorUsers.Sort((x, y) => x.SpecialityDoctor.CompareTo(y.SpecialityDoctor));
             List<Appointment> sortedAppointments = new List<Appointment>();
 
-            this._appointmentService.TableHeaderForPatient();
+            this._currentRegisteredUser.TableHeaderForPatient();
             Console.WriteLine("|  Specijalizacija");
-            foreach (DoctorUser doctor in this._userRepository.DoctorUsers)
+            foreach (DoctorUser doctor in this._userService.UsersRepository.DoctorUsers)
             {
                 foreach (Appointment appointment in preformedAppointments)
                 {
