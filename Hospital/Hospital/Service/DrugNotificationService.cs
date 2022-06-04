@@ -15,6 +15,7 @@ namespace Hospital.Service
 		private DrugNotificationRepository _drugNotificationRepository;
 		private List<DrugNotification> _drugNotifications;
 
+		public DrugNotificationRepository DrugNotificationRepository { get { return _drugNotificationRepository; } }
 		public List<DrugNotification> Notifications { get { return _drugNotifications; } set { _drugNotifications = value; } }
 
 		public DrugNotificationService()

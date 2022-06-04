@@ -15,6 +15,7 @@ namespace Hospital.Service
         private List<User> _users;
 
         public List<User> Users { get { return this._users; } }
+        public UserRepository UsersRepository { get { return this._userRepository; } }
 
         public bool IsEmailValid(string email)
         {
