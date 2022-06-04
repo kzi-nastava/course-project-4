@@ -66,8 +66,7 @@ namespace Hospital.Model
             RenovationService renovationService = new RenovationService(roomService, appointmentService, equipmentService);
             renovationService.Renovate();
 
-            //PatientService patientService = new PatientService(this._registeredUser);
-            PatientSchedulingAppointment patientScheduling = new PatientSchedulingAppointment(this._registeredUser, _userService.Users);
+            PatientSchedulingAppointment patientScheduling = new PatientSchedulingAppointment(_userService.Users);
             if (this._registeredUser.UserRole == User.Role.Patient)
             { 
                 // patient
