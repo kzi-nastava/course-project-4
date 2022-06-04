@@ -66,11 +66,10 @@ namespace Hospital.Model
             RenovationService renovationService = new RenovationService(roomService, appointmentService, equipmentService);
             renovationService.Renovate();
 
-            PatientSchedulingAppointment patientScheduling = new PatientSchedulingAppointment(_userService.Users);
             if (this._registeredUser.UserRole == User.Role.Patient)
             { 
                 // patient
-                Patient registeredPatient = new Patient(this._registeredUser.Email, patientScheduling);
+                Patient registeredPatient = new Patient(this._registeredUser.Email);
                 registeredPatient.PatientMenu();
             }
             else if (this._registeredUser.UserRole == User.Role.Doctor)

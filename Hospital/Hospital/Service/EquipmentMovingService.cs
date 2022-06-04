@@ -63,12 +63,18 @@ namespace Hospital.Service
             return false;
         }
 
+        public bool IsValidEquipmentMoving(string id, string equipmentId, DateTime scheduledTime,
+            string sourceRoomId, string destinationRoomId)
+        {
+            return !(IdExists(id) || ActiveMovingExists(equipmentId) || !_equipmentService.IdExist(equipmentId)
+                || !_equipmentService.GetEquipmentById(equipmentId).RoomId.Equals(sourceRoomId)
+                || !_roomService.IdExists(destinationRoomId));
+        }
+
         public bool CreateEquipmentMoving(string id, string equipmentId, DateTime scheduledTime,
             string sourceRoomId, string destinationRoomId)
         {
-            if (IdExists(id) || ActiveMovingExists(equipmentId) || !_equipmentService.IdExist(equipmentId)
-                || !_equipmentService.GetEquipmentById(equipmentId).RoomId.Equals(sourceRoomId)
-                || !_roomService.IdExists(destinationRoomId))
+            if (!IsValidEquipmentMoving(id, equipmentId, scheduledTime, sourceRoomId, destinationRoomId))
                 return false;
             EquipmentMoving equipmentMoving = new EquipmentMoving(id, equipmentId, scheduledTime,
                 sourceRoomId, destinationRoomId, true);
