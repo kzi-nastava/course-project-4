@@ -104,43 +104,6 @@ namespace Hospital.Service
 
         }
 
-        public Appointment RescheduleAppointment(Appointment appointment)
-		{
-            string date, startingTime;
-            do
-            {
-                Console.WriteLine("Unesite datum (MM/dd/yyyy): ");
-                date = Console.ReadLine();
-            } while (!Utils.IsDateFormValid(date));
-            do
-            {
-                Console.WriteLine("Unesite vreme pocetka pregleda/operacije (HH:mm): ");
-                startingTime = Console.ReadLine();
-            } while (!Utils.IsTimeFormValid(startingTime));
-
-            DateTime dateOfAppointment = DateTime.ParseExact(date, "MM/dd/yyyy", CultureInfo.InvariantCulture);
-            DateTime startTime = DateTime.ParseExact(startingTime, "HH:mm", CultureInfo.InvariantCulture);
-            DateTime endTime;
-            if (appointment.TypeOfTerm == Appointment.Type.Examination)
-            {
-                endTime = startTime.AddMinutes(15);
-            }
-            else
-            {
-                endTime = startTime.AddMinutes(60);
-            }
-            string id = GetNewAppointmentId().ToString();
-            Room freeRoom = FindFreeRoom(dateOfAppointment, startTime);
-            if (freeRoom is null)
-            {
-                return null;
-            }
-            int roomId = Int32.Parse(freeRoom.Id);
-
-            return new Appointment(id, appointment.PatientEmail, appointment.DoctorEmail, dateOfAppointment,
-                startTime, endTime, Appointment.State.Created, roomId, appointment.TypeOfTerm, false, false);
-        }
-
         public User FindFreeDoctor(DoctorUser.Speciality speciality, Appointment newAppointment)
 		{
             List<User> allDoctors = _userService.FilterDoctors(speciality);

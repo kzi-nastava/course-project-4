@@ -14,19 +14,21 @@ namespace Hospital.SecretaryImplementation
 	class Secretary : IMenuView
 	{
 		private PatientAccountService _patientAccountService;
-		private RequestService _requestService;
-		private ReferralScheduleService _referralScheduleService;
-		private UrgentScheduleService _urgentScheduleService;
-		private DynamicEquipmentMovingService _dynamicEquipmentMovingService;
+		private PatientAccountView _patientAccountView;
+		private PatientRequestView _patientRequestView;
+		private RefferalScheduling _referralScheduleService;
+		private UrgentSchedulingView _urgentSchedulingView;
+		private DynamicEquipmentMoving _dynamicEquipmentMovingService;
 		private DynamicEquipmentRequestService _dynamicEquipmentRequestService;
 
 		public Secretary(UserService service)
 		{
 			this._patientAccountService = new PatientAccountService();
-			this._requestService = new RequestService();
-			this._referralScheduleService = new ReferralScheduleService();
-			this._urgentScheduleService = new UrgentScheduleService();
-			this._dynamicEquipmentMovingService = new DynamicEquipmentMovingService();
+			this._patientAccountView = new PatientAccountView();
+			this._patientRequestView = new PatientRequestView();
+			this._referralScheduleService = new RefferalScheduling();
+			this._urgentSchedulingView = new UrgentSchedulingView();
+			this._dynamicEquipmentMovingService = new DynamicEquipmentMoving();
 			this._dynamicEquipmentRequestService = new DynamicEquipmentRequestService();
 		}
 
@@ -58,14 +60,14 @@ namespace Hospital.SecretaryImplementation
 				var choice = Console.ReadLine();
 				if (choice == "1")
 				{
-					CreatePatientAccount();
+					this._patientAccountService.CreatePatientAccount();
 				}
 				else if (choice == "2")
 				{
 					List<User> activePatients = _patientAccountService.FilterActivePatients();
 					if (activePatients.Count != 0)
 					{
-						_patientAccountService.ShowPatients(activePatients);
+						_patientAccountView.ShowPatients(activePatients);
 					}
 					else
 					{
@@ -74,22 +76,22 @@ namespace Hospital.SecretaryImplementation
 				}
 				else if (choice == "3")
 				{
-					ChangePatientAccount();
+					this._patientAccountService.ChangePatientAccount();
 				}
 				else if (choice == "4")
 				{
-					BlockPatient();
+					this._patientAccountService.BlockPatient();
 				}
 				else if (choice == "5")
 				{
-					UnblockPatient();
+					this._patientAccountService.UnblockPatient();
 				}
 				else if (choice == "6")
 				{
 					List<User> blockedPatients = _patientAccountService.FilterBlockedPatients();
 					if (blockedPatients.Count != 0)
 					{
-						_patientAccountService.ShowPatients(blockedPatients);
+						_patientAccountView.ShowPatients(blockedPatients);
 					}
 					else
 					{
@@ -102,19 +104,19 @@ namespace Hospital.SecretaryImplementation
 				}
 				else if (choice == "8")
 				{
-					ScheduleAppointmentWithReferral();
+					this._referralScheduleService.ScheduleAppointmentWithReferral();
 				}
 				else if(choice == "9")
 				{
-					UrgentSchedule();
+					this._urgentSchedulingView.SelectValuesForUrgentSchedule();
 				}
 				else if(choice == "10")
 				{
-					MakeEquipmentRequest();
+					this._dynamicEquipmentRequestService.SendRequestForProcurment();
 				}
 				else if(choice == "11")
 				{
-
+					this._dynamicEquipmentMovingService.MoveEquipment();
 				}
 				else if (choice == "x")
 				{
@@ -126,26 +128,6 @@ namespace Hospital.SecretaryImplementation
 				}
 			}
 
-		}
-
-		public void CreatePatientAccount()
-		{
-			this._patientAccountService.CreatePatientAccount();
-		}
-
-		public void ChangePatientAccount()
-		{
-			this._patientAccountService.ChangePatientAccount();
-		}
-
-		public void BlockPatient()
-		{
-			this._patientAccountService.BlockPatient();
-		}
-
-		public void UnblockPatient()
-		{
-			this._patientAccountService.UnblockPatient();
 		}
 
 		public int GetAction()
@@ -166,7 +148,7 @@ namespace Hospital.SecretaryImplementation
 
 		public void AnswerRequest()
 		{
-			Appointment activeRequest = _requestService.SelectRequest();
+			Appointment activeRequest = _patientRequestView.SelectRequest();
 			if (activeRequest is null)
 			{
 				return;
@@ -174,24 +156,10 @@ namespace Hospital.SecretaryImplementation
 
 			int actionIndex = GetAction();
 
-			_requestService.ProcessRequest(activeRequest, actionIndex);
+			_patientRequestView._patientRequestService.ProcessRequest(activeRequest, actionIndex);
 			Console.WriteLine("\nZahtev je uspesno obradjen");
 		}
 
-		public void ScheduleAppointmentWithReferral()
-		{
-			this._referralScheduleService.ScheduleAppointmentWithReferral();
-		}
-
-		public void UrgentSchedule()
-		{
-			this._urgentScheduleService.SelectValuesForUrgentSchedule();
-		}
-
-		public void MakeEquipmentRequest()
-		{
-			this._dynamicEquipmentRequestService.SendRequestForProcurment();
-		}
 	}
 
 }

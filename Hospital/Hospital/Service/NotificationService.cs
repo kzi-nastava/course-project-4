@@ -15,25 +15,12 @@ namespace Hospital.Service
 		private List<Notification> _notifications;
 
 		public List<Notification> Notifications { get { return _notifications; } }
+		public NotificationRepository Repository { get { return _notificationRepository; } }
 
 		public NotificationService()
 		{
 			_notificationRepository = new NotificationRepository();
 			_notifications = _notificationRepository.Load();
-		}
-
-		public void UpdateFile()
-		{
-			string filePath = @"..\..\Data\notifications.csv";
-			List<string> lines = new List<string>();
-
-			string line;
-			foreach(Notification notification in _notifications)
-			{
-				line = notification.Id + "," + notification.UserEmail + "," + notification.Content + "," + notification.Read;
-				lines.Add(line);
-			}
-			File.WriteAllLines(filePath, lines.ToArray());
 		}
 
 		public void ReadNotification(Notification notificationRead)
@@ -47,12 +34,29 @@ namespace Hospital.Service
 					break;
 				}
 			}
-			this.UpdateFile();
+			_notificationRepository.Save(_notifications);
 		}
 
 		public string GetNewNotificationId()
 		{
 			return (this._notifications.Count + 1).ToString();
+		}
+
+		public void AddNotification(Notification notification)
+		{
+			Notifications.Add(notification);
+			_notificationRepository.Save(Notifications);
+		}
+
+		public void SendUrgentNotification(string receiverEmail, DateTime time)
+		{
+			Notification notificaton = new Notification(GetNewNotificationId(), receiverEmail,
+							"Imate hitno zakazan termin u " + time.ToString("HH:mm"), false);
+			AddNotification(notificaton);
+		}
+
+		public void SendRescheduleNotification(string receiverEmail, DateTime date, DateTime time)
+		{
 		}
 	}
 }

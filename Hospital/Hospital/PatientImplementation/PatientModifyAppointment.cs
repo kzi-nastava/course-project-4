@@ -14,15 +14,16 @@ namespace Hospital.PatientImplementation
         private Patient _currentPatient;
         private PatientAppointmentsService _patientAppointment;
         private UserActionService _userActionService;
-        private RequestService _requestService;
-        private AppointmentService _appointmentService;
+        private PatientRequestService _requestService;
+       private AppointmentService _appointmentService;
 
         public PatientModifyAppointment(Patient patient, PatientAppointmentsService patientAppointmentsService, UserActionService userActionService, AppointmentService appointmentService)
         {
+
             this._currentPatient = patient;
             this._patientAppointment = patientAppointmentsService;
             this._userActionService = userActionService;
-            this._requestService = new RequestService();
+            this._requestService = new PatientRequestService();
             this._appointmentService = appointmentService;
         }
 
