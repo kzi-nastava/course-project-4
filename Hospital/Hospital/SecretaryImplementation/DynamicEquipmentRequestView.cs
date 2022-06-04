@@ -15,6 +15,7 @@ namespace Hospital.SecretaryImplementation
 			foreach (DynamicEquipment equipment in dynamicEquipment)
 			{
 				Console.WriteLine("{0}. {1}", i, equipment.Name);
+				i++;
 			}
 		}
 

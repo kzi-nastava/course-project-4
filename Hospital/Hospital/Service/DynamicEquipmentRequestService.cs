@@ -43,6 +43,7 @@ namespace Hospital.SecretaryImplementation
 			DynamicEquipmentRequest request = new DynamicEquipmentRequest(chosenEquipment.Id, amount, DateTime.Now.AddHours(24), false);
 			_warehouseService.Requests.Add(request);
 			_warehouseService.DynamicEquipmentRequestRepository.Save(_warehouseService.Requests);
+			Console.WriteLine("Zahtev za nabavku opreme je uspesno poslat.\nZeljena kolicina bice dodata nakon 24h.");
 		}
 	}
 }
