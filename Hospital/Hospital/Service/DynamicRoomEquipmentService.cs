@@ -24,6 +24,22 @@ namespace Hospital.Service
 
         public List<DynamicRoomEquipment> DynamicEquipments { get { return _dynamicEquipments; } }
 
+
+        public void ChangeEquipmentAmount(string roomId, string equipmentId, int amount, bool add)
+		{
+            foreach(DynamicRoomEquipment dynamicRoomEquipment in _dynamicEquipments)
+			{
+                if(dynamicRoomEquipment.IdRoom == roomId)
+				{
+                    if (add)
+                        dynamicRoomEquipment.AmountEquipment[equipmentId] += amount;
+                    else
+                        dynamicRoomEquipment.AmountEquipment[equipmentId] -= amount;
+                    break;
+                }
+			}
+            UpdateFile();
+        }
        
         public void  UpdateDictionary(Dictionary<string, int> amount, string idRoom)
         {

@@ -13,12 +13,14 @@ namespace Hospital.SecretaryImplementation
 		private List<User> _patients;
 		private UserService _userService;
 		private HealthRecordService _healthRecordService;
+		private PatientAccountView _patientAccountView;
 
 		public PatientAccountService()
 		{
 			this._userService = new UserService();
 			this._patients = FilterPatients(_userService.Users);
 			this._healthRecordService = new HealthRecordService();
+			this._patientAccountView = new PatientAccountView();
 		}
 
 
@@ -64,7 +66,7 @@ namespace Hospital.SecretaryImplementation
 
 		public void BlockPatient()
 		{
-			User patient = PatientAccountView.SelectPatient(FilterActivePatients());
+			User patient = _patientAccountView.SelectPatient(FilterActivePatients());
 			if (patient is null)
 				return;
 
@@ -76,7 +78,7 @@ namespace Hospital.SecretaryImplementation
 
 		public void UnblockPatient()
 		{
-			User patient = PatientAccountView.SelectPatient(FilterBlockedPatients());
+			User patient = _patientAccountView.SelectPatient(FilterBlockedPatients());
 			if (patient is null)
 				return;
 			_userService.BlockOrUnblockUser(patient, false);
@@ -88,7 +90,7 @@ namespace Hospital.SecretaryImplementation
 
 		public void CreatePatientAccount()
 		{
-			User newPatient = PatientAccountView.EnterNewUserData();
+			User newPatient = _patientAccountView.EnterNewUserData();
 			this._userService.AddUser(newPatient);
 			this._patients.Add(newPatient);
 
@@ -98,10 +100,10 @@ namespace Hospital.SecretaryImplementation
 
 		public void ChangePatientAccount()
 		{
-			User patient = PatientAccountView.SelectPatient(_patients);
+			User patient = _patientAccountView.SelectPatient(_patients);
 			if (patient is null)
 				return;
-			patient = PatientAccountView.ChangePatientData(patient);
+			patient = _patientAccountView.ChangePatientData(patient);
 			_userService.UpdateUserInfo(patient);
 
 			Console.WriteLine("\nNalog pacijenta je uspesno izmenjen.");

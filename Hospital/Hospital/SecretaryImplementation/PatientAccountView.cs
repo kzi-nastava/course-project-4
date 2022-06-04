@@ -4,13 +4,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Hospital.Model;
+using Hospital.Service;
 
 namespace Hospital.SecretaryImplementation
 {
 	class PatientAccountView
 	{
+		private UserService _userService; 
 
-		public static void ShowPatients(List<User> patients)
+		public PatientAccountView()
+		{
+			this._userService = new UserService();
+		}
+
+		public void ShowPatients(List<User> patients)
 		{
 			for (int i = 0; i < patients.Count; i++)
 			{
@@ -19,7 +26,7 @@ namespace Hospital.SecretaryImplementation
 			}
 		}
 
-		public static int EnterPatientIndex()
+		public int EnterPatientIndex()
 		{
 			string patientIndexInput;
 			int patientIndex;
@@ -38,7 +45,7 @@ namespace Hospital.SecretaryImplementation
 
 		}
 
-		public static User SelectPatient(List<User> patients)
+		public User SelectPatient(List<User> patients)
 		{
 			if (patients.Count == 0)
 			{
@@ -59,12 +66,16 @@ namespace Hospital.SecretaryImplementation
 			return patients[patientIndex - 1];
 		}
 
-		public static User EnterNewUserData()
+		public User EnterNewUserData()
 		{
 			Console.WriteLine("-------------------------------------");
 			Console.WriteLine("Unesite podatke o pacijentu");
-			Console.Write("Email: ");
-			var email = Console.ReadLine();
+			string email;
+			do
+			{
+				Console.Write("Email: ");
+				email = Console.ReadLine();
+			} while (_userService.IsEmailValid(email));
 			Console.Write("Password: ");
 			var password = Console.ReadLine();
 			Console.Write("Ime: ");
@@ -76,7 +87,7 @@ namespace Hospital.SecretaryImplementation
 			return newPatient;
 		}
 
-		public static void ShowPatientData(User patient)
+		public void ShowOldPatientData(User patient)
 		{
 			Console.WriteLine("\nStari podaci\n---------------------------------------------");
 			Console.WriteLine("Ime: " + patient.Name);
@@ -86,9 +97,9 @@ namespace Hospital.SecretaryImplementation
 			Console.WriteLine("---------------------------------------------\n");
 		}
 
-		public static User ChangePatientData(User patient)
+		public User ChangePatientData(User patient)
 		{
-			ShowPatientData(patient);
+			ShowOldPatientData(patient);
 			Console.WriteLine("\nNovi podaci\n------------------------------------------");
 			Console.Write("Ime: ");
 			var newName = Console.ReadLine();

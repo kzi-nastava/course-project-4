@@ -10,13 +10,13 @@ using Microsoft.VisualBasic.FileIO;
 
 namespace Hospital.Repository
 {
-	public class RequestRepository
+	public class PatientRequestRepository
 	{
         public List<Appointment> Load()
         {
             List<Appointment> allRequests = new List<Appointment>();
 
-            using (TextFieldParser parser = new TextFieldParser(@"..\..\Data\requests.csv"))
+            using (TextFieldParser parser = new TextFieldParser(@"..\..\Data\patientRequests.csv"))
             {
                 parser.TextFieldType = FieldType.Delimited;
                 parser.SetDelimiters(",");
@@ -46,7 +46,7 @@ namespace Hospital.Repository
 
 		public void Save(List<Appointment> requests)
 		{
-            string filePath = @"..\..\Data\requests.csv";
+            string filePath = @"..\..\Data\patientRequests.csv";
 
             if (requests.Count == 0)
             {

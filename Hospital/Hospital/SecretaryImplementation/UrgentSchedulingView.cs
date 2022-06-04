@@ -12,17 +12,19 @@ namespace Hospital.SecretaryImplementation
 	{
 		private UrgentScheduling _urgentScheduling;
 		private PatientAccountService _patientAccountService;
+		private PatientAccountView _patientAccountView;
 
 		public UrgentSchedulingView()
 		{
 			this._urgentScheduling = new UrgentScheduling();
 			this._patientAccountService = new PatientAccountService();
+			this._patientAccountView = new PatientAccountView();
 		}
 
 
 		public void SelectValuesForUrgentSchedule()
 		{
-			User patient = PatientAccountView.SelectPatient(_patientAccountService.FilterActivePatients());
+			User patient = _patientAccountView.SelectPatient(_patientAccountService.FilterActivePatients());
 			DoctorUser.Speciality speciality = SelectSpeciality();
 			Console.WriteLine("\nTip:\n1.Pregled\n2.Operacija");
 			string indexInput;

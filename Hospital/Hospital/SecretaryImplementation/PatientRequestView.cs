@@ -8,20 +8,20 @@ using Hospital.Service;
 
 namespace Hospital.SecretaryImplementation
 {
-	class RequestView
+	class PatientRequestView
 	{
-		public RequestService _requestService;
+		public PatientRequestService _patientRequestService;
 		private UserService _userService;
 
-		public RequestView()
+		public PatientRequestView()
 		{
-			this._requestService = new RequestService();
+			this._patientRequestService = new PatientRequestService();
 			this._userService = new UserService();
 		}
 
 		public Appointment SelectRequest()
 		{
-			List<Appointment> requests = _requestService.FilterPending();
+			List<Appointment> requests = _patientRequestService.FilterPending();
 			if (requests.Count == 0)
 			{
 				Console.WriteLine("Trenutno nema zahteva za obradu. ");
@@ -55,7 +55,7 @@ namespace Hospital.SecretaryImplementation
 				switch (request.AppointmentState)
 				{
 					case (Appointment.State.UpdateRequest):
-						Appointment oldValuesAppointment = _requestService.FindInitialAppointment(request.AppointmentId);
+						Appointment oldValuesAppointment = _patientRequestService.FindInitialAppointment(request.AppointmentId);
 						Console.Write("{0}. {1}, {2}->{3}, {4}->{5}, {6}->{7}, ", i + 1, _userService.GetUserFullName(oldValuesAppointment.PatientEmail),
 							oldValuesAppointment.DateAppointment.ToString("MM/dd/yyyy"), request.DateAppointment.ToString("MM/dd/yyyy"),
 							oldValuesAppointment.StartTime.ToString("HH:mm"), request.StartTime.ToString("HH:mm"),

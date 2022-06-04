@@ -9,17 +9,17 @@ using Hospital.Repository;
 
 namespace Hospital.Service
 {
-	class RequestService
+	class PatientRequestService
 	{
 		private AppointmentService _appointmentService;
-		private RequestRepository _requestRepository;
+		private PatientRequestRepository _requestRepository;
 		private List<Appointment> _requests;
 
 		public List<Appointment> Requests { get { return this._requests; } }
 
-		public RequestService()
+		public PatientRequestService()
 		{
-			_requestRepository = new RequestRepository();
+			_requestRepository = new PatientRequestRepository();
 			_requests = _requestRepository.Load();
 			this._appointmentService = new AppointmentService();
 		}
