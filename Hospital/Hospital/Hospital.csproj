@@ -79,9 +79,11 @@
     <Compile Include="PatientImplementation\PatientAnamnesis.cs" />
     <Compile Include="PatientImplementation\PatientDoctorSurvey.cs" />
     <Compile Include="PatientImplementation\PatientDrugNotification.cs" />
+    <Compile Include="PatientImplementation\PatientModifyAppointment.cs" />
     <Compile Include="PatientImplementation\PatientSchedulingAppointment.cs" />
-    <Compile Include="PatientImplementation\PatientAppointments.cs" />
+    <Compile Include="PatientImplementation\PatientAppointmentsService.cs" />
     <Compile Include="PatientImplementation\Patient.cs" />
+    <Compile Include="PatientImplementation\RecommendedAppointment.cs" />
     <Compile Include="Repository\DoctorSurveyRepository.cs" />
     <Compile Include="Repository\DrugNotificationRepository.cs" />
     <Compile Include="Repository\DrugProposalRepository.cs" />
