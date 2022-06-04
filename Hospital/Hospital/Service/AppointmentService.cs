@@ -21,7 +21,7 @@ namespace Hospital.Service
         private List<Room> _rooms;
 
         public AppointmentRepository AppointmentRepository { get { return _appointmentRepository; } }
-        public List<Appointment> Appointments { get { return _appointments; } }
+        public List<Appointment> Appointments { get { return _appointments; } set { _appointments = value; } }
         public AppointmentService()
         {
             _appointmentRepository = new AppointmentRepository();
@@ -160,8 +160,7 @@ namespace Hospital.Service
 
         public List<Appointment> GetDoctorAppointment(User user)
         {
-
-            //returns all _appointments for a particular doctor
+            //returns all appointments for a particular doctor
             List<Appointment> doctorAppointment = new List<Appointment>();
             foreach (Appointment appointment in this._appointments)
             {
@@ -197,10 +196,12 @@ namespace Hospital.Service
 
         public void UpdateAppointment(Appointment appointmentChange)
         {
-            foreach(Appointment updateAppointment in this._appointments)
+            this._appointments = _appointmentRepository.Load();
+            foreach (Appointment updateAppointment in this._appointments)
             {
                 if (updateAppointment.AppointmentId.Equals(appointmentChange.AppointmentId))
                 {
+                    Console.WriteLine("proslo");
                     updateAppointment.PatientEmail = appointmentChange.PatientEmail;
                     updateAppointment.DoctorEmail = appointmentChange.DoctorEmail;
                     updateAppointment.DateAppointment = appointmentChange.DateAppointment;
@@ -273,13 +274,6 @@ namespace Hospital.Service
             }
             else
                 return freeRooms[0];
-        }
-
-        public void TableHeaderForPatient() //treba premestiti u view
-        {
-            Console.WriteLine();
-            Console.Write(String.Format("{0,3}|{1,10}|{2,10}|{3,10}|{4,10}|{5,10}|{6,10}|{7,10}",
-                "Br.", "Doktor", "Datum", "Pocetak", "Kraj", "Soba", "Tip", "Stanje"));
         }
 
         public bool IntervalsOverlap(DateTime firstStart, DateTime firstEnd, DateTime secondStart, DateTime secondEnd)
