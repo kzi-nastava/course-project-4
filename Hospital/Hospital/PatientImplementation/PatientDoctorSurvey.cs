@@ -24,7 +24,6 @@ namespace Hospital.PatientImplementation
         {
             IDictionary<string, double> averageGrades = new Dictionary<string, double>();
             double grades = 0.0, numberGrades = 0.0;
-            //double numberGrades = 0.0;
             foreach (DoctorUser doctor in _userService.UsersRepository.DoctorUsers)
             {
                 foreach (DoctorSurvey evaluatedDoctor in _doctorSurveyService.EvaluatedDoctors)

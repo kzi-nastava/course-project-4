@@ -13,11 +13,13 @@ namespace Hospital.PatientImplementation
     {
         private Patient _currentRegisteredUser;
         private UserService _userService;
+        private PatientSchedulingAppointment _patientScheduling;
 
-        public PatientDoctorSearch(Patient patient, UserService userService)
+        public PatientDoctorSearch(Patient patient, UserService userService, PatientSchedulingAppointment patientScheduling)
         {
             this._currentRegisteredUser = patient;
             this._userService = userService;
+            this._patientScheduling = patientScheduling;
         }
 
         public void MenuForDoctorSearch()
@@ -177,7 +179,7 @@ namespace Hospital.PatientImplementation
                 choice = Console.ReadLine();
             } while (!int.TryParse(choice, out numDoctor) || numDoctor < 1 || numDoctor > doctors.Count);
 
-            _currentRegisteredUser.SchedulingAppointment(doctors[numDoctor-1].Email);
+            this._patientScheduling.SchedulingAppointment(doctors[numDoctor-1].Email);
         }
     }
 }

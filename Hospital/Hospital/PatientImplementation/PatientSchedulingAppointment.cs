@@ -13,90 +13,20 @@ namespace Hospital.PatientImplementation
     class PatientSchedulingAppointment
     {
         private AppointmentService _appointmentService;
-        private List<User> _allUsers;
+        private UserService _userService;
         private Patient _currentRegisteredUser;
+        private PatientAppointmentsService _patientAppointmentsService;
+        private UserActionService _userActionService;
 
         public AppointmentService AppointmentService { get { return _appointmentService; } }
-        public Patient RegisteredUser { get { return _currentRegisteredUser; } set { _currentRegisteredUser = value; } } 
 
-        public PatientSchedulingAppointment(List<User> allUsers)
+        public PatientSchedulingAppointment(Patient patient, AppointmentService appointmentService, UserService userService, PatientAppointmentsService patientAppointmentsService, UserActionService userActionService)
         {
-            this._allUsers = allUsers;
-            this._appointmentService = new AppointmentService();
-        }
-
-        public bool IsAppointmentFree(string id, string[] inputValues)
-        {
-            string doctorEmail = inputValues[0];
-            string newDate = inputValues[1];
-            string newStartTime = inputValues[2];
-
-            DateTime dateExamination = DateTime.Parse(newDate);
-            DateTime startTime = DateTime.Parse(newStartTime);
-
-            foreach (Appointment appointment in _appointmentService.Appointments)
-            {
-                if (appointment.DoctorEmail.Equals(doctorEmail) && appointment.DateAppointment == dateExamination
-                    && appointment.StartTime <= startTime && appointment.EndTime > startTime)
-                    return false;
-                else if (appointment.PatientEmail.Equals(_currentRegisteredUser.Email) && appointment.DateAppointment == dateExamination
-                    && appointment.StartTime <= startTime && appointment.EndTime > startTime && !appointment.AppointmentId.Equals(id))
-                    return false;
-            }
-            return true;
-        }
-
-        public string CheckPriority()
-        {
-            string priority;
-            do
-            {
-                Console.WriteLine("\nIzaberite prioritet pri zakazivanju");
-                Console.WriteLine("1. Doktor");
-                Console.WriteLine("2. Vremenski opseg");
-                Console.Write(">> ");
-                priority = Console.ReadLine();
-
-                if (priority.Equals("1"))
-                    return "1";
-                else if (priority.Equals("2"))
-                    return "2";
-            } while (true);
-        }
-
-        public bool IsTimeBetweenTwoTimes(DateTime time)
-        {
-            DateTime midnight = DateTime.ParseExact("00:00", "HH:mm", CultureInfo.InvariantCulture);
-            DateTime earliestTime = DateTime.ParseExact("06:00", "HH:mm", CultureInfo.InvariantCulture);
-            if (time.TimeOfDay >= midnight.TimeOfDay && time.TimeOfDay < earliestTime.TimeOfDay)
-                return true;
-            return false;
-        }
-
-        public Appointment FindAppointmentAtChosenDoctor(string[] inputValues)
-        {
-            string doctorEmail = inputValues[0];
-            DateTime latestDate = DateTime.ParseExact(inputValues[1], "MM/dd/yyyy", CultureInfo.InvariantCulture);
-            DateTime startTime = DateTime.ParseExact(inputValues[2], "HH:mm", CultureInfo.InvariantCulture);
-
-            DateTime earliestDate = DateTime.Now.AddDays(1);
-            string[] dataForAppointment;
-            do
-            {
-                if (this.IsTimeBetweenTwoTimes(startTime))
-                {
-                    startTime = DateTime.ParseExact("06:00", "HH:mm", CultureInfo.InvariantCulture);
-                    earliestDate = earliestDate.AddDays(1);
-                }
-
-                if (earliestDate.Date > latestDate.Date)
-                    return this.FindAppointmentsClosestPatientWishes(inputValues);
-
-                dataForAppointment = new string[] { doctorEmail, earliestDate.ToString("MM/dd/yyyy"), startTime.ToString("HH:mm") };
-                startTime = startTime.AddMinutes(15);
-            } while (!this.IsAppointmentFree("0", dataForAppointment));
-
-            return this.CreateAppointment(dataForAppointment);
+            this._userService = userService;
+            this._appointmentService = appointmentService;
+            this._currentRegisteredUser = patient;
+            this._patientAppointmentsService = patientAppointmentsService;
+            this._userActionService = userActionService;
         }
 
         public string AcceptAppointment(Appointment newAppointment)
@@ -122,62 +52,6 @@ namespace Hospital.PatientImplementation
             } while (true);
         }
 
-        public Appointment FindAppointmentInTheSelectedRange(string[] inputValues)
-        {
-            string[] dataForAppointment = new string[3];
-
-            foreach (User doctor in this.AllDoctors())
-            {
-                inputValues[0] = doctor.Email;
-                dataForAppointment = this.IsDoctorAvailable(inputValues);
-                if (dataForAppointment != null)
-                    break;
-            }
-            if (dataForAppointment == null)
-                return this.FindAppointmentsClosestPatientWishes(inputValues); 
-
-            return this.CreateAppointment(dataForAppointment);
-        }
-
-        public string[] IsDoctorAvailable(string[] inputValues)
-        {
-            DateTime latestDate = DateTime.ParseExact(inputValues[1], "MM/dd/yyyy", CultureInfo.InvariantCulture);
-            DateTime startTime = DateTime.ParseExact(inputValues[2], "HH:mm", CultureInfo.InvariantCulture);
-            DateTime endTime = DateTime.ParseExact(inputValues[3], "HH:mm", CultureInfo.InvariantCulture);
-
-            DateTime earliestDate = DateTime.Now.AddDays(1);
-            string[] dataForAppointment;
-            do
-            {
-                if (startTime.TimeOfDay >= endTime.TimeOfDay)
-                {
-                    earliestDate = earliestDate.AddDays(1);
-                    startTime = DateTime.ParseExact(inputValues[2], "HH:mm", CultureInfo.InvariantCulture); // reset time
-                }
-
-                if (earliestDate.Date > latestDate.Date)
-                    return null;
-
-                dataForAppointment = new string[] { inputValues[0], earliestDate.ToString("MM/dd/yyyy"), startTime.ToString("HH:mm") };
-                startTime = startTime.AddMinutes(15);
-            } while (!this.IsAppointmentFree("0", dataForAppointment));
-
-            return dataForAppointment;
-        }
-
-        public Appointment FindAppointmentsClosestPatientWishes(string[] inputValues)
-        {
-            foreach (User doctor in this.AllDoctors())
-            {
-                if (doctor.Email.Equals(inputValues[0]))
-                    continue;
-                inputValues[0] = doctor.Email;
-                break;
-            }
-            List<Appointment> appointmentsForChoosing = FindRandomAppointmentForScheduling(inputValues);
-            return this.PickAppointmentForScheduling(appointmentsForChoosing);
-        }
-
         public List<Appointment> FindRandomAppointmentForScheduling(string[] inputValues)
         {
             List<Appointment> appointmentsForChoosing = new List<Appointment>();
@@ -188,7 +62,7 @@ namespace Hospital.PatientImplementation
 
             do
             {
-                if (this.IsTimeBetweenTwoTimes(startTime))
+                if (Utils.IsTimeBetweenTwoTimes(startTime))
                 {
                     startTime = DateTime.ParseExact(inputValues[2], "HH:mm", CultureInfo.InvariantCulture);
                     appointmentDate = appointmentDate.AddDays(1);
@@ -196,22 +70,13 @@ namespace Hospital.PatientImplementation
 
                 dataForAppointment = new string[] { inputValues[0], appointmentDate.ToString("MM/dd/yyyy"), startTime.ToString("HH:mm") };
               
-                if (this.IsAppointmentFree("0", dataForAppointment))
+                if (this._patientAppointmentsService.IsAppointmentFree("0", dataForAppointment))
                     appointmentsForChoosing.Add(this.CreateAppointment(dataForAppointment));
                 
                 startTime = startTime.AddMinutes(15);
             } while (appointmentsForChoosing.Count != 3);
 
             return appointmentsForChoosing;
-        }
-
-        public List<User> AllDoctors()
-        {
-            List<User> allDoctors = new List<User>();
-            foreach (User user in _allUsers)
-                if (user.UserRole == User.Role.Doctor)
-                    allDoctors.Add(user);
-            return allDoctors;
         }
 
         public Appointment CreateAppointment(string[] dataForAppointment)
@@ -230,22 +95,9 @@ namespace Hospital.PatientImplementation
             return newAppointment;
         }
 
-        public void PrintAppointments(List<Appointment> appointments)
-        {
-            int numAppointment = 1;
-            Console.WriteLine("\nPREDLOZI TERMINA PREGLEDA");
-            this._currentRegisteredUser.TableHeaderForPatient();
-            Console.WriteLine();
-            foreach (Appointment appointment in appointments)
-            {
-                Console.WriteLine(numAppointment + ". " + appointment.DisplayOfPatientAppointment());
-                numAppointment += 1;
-            }
-        }
-
         public Appointment PickAppointmentForScheduling(List<Appointment> appointments)
         {
-            this.PrintAppointments(appointments);
+            this._patientAppointmentsService.PrintRecommendedAppointments(appointments);
             int numAppointment;
             string choice;
             do
@@ -258,5 +110,23 @@ namespace Hospital.PatientImplementation
             return appointments[numAppointment - 1];
         }
 
+        public void SchedulingAppointment(string doctorEmail)
+        {
+            string[] inputValues = _patientAppointmentsService.InputValuesForAppointment(doctorEmail);
+
+            if (!_patientAppointmentsService.IsAppointmentFree("0", inputValues))
+            {
+                Console.WriteLine("Nije moguce zakazati pregled u izabranom terminu!");
+                return;
+            }
+
+            Appointment newAppointment = this.CreateAppointment(inputValues);
+            this._appointmentService.AddAppointment(newAppointment);
+            this._currentRegisteredUser.PatientAppointments = _patientAppointmentsService.RefreshPatientAppointments();
+            this._userActionService.ActionRepository.AppendToActionFile("create");
+            this._userActionService.AntiTrolMechanism();
+
+            Console.WriteLine("Uspesno ste kreirali nov pregled!");
+        }
     }
 }
