@@ -12,14 +12,18 @@ namespace Hospital.PatientImplementation
 {
     class Patient
     {
-        string _email;
-        PatientService _patientService;
-        PatientSchedulingAppointment _patientScheduling;
-        PatientAnamnesis _patientAnamnesis;
-        PatientDoctorSearch _doctorSearch;
-        PatientDoctorSurvey _doctorSurvey;
-        List<Appointment> _currentAppointments;
-        PatientDrugNotification _drugNotification;
+        private string _email;
+        private PatientAppointments _patientService;
+        private AppointmentService _appointmentService;
+        private PatientSchedulingAppointment _patientScheduling;
+        private PatientAnamnesis _patientAnamnesis;
+        private PatientDoctorSearch _doctorSearch;
+        private PatientDoctorSurvey _doctorSurvey;
+        private List<Appointment> _currentAppointments;
+        private PatientDrugNotification _drugNotification;
+        private UserService _userService;
+        private UserActionService _userActionService;
+        private DrugNotificationService _drugNotificationService;
 
         public string Email { get { return _email; } }
         public List<Appointment> PatientAppointments
@@ -32,13 +36,18 @@ namespace Hospital.PatientImplementation
         public Patient(string email, PatientSchedulingAppointment patientScheduling)
         {
             this._email = email;
-            this._patientService = new PatientService(this);
+            this._appointmentService = new AppointmentService();
+            this._drugNotificationService = new DrugNotificationService();
+            this._userService = new UserService();
+            this._patientService = new PatientAppointments(this, _appointmentService);
             this._patientScheduling = patientScheduling;
-            this._patientAnamnesis = new PatientAnamnesis(this);
+            this._patientScheduling.RegisteredUser = this;
+            this._patientAnamnesis = new PatientAnamnesis(this, _appointmentService, _userService);
             this._currentAppointments = this._patientService.RefreshPatientAppointments();
-            this._doctorSearch = new PatientDoctorSearch(this);
-            this._doctorSurvey = new PatientDoctorSurvey(this);
-            this._drugNotification = new PatientDrugNotification(this);
+            this._doctorSearch = new PatientDoctorSearch(this, _userService);
+            this._doctorSurvey = new PatientDoctorSurvey(_userService);
+            this._drugNotification = new PatientDrugNotification(this, _appointmentService, _drugNotificationService);
+            this._userActionService = new UserActionService(this);
         }
 
         // methods
@@ -68,30 +77,37 @@ namespace Hospital.PatientImplementation
                 else if (choice.Equals("2"))
                     this.SchedulingAppointment("");
                 else if (choice.Equals("3"))
-                    this.UpdateAppointment();
+                    this.UpdateOwnAppointment();
                 else if (choice.Equals("4"))
-                    this.DeleteAppointment();
+                    this.DeleteOwnAppointment();
                 else if (choice.Equals("5"))
                     this.RecommendationFreeAppointments();
                 else if (choice.Equals("6"))
-                    this.AnamnesisSearch();
+                    this._patientAnamnesis.MainMenuForSearch();
                 else if (choice.Equals("7"))
-                    this.DoctorSearch();
+                    this._doctorSearch.MenuForDoctorSearch();
                 else if (choice.Equals("8"))
-                    this.DrugNotification();
+                    this._drugNotification.ShowDrugNotification();
                 else if (choice.Equals("9"))
                     this.LogOut();
             } while (true);
         }
 
+        public void TableHeaderForPatient()
+        {
+            Console.WriteLine();
+            Console.Write(String.Format("{0,3}|{1,10}|{2,10}|{3,10}|{4,10}|{5,10}|{6,10}|{7,10}",
+                "Br.", "Doktor", "Datum", "Pocetak", "Kraj", "Soba", "Tip", "Stanje"));
+        }
+
         private void ReadOwnAppointments()
         {
-            if (!_patientService.HasPatientAppointmen(this._currentAppointments)) 
+            if (!_patientService.HasPatientAppointment(this._currentAppointments)) 
                 return;
                 
             int serialNumber = 0;
 
-            _patientService.AppointmentService.TableHeaderForPatient();
+            this.TableHeaderForPatient();
             Console.WriteLine();
             
             foreach (Appointment appointment in this._currentAppointments)
@@ -102,20 +118,20 @@ namespace Hospital.PatientImplementation
             Console.WriteLine();
         }
 
-        private void DeleteAppointment() 
+        private void DeleteOwnAppointment() 
         {
             Appointment appointmentForDelete = _patientService.PickAppointmentForDeleteOrUpdate();
 
             if (appointmentForDelete == null)
                 return;
 
-            _patientService.ReadFileForDeleteAppointment(appointmentForDelete);
+            this._patientService.DeleteAppointment(appointmentForDelete);
             this._currentAppointments = _patientService.RefreshPatientAppointments();
-            _patientService.AppendToActionFile("delete");
-            this.AntiTrolMechanism();
+            this._userActionService.ActionRepository.AppendToActionFile("delete");
+            this._userActionService.AntiTrolMechanism();
         }
 
-        private void UpdateAppointment()
+        private void UpdateOwnAppointment()
         {
             Appointment appointmentForUpdate = _patientService.PickAppointmentForDeleteOrUpdate();
 
@@ -130,11 +146,9 @@ namespace Hospital.PatientImplementation
                 return;
             }
 
-            _patientService.ReadFileForUpdateAppointment(appointmentForUpdate, inputValues);
-            this._currentAppointments = _patientService.RefreshPatientAppointments();
-            _patientService.AppendToActionFile("update");
-            this.AntiTrolMechanism();
-
+            this._patientService.UpdateAppointment(appointmentForUpdate, inputValues);
+            this._userActionService.ActionRepository.AppendToActionFile("update");
+            this._userActionService.AntiTrolMechanism();
         }
 
         public void SchedulingAppointment(string doctorEmail)
@@ -148,43 +162,12 @@ namespace Hospital.PatientImplementation
             }
 
             Appointment newAppointment = _patientScheduling.CreateAppointment(inputValues);
+            this._appointmentService.AddAppointment(newAppointment);
+            this._currentAppointments = _patientService.RefreshPatientAppointments();
+            this._userActionService.ActionRepository.AppendToActionFile("create");
+            this._userActionService.AntiTrolMechanism();
 
             Console.WriteLine("Uspesno ste kreirali nov pregled!");
-
-            _patientService.AppointmentService.AppendNewAppointmentInFile(newAppointment);
-            this._currentAppointments = _patientService.RefreshPatientAppointments();
-            _patientService.AppendToActionFile("create");
-            this.AntiTrolMechanism(); 
-        }
-
-        private void AntiTrolMechanism()
-        {
-            int changed = 0;
-            int deleted = 0;
-            int created = 0;
-
-            List<UserAction> myCurrentActions = _patientService.LoadMyCurrentActions(this._email);
-
-            foreach (UserAction action in myCurrentActions) {
-                if (action.ActionState == UserAction.State.Created)
-                    created += 1;
-                else if (action.ActionState == UserAction.State.Modified)
-                    changed += 1;
-                else if (action.ActionState == UserAction.State.Deleted)
-                    deleted += 1;
-            }
-
-            if (changed > 4)
-                Console.WriteLine("\nU proteklih 30 dana previse puta ste izmenili termin.\nPristup aplikaciji Vam je sada blokiran!");
-            else if (deleted > 4)
-                Console.WriteLine("\nU proteklih 30 dana previse puta ste obrisali termin.\nPristup aplikaciji Vam je sada blokiran!");
-            else if (created > 8)
-                Console.WriteLine("\nU proteklih 30 dana previse puta ste kreirali termin.\nPristup aplikaciji Vam je sada blokiran!");
-            else
-                return;
-          
-            _patientService.BlockAccessApplication();
-            this.LogOut(); //log out from account
         }
 
         private void RecommendationFreeAppointments()
@@ -206,56 +189,13 @@ namespace Hospital.PatientImplementation
             if (_patientScheduling.AcceptAppointment(newAppointment).Equals("2"))
                 return;
 
-            _patientService.AppointmentService.AppendNewAppointmentInFile(newAppointment);
+            this._patientService.AppointmentService.AppendNewAppointmentInFile(newAppointment);
             this._currentAppointments = _patientService.RefreshPatientAppointments();
-            _patientService.AppendToActionFile("create");
-            this.AntiTrolMechanism();
+            this._userActionService.ActionRepository.AppendToActionFile("create");
+            this._userActionService.AntiTrolMechanism();
         }
 
-        private void AnamnesisSearch()
-        {
-            _patientAnamnesis.MainMenuForSearch();
-        }
-
-        private void DoctorSearch()
-        {
-            string choice;
-            Console.Write("\nPretraga doktora po");
-            do
-            {
-                Console.WriteLine("\n1. Imenu");
-                Console.WriteLine("2. Prezimenu");
-                Console.WriteLine("3. Uzoj oblasti");
-                Console.Write(">> ");
-                choice = Console.ReadLine();
-
-                if (choice.Equals("1"))
-                    _doctorSearch.FindDoctorsByName();
-                else if (choice.Equals("2"))
-                    _doctorSearch.FindDoctorsBySurname();
-                else if (choice.Equals("3"))
-                    _doctorSearch.FindDoctorsBySpeciality();
-            } while (choice != "1" && choice != "2" && choice != "3");
-        }
-
-        private void DrugNotification()
-        {
-            this._drugNotification.InformPatientAboutDrug();
-            string choice;
-            Console.WriteLine("\nDa li zelite da izmenite vreme obavestenja?");
-            do
-            {
-                Console.WriteLine("\n1. DA       2. NE");
-                Console.Write(">> ");
-                choice = Console.ReadLine();
-                if (choice.Equals("1"))
-                    this._drugNotification.ChangeTimeNotification();
-                else if (choice.Equals("2"))
-                    return;
-            } while (choice != "1" && choice != "2");
-        }
-
-        private void LogOut()
+        public void LogOut()
         {
             Login loging = new Login();
             loging.LogIn();

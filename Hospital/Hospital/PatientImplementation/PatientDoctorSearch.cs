@@ -11,17 +11,34 @@ namespace Hospital.PatientImplementation
 {
     class PatientDoctorSearch
     {
-        Patient _currentRegisteredUser;
-        AppointmentService _appointmentService = new AppointmentService(); 
-        List<Appointment> _allAppointments;
-        UserRepository _userRepository = new UserRepository();
-        List<User> _allUsers;
+        private Patient _currentRegisteredUser;
+        private UserService _userService;
 
-        public PatientDoctorSearch(Patient patient)
+        public PatientDoctorSearch(Patient patient, UserService userService)
         {
             this._currentRegisteredUser = patient;
-            _allAppointments = _appointmentService.AppointmentRepository.Load();
-            this._allUsers = _userRepository.Load();
+            this._userService = userService;
+        }
+
+        public void MenuForDoctorSearch()
+        {
+            string choice;
+            Console.Write("\nPretraga doktora po");
+            do
+            {
+                Console.WriteLine("\n1. Imenu");
+                Console.WriteLine("2. Prezimenu");
+                Console.WriteLine("3. Uzoj oblasti");
+                Console.Write(">> ");
+                choice = Console.ReadLine();
+
+                if (choice.Equals("1"))
+                    this.FindDoctorsByName();
+                else if (choice.Equals("2"))
+                    this.FindDoctorsBySurname();
+                else if (choice.Equals("3"))
+                    this.FindDoctorsBySpeciality();
+            } while (choice != "1" && choice != "2" && choice != "3");
         }
 
         private void HeaderDoctorTable()
@@ -41,19 +58,15 @@ namespace Hospital.PatientImplementation
             }
         }
 
-        private string Capitalize(string word)
-        {
-            return word.Substring(0, 1).ToUpper() + word.Substring(1).ToLower();
-        }
-
         private void FindDoctorByParameter(string searchParameter, int numberParameter)
         {
             List<DoctorUser> selectedDoctors = new List<DoctorUser>();
-            foreach (DoctorUser doctor in _userRepository.DoctorUsers)
+            Console.WriteLine(_userService.UsersRepository.DoctorUsers.Count);
+            foreach (DoctorUser doctor in _userService.UsersRepository.DoctorUsers)
             {
-                if (Capitalize(searchParameter).Equals(doctor.Name) && numberParameter == 0 ||
-                    Capitalize(searchParameter).Equals(doctor.Surname) && numberParameter == 1 ||
-                    Capitalize(searchParameter).Equals(doctor.SpecialityDoctor.ToString()) && numberParameter == 2)
+                if (Utils.Capitalize(searchParameter).Equals(doctor.Name) && numberParameter == 0 ||
+                    Utils.Capitalize(searchParameter).Equals(doctor.Surname) && numberParameter == 1 ||
+                    Utils.Capitalize(searchParameter).Equals(doctor.SpecialityDoctor.ToString()) && numberParameter == 2)
                
                     selectedDoctors.Add(doctor);
             }
@@ -67,21 +80,21 @@ namespace Hospital.PatientImplementation
             }
         }
 
-        public void FindDoctorsByName()
+        private void FindDoctorsByName()
         {
             Console.Write("\nUnesite ime doktora: ");
             string inputName = Console.ReadLine();
             this.FindDoctorByParameter(inputName, 0);
         }
 
-        public void FindDoctorsBySurname()
+        private void FindDoctorsBySurname()
         {
             Console.Write("\nUnesite prezime doktora: ");
             string inputSurname = Console.ReadLine();
             this.FindDoctorByParameter(inputSurname, 1);
         }
 
-        public void FindDoctorsBySpeciality()
+        private void FindDoctorsBySpeciality()
         {
             Console.Write("\nUnesite uzu oblast doktora: ");
             string inputSpeciality = Console.ReadLine();

@@ -12,19 +12,39 @@ namespace Hospital.PatientImplementation
 {
     class PatientDrugNotification
     {
-        Patient _currentPatient;
-        DrugNotificationService _drugNotificationService;
-        DrugService _drugService;
-        PrescriptionService _prescriptionService;
-        AppointmentService _appointmentService;
+        private Patient _currentPatient;
+        private AppointmentService _appointmentService;
+        private DrugNotificationService _drugNotificationService;
+        private DrugService _drugService;
+        private PrescriptionService _prescriptionService;
 
-        public PatientDrugNotification(Patient patient)
+        public PatientDrugNotification(Patient patient, AppointmentService appointmentService, DrugNotificationService drugNotificationService)
         {
             this._currentPatient = patient;
-            this._drugNotificationService = new DrugNotificationService();
+            this._appointmentService = appointmentService;
+            this._drugNotificationService = drugNotificationService;
             this._drugService = new DrugService();
             this._prescriptionService = new PrescriptionService();
-            this._appointmentService = new AppointmentService();
+        }
+
+        public void ShowDrugNotification()
+        {
+            this.InformPatientAboutDrug();
+            string choice;
+            Console.WriteLine("\nDa li zelite da izmenite vreme obavestenja?");
+            do
+            {
+                Console.WriteLine("\n1. DA       2. NE");
+                Console.Write(">> ");
+                choice = Console.ReadLine();
+                if (choice.Equals("1"))
+                {
+                    this._drugNotificationService.DrugNotificationRepository.ChangeTimeNotification(this._currentPatient.Email);
+                    this._drugNotificationService = new DrugNotificationService(); // refresh data
+                }
+                else if (choice.Equals("2"))
+                    return;
+            } while (choice != "1" && choice != "2");
         }
 
         private Dictionary<string, List<DateTime>> FindDrugsForPatient()
@@ -78,7 +98,7 @@ namespace Hospital.PatientImplementation
             return DateTime.ParseExact("00:00", "HH:mm", CultureInfo.InvariantCulture);
         }
 
-        public void InformPatientAboutDrug()
+        private void InformPatientAboutDrug()
         {
             DateTime timeNotification = this.FindNotificationTime();
             if (timeNotification.ToString("HH:mm").Equals("00:00"))
@@ -90,6 +110,11 @@ namespace Hospital.PatientImplementation
             if (timeNotification.Hour == 0)
                 isHours = false;
 
+            this.CheckDrugTime(timeNotification, isHours);
+        }
+
+        private void CheckDrugTime(DateTime timeNotification, bool isHours)
+        {
             bool isTime = false;
             Dictionary<string, List<DateTime>> drugsNamesAndTime = this.FindDrugsNames();
             foreach (KeyValuePair<string, List<DateTime>> drug in drugsNamesAndTime)
@@ -111,26 +136,6 @@ namespace Hospital.PatientImplementation
                     Console.WriteLine("Jos uvek ne treba da popijete " + drug.Key);
                 isTime = false;
             }
-        }
-
-        public void ChangeTimeNotification()
-        {
-            Console.Write("\nUnesite koliko vremena ranije zelite da dobije obavestenje: ");
-            string newTime = Console.ReadLine();
-
-            List<string> lines = new List<string>();
-            string line;
-            foreach (DrugNotification notification in this._drugNotificationService.Notifications)
-            {
-                if (notification.PatientEmail.Equals(this._currentPatient.Email))
-                    line = notification.PatientEmail + "," + newTime; 
-                else
-                    line = notification.PatientEmail + "," + notification.TimeNotification.ToString("HH:mm");
-                lines.Add(line);
-            }
-            File.WriteAllLines(@"..\..\Data\drugNotification.csv", lines.ToArray());
-
-            this._drugNotificationService = new DrugNotificationService(); // refresh data  
         }
     }
 }

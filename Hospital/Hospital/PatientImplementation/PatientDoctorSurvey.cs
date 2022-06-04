@@ -11,18 +11,13 @@ namespace Hospital.PatientImplementation
 {
     class PatientDoctorSurvey
     {
-        Patient _currentPatient;
-        AppointmentService _appointmentService = new AppointmentService();
-        List<Appointment> _allAppointments;
-        DoctorSurveyService _doctorSurveyService = new DoctorSurveyService();
-        UserRepository _userRepository = new UserRepository();
-        List<User> _allUsers;
+        private DoctorSurveyService _doctorSurveyService;
+        private UserService _userService;
 
-        public PatientDoctorSurvey(Patient patient)
+        public PatientDoctorSurvey(UserService userService)
         {
-            this._currentPatient = patient;
-            _allAppointments = _appointmentService.AppointmentRepository.Load();
-            this._allUsers = _userRepository.Load();
+            this._doctorSurveyService = new DoctorSurveyService();
+            this._userService = userService;
         }
 
         public IDictionary<string, double> CalculateAverageDoctorGrade()
@@ -30,7 +25,7 @@ namespace Hospital.PatientImplementation
             IDictionary<string, double> averageGrades = new Dictionary<string, double>();
             double grades = 0.0, numberGrades = 0.0;
             //double numberGrades = 0.0;
-            foreach (DoctorUser doctor in _userRepository.DoctorUsers)
+            foreach (DoctorUser doctor in _userService.UsersRepository.DoctorUsers)
             {
                 foreach (DoctorSurvey evaluatedDoctor in _doctorSurveyService.EvaluatedDoctors)
                 {

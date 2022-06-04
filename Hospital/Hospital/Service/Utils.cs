@@ -37,5 +37,21 @@ namespace Hospital.Service
             }
             return true;
         }
+
+        public static bool CompareTwoTimes(string startTime, string endTime)
+        {
+            DateTime initialTime = DateTime.ParseExact(startTime, "HH:mm", CultureInfo.InvariantCulture);
+            DateTime latestTime = DateTime.ParseExact(endTime, "HH:mm", CultureInfo.InvariantCulture);
+
+            if (initialTime.AddMinutes(15) > latestTime)
+                return false;
+
+            return initialTime < latestTime;
+        }
+
+        public static string Capitalize(string word)
+        {
+            return word.Substring(0, 1).ToUpper() + word.Substring(1).ToLower();
+        }
     }
 }

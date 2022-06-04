@@ -12,16 +12,17 @@ namespace Hospital.PatientImplementation
 {
     class PatientSchedulingAppointment
     {
-        AppointmentService _appointmentService = new AppointmentService();  // loading all appointments
-        List<User> _allUsers;
-        User _currentRegisteredUser;
+        private AppointmentService _appointmentService;
+        private List<User> _allUsers;
+        private Patient _currentRegisteredUser;
 
         public AppointmentService AppointmentService { get { return _appointmentService; } }
+        public Patient RegisteredUser { get { return _currentRegisteredUser; } set { _currentRegisteredUser = value; } } 
 
-        public PatientSchedulingAppointment(User user, List<User> allUsers)
+        public PatientSchedulingAppointment(List<User> allUsers)
         {
-            this._currentRegisteredUser = user;
             this._allUsers = allUsers;
+            this._appointmentService = new AppointmentService();
         }
 
         public bool IsAppointmentFree(string id, string[] inputValues)
@@ -101,7 +102,7 @@ namespace Hospital.PatientImplementation
         public string AcceptAppointment(Appointment newAppointment)
         {
             Console.WriteLine("\nPRONADJEN TERMIN PREGLEDA");
-            this._appointmentService.TableHeaderForPatient();
+            this._currentRegisteredUser.TableHeaderForPatient();
             Console.WriteLine();
             Console.WriteLine("1. " + newAppointment.DisplayOfPatientAppointment());
 
@@ -233,7 +234,7 @@ namespace Hospital.PatientImplementation
         {
             int numAppointment = 1;
             Console.WriteLine("\nPREDLOZI TERMINA PREGLEDA");
-            this._appointmentService.TableHeaderForPatient();
+            this._currentRegisteredUser.TableHeaderForPatient();
             Console.WriteLine();
             foreach (Appointment appointment in appointments)
             {
