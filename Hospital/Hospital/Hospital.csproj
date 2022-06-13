@@ -66,6 +66,7 @@
     <Compile Include="Rooms\View\DynamicEquipmentRequestView.cs" />
     <Compile Include="Users\Model\DoctorUser.cs" />
     <Compile Include="Users\Model\HospitalSurvey.cs" />
+    <Compile Include="Users\Model\HospitalSurveyResult.cs" />
     <Compile Include="Users\Model\User.cs" />
     <Compile Include="Users\Model\UserAction.cs" />
     <Compile Include="Users\Model\RequestForDaysOff.cs" />
@@ -86,7 +87,6 @@
     <Compile Include="Users\Service\UserActionService.cs" />
     <Compile Include="Users\Service\DoctorSurveyService.cs" />
     <Compile Include="Users\View\PatientAccountView.cs" />
-    <Compile Include="Users\View\PatientHospitalSurvey.cs" />
     <Compile Include="Users\View\PatientRequestView.cs" />
     <Compile Include="Users\View\Secretary.cs" />
     <Compile Include="Users\View\Doctor.cs" />
