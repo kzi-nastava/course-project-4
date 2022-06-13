@@ -19,7 +19,8 @@ namespace Hospital.SecretaryImplementation
 		private UrgentSchedulingView _urgentSchedulingView;
 		private ReferralSchedulingView _referralScheduling;
 		private DynamicEquipmentMovingView _dynamicEquipmentMovingView;
-		private DynamicEquipmentRequestSending _dynamicEquipmentRequestSending;
+		private DynamicEquipmentRequestView _dynamicEquipmentRequestView;
+		private AnswerRequestsForDaysOffView _answerRequestsForDaysOffView;
 
 		public Secretary(UserService service)
 		{
@@ -28,7 +29,8 @@ namespace Hospital.SecretaryImplementation
 			this._referralScheduling = new ReferralSchedulingView();
 			this._urgentSchedulingView = new UrgentSchedulingView();
 			this._dynamicEquipmentMovingView = new DynamicEquipmentMovingView();
-			this._dynamicEquipmentRequestSending = new DynamicEquipmentRequestSending();
+			this._dynamicEquipmentRequestView = new DynamicEquipmentRequestView();
+			this._answerRequestsForDaysOffView = new AnswerRequestsForDaysOffView();
 		}
 
 		public void PrintSecretaryMenu()
@@ -96,7 +98,7 @@ namespace Hospital.SecretaryImplementation
 				}
 				else if(choice == "10")
 				{
-					this._dynamicEquipmentRequestSending.SendRequestForProcurment();
+					this._dynamicEquipmentRequestView.SendRequestForProcurment();
 				}
 				else if(choice == "11")
 				{
@@ -104,7 +106,7 @@ namespace Hospital.SecretaryImplementation
 				}
 				else if(choice == "12")
 				{
-
+					this._answerRequestsForDaysOffView.AnswerRequest();
 				}
 				else if (choice == "x")
 				{
