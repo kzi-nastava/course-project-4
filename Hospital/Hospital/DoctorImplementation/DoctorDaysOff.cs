@@ -20,7 +20,7 @@ namespace Hospital.DoctorImplementation
         public DoctorDaysOff(User doctor)
         {
             requestForDaysOffService = new RequestForDaysOffService();
-            requestsForDaysOff = requestForDaysOffService.RequirementsForDaysOff;
+            requestsForDaysOff = requestForDaysOffService.RequestsForDaysOff;
             currentRegisteredDoctor = doctor;
 
         }

@@ -8,17 +8,15 @@ using Hospital.Service;
 
 namespace Hospital.SecretaryImplementation
 {
-	class DynamicEquipmentMoving
+	class DynamicEquipmentMovingService
 	{
 		private WarehouseService _warehouseService;
 		private DynamicRoomEquipmentService _dynamicRoomEquipmentService;
-		private DynamicEquipmentMovingView _dynamicEquipmentMovingView;
 		private RoomService _roomService;
-		public DynamicEquipmentMoving()
+		public DynamicEquipmentMovingService()
 		{
 			this._warehouseService = new WarehouseService();
 			this._dynamicRoomEquipmentService = new DynamicRoomEquipmentService();
-			this._dynamicEquipmentMovingView = new DynamicEquipmentMovingView();
 			this._roomService = new RoomService();
 		}
 
@@ -51,27 +49,6 @@ namespace Hospital.SecretaryImplementation
 					rooms.Add(_roomService.GetRoomById(roomEquipment.IdRoom));
 			}
 			return rooms;
-		}
-
-		public void MoveEquipment()
-		{
-			List < KeyValuePair<string, DynamicEquipment> > missingEquipment = GetMissingEquipmentInRooms();
-			if(missingEquipment.Count == 0)
-			{
-				Console.WriteLine("\nTrenutno ni u jednoj sobi ne postoji potreba za premestanjem dinamicke robe.\n");
-				return;
-			}
-			KeyValuePair<string, DynamicEquipment> selectedPair = _dynamicEquipmentMovingView.SelectPair(missingEquipment);
-			var amount = _dynamicEquipmentMovingView.InputAmount();
-			List<Room> roomsWithEquipment = GetRoomsWithEnoughEquipment(selectedPair.Value.Id, amount, selectedPair.Key);
-			Room selectedRoom = _dynamicEquipmentMovingView.SelectRoom(roomsWithEquipment);
-			if(selectedRoom is null)
-			{
-				Console.WriteLine("Nema soba sa dovoljno opreme!");
-				return;
-			}
-			_dynamicRoomEquipmentService.ChangeEquipmentAmount(selectedPair.Key, selectedPair.Value.Id, amount, true);
-			_dynamicRoomEquipmentService.ChangeEquipmentAmount(selectedRoom.Id, selectedPair.Value.Id, amount, false);
 		}
 	}
 
