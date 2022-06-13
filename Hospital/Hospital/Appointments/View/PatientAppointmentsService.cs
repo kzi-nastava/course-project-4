@@ -159,7 +159,7 @@ namespace Hospital.Appointments.View
         public void PrintRecommendedAppointments(List<Appointment> appointments)
         {
             int numAppointment = 1;
-            Console.WriteLine("\nPREDLOZI TERMINA PREGLEDA");
+            Console.WriteLine("\nPREGLED");
             this._currentRegisteredUser.TableHeaderForPatient();
             Console.WriteLine();
             foreach (Appointment appointment in appointments)
@@ -167,6 +167,21 @@ namespace Hospital.Appointments.View
                 Console.WriteLine(numAppointment + ". " + appointment.DisplayOfPatientAppointment());
                 numAppointment += 1;
             }
+        }
+
+        public List<Appointment> GetPerformedAppointmentForPatient(bool print=true)
+        {
+            List<Appointment> performedAppointment = new List<Appointment>();
+            if(print) this._currentRegisteredUser.TableHeaderForPatient();
+            foreach (Appointment appointment in this._appointmentService.Appointments)
+            {
+                if (appointment.PatientEmail.Equals(this._currentRegisteredUser.Email) && appointment.AppointmentPerformed)
+                {
+                    performedAppointment.Add(appointment);
+                    if(print) Console.Write("\n" + performedAppointment.Count + ". " + appointment.DisplayOfPatientAppointment());
+                }
+            }
+            return performedAppointment;
         }
     }
 }
