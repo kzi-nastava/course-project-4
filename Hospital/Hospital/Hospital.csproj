@@ -51,7 +51,9 @@
     <Compile Include="ManagerImplementation\Manager.cs" />
     <Compile Include="ManagerImplementation\RenovationView.cs" />
     <Compile Include="ManagerImplementation\RoomView.cs" />
+    <Compile Include="ManagerImplementation\SurveyView.cs" />
     <Compile Include="Model\DoctorSurvey.cs" />
+    <Compile Include="Model\DoctorSurveyResult.cs" />
     <Compile Include="Model\DoctorUser.cs" />
     <Compile Include="Model\Drug.cs" />
     <Compile Include="Model\DrugNotification.cs" />
