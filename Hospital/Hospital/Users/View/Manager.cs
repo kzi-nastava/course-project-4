@@ -26,6 +26,7 @@ namespace Hospital.Users.View
         private IngredientService _ingredientService;
         private DrugProposalService _drugProposalService;
         private DoctorSurveyService _doctorSurveyService;
+        private HospitalSurveyService _hospitalSurveyService;
 
         private RoomView _roomView;
         private EquipmentView _equipmentView;
@@ -45,13 +46,14 @@ namespace Hospital.Users.View
             this._ingredientService = new IngredientService();
             this._drugProposalService = new DrugProposalService();
             this._doctorSurveyService = new DoctorSurveyService();
+            this._hospitalSurveyService = new HospitalSurveyService("");
 
             this._roomView = new RoomView(_roomService);
             this._equipmentView = new EquipmentView(_roomService, _equipmentService, _equipmentMovingService);
             this._renovationView = new RenovationView(_roomService, _appointmentService, _renovationService);
             this._ingredientView = new IngredientView(_ingredientService);
             this._drugView = new DrugView(_ingredientService, _drugProposalService);
-            this._surveyView = new SurveyView(_doctorSurveyService);
+            this._surveyView = new SurveyView(_doctorSurveyService, _hospitalSurveyService);
         }
 
         public void ManagerMenu() 

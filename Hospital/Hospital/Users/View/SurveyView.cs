@@ -12,10 +12,12 @@ namespace Hospital.Users.View
     public class SurveyView
     {
         DoctorSurveyService _doctorSurveyService;
+        HospitalSurveyService _hospitalSurveyService;
 
-        public SurveyView(DoctorSurveyService doctorSurveyService)
+        public SurveyView(DoctorSurveyService doctorSurveyService, HospitalSurveyService hospitalSurveyService)
         {
             _doctorSurveyService = doctorSurveyService;
+            _hospitalSurveyService = hospitalSurveyService;
         }
 
         public void ViewSurveyResults()
@@ -33,7 +35,38 @@ namespace Hospital.Users.View
 
         private void ViewHospitalSurveyResults()
         {
+            HospitalSurveyResult result = _hospitalSurveyService.GetResult();
+            Console.WriteLine("Rezultat ankete o bolnici");
+            Console.WriteLine("-------------------------");
+            Console.WriteLine("Broj anketa: " + result.SurveyCount);
+            
+            Console.Write("Prosecna ocena kvaliteta: " + result.AverageQuality + " ->");
+            for (int i = 1; i <= 5; i++)
+                Console.Write(" " + i + "(" + result.QualityCount[i] + ")");
+            Console.WriteLine();
 
+            Console.Write("Prosecna ocena cistoce: " + result.AverageCleanliness + " ->");
+            for (int i = 1; i <= 5; i++)
+                Console.Write(" " + i + "(" + result.CleanlinessCount[i] + ")");
+            Console.WriteLine();
+
+            Console.Write("Prosecna ocena zadovoljstva: " + result.AverageSatisfied + " ->");
+            for (int i = 1; i <= 5; i++)
+                Console.Write(" " + i + "(" + result.SatisfiedCount[i] + ")");
+            Console.WriteLine();
+
+            Console.Write("Prosecna ocena preporuke: " + result.AverageRecommendation + " ->");
+            for (int i = 1; i <= 5; i++)
+                Console.Write(" " + i + "(" + result.RecommendationCount[i] + ")");
+            Console.WriteLine();
+
+            Console.WriteLine("Komentari");
+            Console.WriteLine("-----------------------");
+            foreach (string comment in result.Comments)
+            {
+                Console.WriteLine(comment);
+            }
+            Console.WriteLine();
         }
 
         private void PrintDoctorSurveyResult(DoctorSurveyResult result)
