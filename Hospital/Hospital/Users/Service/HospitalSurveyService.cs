@@ -8,7 +8,7 @@ using Hospital.Users.Model;
 
 namespace Hospital.Users.Service
 {
-    class HospitalSurveyService
+    public class HospitalSurveyService
     {
         private HospitalSurveyRepository _hospitalServiceRepository;
         private List<HospitalSurvey> _surveyResults;
@@ -41,6 +41,60 @@ namespace Hospital.Users.Service
             this._surveyResults.Add(newRatedSurvey);
             this._hospitalServiceRepository.Save(this._surveyResults);
             this._surveyResults = this._hospitalServiceRepository.Load();
+        }
+
+        public HospitalSurveyResult GetResult()
+        {
+            int surveyCount = 0;
+
+            float qualitySum = 0;
+            int[] qualityCount = new int[6] { 0, 0, 0, 0, 0, 0 };
+            
+            float cleanlinessSum = 0;
+            int[] cleanlinessCount = new int[6] { 0, 0, 0, 0, 0, 0 };
+            
+            float satisfiedSum = 0;
+            int[] satisfiedCount = new int[6] { 0, 0, 0, 0, 0, 0 };
+            
+            float recommendationSum = 0;
+            int[] recommendationCount = new int[6] { 0, 0, 0, 0, 0, 0 };
+            
+            List<string> comments = new List<string>();
+
+            foreach (HospitalSurvey survey in _surveyResults)
+            {
+                surveyCount++;
+
+                qualitySum += survey.Quality;
+                qualityCount[survey.Quality]++;
+
+                cleanlinessSum += survey.Cleanliness;
+                cleanlinessCount[survey.Cleanliness]++;
+
+                satisfiedSum += survey.Satisfied;
+                satisfiedCount[survey.Satisfied]++;
+
+                recommendationSum += survey.Recommendation;
+                recommendationCount[survey.Recommendation]++;
+
+                comments.Add("Pacijent " + survey.PatientEmail + ":\n" + survey.Comment);
+            }
+
+            float averageQuality = 0;
+            float averageCleanliness = 0;
+            float averageSatisfied = 0;
+            float averageRecommendation = 0;
+
+            if (surveyCount != 0)
+            {
+                averageQuality = qualitySum / surveyCount;
+                averageCleanliness = cleanlinessSum / surveyCount;
+                averageSatisfied = satisfiedSum / surveyCount;
+                averageRecommendation = recommendationSum / surveyCount;
+            }
+
+            return new HospitalSurveyResult(surveyCount, averageQuality, qualityCount, averageCleanliness, cleanlinessCount, averageSatisfied,
+                satisfiedCount, averageRecommendation, recommendationCount, comments);
         }
     }
 }

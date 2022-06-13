@@ -42,7 +42,7 @@ namespace Hospital.Users.Service
                     qualityCount[survey.Quality]++;
                     recommendationSum += survey.Recommendation;
                     recommendationCount[survey.Recommendation]++;
-                    comments.Add("Patient " + survey.PatientEmail + ":\n" + survey.Comment);
+                    comments.Add("Pacijent " + survey.PatientEmail + ":\n" + survey.Comment);
                 }
             }
             float averageQuality = surveyCount > 0 ? qualitySum / surveyCount : 0.0f;
