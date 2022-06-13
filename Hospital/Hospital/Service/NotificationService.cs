@@ -57,6 +57,20 @@ namespace Hospital.Service
 
 		public void SendRescheduleNotification(string receiverEmail, DateTime date, DateTime time)
 		{
+			Notification notification = new Notification(GetNewNotificationId(), receiverEmail, "Vas termin je prebacen za "
+				+ date.ToString("MM/dd/yyyy") + " u " + time.ToString("HH:mm") + " sati", false);
+			AddNotification(notification);
+		}
+
+		public void SendVacationNotification(string receiverEmail, DateTime startDate, DateTime endDate, string reason)
+		{
+			Notification notification;
+			if (reason == "")
+				notification = new Notification(GetNewNotificationId(), receiverEmail, "Zahtev za slobodne dane (" + startDate.ToString("MM/dd/yyyy") +
+					" - " + endDate.ToString("MM/dd/yyyy") + ") je prihvacen", false);
+			else
+				notification = new Notification(GetNewNotificationId(), receiverEmail, "Zahtev za slobodne dane je odbijen. Razlog : " + reason, false);
+			AddNotification(notification);
 		}
 	}
 }

@@ -13,23 +13,24 @@ namespace Hospital.SecretaryImplementation
 {
 	class Secretary : IMenuView
 	{
-		private PatientAccountService _patientAccountService;
+		
 		private PatientAccountView _patientAccountView;
 		private PatientRequestView _patientRequestView;
-		private RefferalScheduling _referralScheduleService;
 		private UrgentSchedulingView _urgentSchedulingView;
-		private DynamicEquipmentMoving _dynamicEquipmentMovingService;
-		private DynamicEquipmentRequestService _dynamicEquipmentRequestService;
+		private ReferralSchedulingView _referralScheduling;
+		private DynamicEquipmentMovingView _dynamicEquipmentMovingView;
+		private DynamicEquipmentRequestView _dynamicEquipmentRequestView;
+		private AnswerRequestsForDaysOffView _answerRequestsForDaysOffView;
 
 		public Secretary(UserService service)
 		{
-			this._patientAccountService = new PatientAccountService();
 			this._patientAccountView = new PatientAccountView();
 			this._patientRequestView = new PatientRequestView();
-			this._referralScheduleService = new RefferalScheduling();
+			this._referralScheduling = new ReferralSchedulingView();
 			this._urgentSchedulingView = new UrgentSchedulingView();
-			this._dynamicEquipmentMovingService = new DynamicEquipmentMoving();
-			this._dynamicEquipmentRequestService = new DynamicEquipmentRequestService();
+			this._dynamicEquipmentMovingView = new DynamicEquipmentMovingView();
+			this._dynamicEquipmentRequestView = new DynamicEquipmentRequestView();
+			this._answerRequestsForDaysOffView = new AnswerRequestsForDaysOffView();
 		}
 
 		public void PrintSecretaryMenu()
@@ -47,6 +48,7 @@ namespace Hospital.SecretaryImplementation
 			Console.WriteLine("9. Hitno zakazivanje");
 			Console.WriteLine("10. Kreiranje zahteva za nabavku dinamicke opreme");
 			Console.WriteLine("11. Rasporedjivanje dinamicke opreme");
+			Console.WriteLine("12. Pregled zahteva za slobodne dane");
 			Console.WriteLine("x. Odjavi se");
 			Console.WriteLine("--------------------------------------------");
 			Console.Write(">>");
@@ -60,43 +62,27 @@ namespace Hospital.SecretaryImplementation
 				var choice = Console.ReadLine();
 				if (choice == "1")
 				{
-					this._patientAccountService.CreatePatientAccount();
+					this._patientAccountView.CreateNewPatientAccount();
 				}
 				else if (choice == "2")
 				{
-					List<User> activePatients = _patientAccountService.FilterActivePatients();
-					if (activePatients.Count != 0)
-					{
-						_patientAccountView.ShowPatients(activePatients);
-					}
-					else
-					{
-						Console.WriteLine("Trenutno nema aktivnih pacijenata.");
-					}
+					_patientAccountView.ShowActivePatients();
 				}
 				else if (choice == "3")
 				{
-					this._patientAccountService.ChangePatientAccount();
+					this._patientAccountView.ChangePatientAccount();
 				}
 				else if (choice == "4")
 				{
-					this._patientAccountService.BlockPatient();
+					this._patientAccountView.BlockingPatient();
 				}
 				else if (choice == "5")
 				{
-					this._patientAccountService.UnblockPatient();
+					this._patientAccountView.UnblockingPatient();
 				}
 				else if (choice == "6")
 				{
-					List<User> blockedPatients = _patientAccountService.FilterBlockedPatients();
-					if (blockedPatients.Count != 0)
-					{
-						_patientAccountView.ShowPatients(blockedPatients);
-					}
-					else
-					{
-						Console.WriteLine("Trenutno nema blokiranih pacijenata.");
-					}
+					_patientAccountView.ShowBlockedPatients();
 				}
 				else if (choice == "7")
 				{
@@ -104,7 +90,7 @@ namespace Hospital.SecretaryImplementation
 				}
 				else if (choice == "8")
 				{
-					this._referralScheduleService.ScheduleAppointmentWithReferral();
+					this._referralScheduling.ScheduleAppointmentWithReferral();
 				}
 				else if(choice == "9")
 				{
@@ -112,11 +98,15 @@ namespace Hospital.SecretaryImplementation
 				}
 				else if(choice == "10")
 				{
-					this._dynamicEquipmentRequestService.SendRequestForProcurment();
+					this._dynamicEquipmentRequestView.SendRequestForProcurment();
 				}
 				else if(choice == "11")
 				{
-					this._dynamicEquipmentMovingService.MoveEquipment();
+					this._dynamicEquipmentMovingView.MoveEquipment();
+				}
+				else if(choice == "12")
+				{
+					this._answerRequestsForDaysOffView.AnswerRequest();
 				}
 				else if (choice == "x")
 				{

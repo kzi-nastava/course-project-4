@@ -13,16 +13,15 @@ namespace Hospital.SecretaryImplementation
 		private List<User> _patients;
 		private UserService _userService;
 		private HealthRecordService _healthRecordService;
-		private PatientAccountView _patientAccountView;
 
 		public PatientAccountService()
 		{
 			this._userService = new UserService();
 			this._patients = FilterPatients(_userService.Users);
 			this._healthRecordService = new HealthRecordService();
-			this._patientAccountView = new PatientAccountView();
 		}
 
+		public List<User> Patients { get { return _patients; } }
 
 		public List<User> FilterPatients(List<User> allUsers)
 		{
@@ -64,50 +63,26 @@ namespace Hospital.SecretaryImplementation
 			return blockedPatients;
 		}
 
-		public void BlockPatient()
+		public void BlockPatient(User patient)
 		{
-			User patient = _patientAccountView.SelectPatient(FilterActivePatients());
-			if (patient is null)
-				return;
-
 			_userService.BlockOrUnblockUser(patient, true);
 			this._patients = FilterPatients(_userService.Users);
-
-			Console.WriteLine("\nPacijent " + patient.Name + " " + patient.Surname + " je uspesno blokiran.\n");
 		}
 
-		public void UnblockPatient()
+		public void UnblockPatient(User patient)
 		{
-			User patient = _patientAccountView.SelectPatient(FilterBlockedPatients());
-			if (patient is null)
-				return;
 			_userService.BlockOrUnblockUser(patient, false);
 			this._patients = FilterPatients(_userService.Users);
 
-			Console.WriteLine("\nPacijent " + patient.Name + " " + patient.Surname + " je uspesno odblokiran.\n");
-
 		}
 
-		public void CreatePatientAccount()
+		public void CreatePatientAccount(User newPatient)
 		{
-			User newPatient = _patientAccountView.EnterNewUserData();
 			this._userService.AddUser(newPatient);
 			this._patients.Add(newPatient);
 
 			
 			this._healthRecordService.CreateHealthRecord(newPatient);
-		}
-
-		public void ChangePatientAccount()
-		{
-			User patient = _patientAccountView.SelectPatient(_patients);
-			if (patient is null)
-				return;
-			patient = _patientAccountView.ChangePatientData(patient);
-			_userService.UpdateUserInfo(patient);
-
-			Console.WriteLine("\nNalog pacijenta je uspesno izmenjen.");
-
 		}
 	}
 }

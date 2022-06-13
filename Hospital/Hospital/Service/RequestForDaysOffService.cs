@@ -28,7 +28,7 @@ namespace Hospital.Service
         }
 
 
-        public List<RequestForDaysOff> RequirementsForDaysOff { get { return _requestsForDaysOff; } set { _requestsForDaysOff = value; } }
+        public List<RequestForDaysOff> RequestsForDaysOff { get { return _requestsForDaysOff; } set { _requestsForDaysOff = value; } }
 
        
         public string GetNewRequestId()
@@ -76,6 +76,19 @@ namespace Hospital.Service
             this._requestForDaysOffRepository.Save(this._requestsForDaysOff);
         }
 
+        public void AnswerRequest(RequestForDaysOff pendingRequest)
+		{
+            foreach(RequestForDaysOff request in _requestsForDaysOff)
+			{
+                if(request.Id == pendingRequest.Id)
+				{
+                    request.StateRequired = pendingRequest.StateRequired;
+                    request.ReasonRequired = pendingRequest.ReasonRequired;
+                    break;
+				}
+			}
+            this._requestForDaysOffRepository.Save(this._requestsForDaysOff);
+		}
 
     }
 }

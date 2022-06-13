@@ -9,12 +9,12 @@ using Hospital.Service;
 
 namespace Hospital.SecretaryImplementation
 {
-	class RefferalScheduling
+	class ReferralSchedulingView
 	{
 		private ReferralService _referralService;
 		private AppointmentService _appointmentService;
 
-		public RefferalScheduling()
+		public ReferralSchedulingView()
 		{
 			this._appointmentService = new AppointmentService();
 			this._referralService = new ReferralService();

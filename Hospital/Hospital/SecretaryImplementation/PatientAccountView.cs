@@ -10,11 +10,39 @@ namespace Hospital.SecretaryImplementation
 {
 	class PatientAccountView
 	{
-		private UserService _userService; 
+		private UserService _userService;
+		private PatientAccountService _patientAccountService;
 
 		public PatientAccountView()
 		{
 			this._userService = new UserService();
+			this._patientAccountService = new PatientAccountService();
+		}
+
+		public void ShowActivePatients()
+		{
+			List<User> activePatients = _patientAccountService.FilterActivePatients();
+			if (activePatients.Count != 0)
+			{
+				ShowPatients(activePatients);
+			}
+			else
+			{
+				Console.WriteLine("Trenutno nema aktivnih pacijenata.");
+			}
+		}
+
+		public void ShowBlockedPatients()
+		{
+			List<User> activePatients = _patientAccountService.FilterBlockedPatients();
+			if (activePatients.Count != 0)
+			{
+				ShowPatients(activePatients);
+			}
+			else
+			{
+				Console.WriteLine("Trenutno nema blokiranih pacijenata.");
+			}
 		}
 
 		public void ShowPatients(List<User> patients)
@@ -112,6 +140,44 @@ namespace Hospital.SecretaryImplementation
 			patient.Surname = newSurname;
 			patient.Password = newPassword;
 			return patient;
+		}
+
+		public void BlockingPatient()
+		{
+			User patient = SelectPatient(_patientAccountService.FilterActivePatients());
+			if (patient is null)
+				return;
+			_patientAccountService.BlockPatient(patient);
+			Console.WriteLine("\nPacijent " + patient.Name + " " + patient.Surname + " je uspesno blokiran.\n");
+		}
+
+		public void UnblockingPatient()
+		{
+			User patient = SelectPatient(_patientAccountService.FilterBlockedPatients());
+			if (patient is null)
+				return;
+			_patientAccountService.UnblockPatient(patient);
+
+			Console.WriteLine("\nPacijent " + patient.Name + " " + patient.Surname + " je uspesno odblokiran.\n");
+
+		}
+
+		public void CreateNewPatientAccount()
+		{
+			User newPatient = EnterNewUserData();
+			_patientAccountService.CreatePatientAccount(newPatient);
+		}
+
+		public void ChangePatientAccount()
+		{
+			User patient = SelectPatient(_patientAccountService.Patients);
+			if (patient is null)
+				return;
+			patient = ChangePatientData(patient);
+			_userService.UpdateUserInfo(patient);
+
+			Console.WriteLine("\nNalog pacijenta je uspesno izmenjen.");
+
 		}
 	}
 }

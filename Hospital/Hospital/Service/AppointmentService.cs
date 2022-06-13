@@ -38,6 +38,19 @@ namespace Hospital.Service
             return this._appointments.Count + 1;
         }
 
+        public Appointment CreateNewAppointment(User patient, User doctor, DateTime startingTime, int appointmentType)
+        {
+            Room freeRoom = FindFreeRoom(startingTime, startingTime);
+            DateTime endTime;
+            if (appointmentType == 1)
+                endTime = startingTime.AddMinutes(15);
+            else
+                endTime = startingTime.AddMinutes(60);
+            return new Appointment(GetNewAppointmentId().ToString(), patient.Email, doctor.Email,
+                startingTime, startingTime, endTime, Appointment.State.Created,
+                Int32.Parse(freeRoom.Id), (Appointment.Type)appointmentType, false, true);
+        }
+
         public bool IsDoctorFree(User doctor, DateTime startTime)
 		{
             foreach(Appointment appointment in _appointments)
