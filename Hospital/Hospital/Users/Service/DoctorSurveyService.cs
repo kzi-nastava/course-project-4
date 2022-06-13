@@ -16,6 +16,7 @@ namespace Hospital.Users.Service
         private UserService _userService;
 
         public List<DoctorSurvey> EvaluatedDoctors { get { return _evaluatedDoctors; } }
+        public DoctorSurveyRepository DoctorSurveyRepository { get { return _doctorServiceRepository; } }
 
         public DoctorSurveyService()
         {
@@ -48,6 +49,13 @@ namespace Hospital.Users.Service
             float averageRecommendation = surveyCount > 0 ? recommendationSum / surveyCount : 0.0f;
             return new DoctorSurveyResult(doctor, surveyCount, averageQuality, qualityCount, averageRecommendation, 
                 recommendationCount, comments);
+        }
+
+        public void AddEvaluatedDoctor(DoctorSurvey evaluatedDoctor)
+        {
+            this._evaluatedDoctors.Add(evaluatedDoctor);
+            this._doctorServiceRepository.Save(this._evaluatedDoctors);
+            this._evaluatedDoctors = this._doctorServiceRepository.Load();
         }
 
         public List<DoctorSurveyResult> GetResults()

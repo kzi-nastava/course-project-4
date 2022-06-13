@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 using Hospital.Users.Service;
 using Hospital.Users.Model;
+using Hospital.Appointments.View;
+using Hospital.Appointments.Model;
 
 namespace Hospital.Users.View
 {
@@ -13,11 +14,13 @@ namespace Hospital.Users.View
     {
         private DoctorSurveyService _doctorSurveyService;
         private UserService _userService;
+        private PatientAppointmentsService _appointmentsService;
 
-        public PatientDoctorSurvey(UserService userService)
+        public PatientDoctorSurvey(UserService userService, PatientAppointmentsService appointmentsService)
         {
             this._doctorSurveyService = new DoctorSurveyService();
             this._userService = userService;
+            this._appointmentsService = appointmentsService;
         }
 
         public IDictionary<string, double> CalculateAverageDoctorGrade()
@@ -41,6 +44,45 @@ namespace Hospital.Users.View
                 numberGrades = 0.0;
             }
             return averageGrades;
+        }
+
+        public void GetAppointmentsForEvaluation()
+        {
+            List<Appointment> performedAppointment = this._appointmentsService.GetPerformedAppointmentForPatient(false);
+            List<Appointment> appointmentsForEvaluation = new List<Appointment>();
+            bool rated = false;
+
+            foreach (Appointment appointment in performedAppointment)
+            {
+                foreach (DoctorSurvey doctorSurvey in this._doctorSurveyService.EvaluatedDoctors)
+                {
+                    if (doctorSurvey.IdAppointment.Equals(appointment.AppointmentId))
+                        rated = true;
+                }
+                if (!rated) appointmentsForEvaluation.Add(appointment);
+            }
+            this.PickAppointmentForEvaluation(appointmentsForEvaluation);
+        }
+
+        private void PickAppointmentForEvaluation(List<Appointment> appointmentsForEvaluation)
+        {
+            if (appointmentsForEvaluation.Count == 0)
+            { Console.WriteLine("Nemate nijedan pregled za ocenjivanje."); return; }
+            
+            this._appointmentsService.PrintRecommendedAppointments(appointmentsForEvaluation);
+
+            int numAppointment;
+            string choice;
+            do
+            {
+                Console.WriteLine("\nUnesite broj pregleda koji zelite da ocenite: ");
+                Console.Write(">> ");
+                choice = Console.ReadLine();
+            } while (!int.TryParse(choice, out numAppointment) || numAppointment < 1 || numAppointment > appointmentsForEvaluation.Count);
+
+            DoctorSurvey evaluatedDoctor = this._doctorSurveyService.DoctorSurveyRepository.EvaluateDoctor(appointmentsForEvaluation[numAppointment-1]);
+
+            this._doctorSurveyService.AddEvaluatedDoctor(evaluatedDoctor);
         }
     }
 }
