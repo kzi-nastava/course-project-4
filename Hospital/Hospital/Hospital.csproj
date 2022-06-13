@@ -86,7 +86,6 @@
     <Compile Include="Users\Service\UserActionService.cs" />
     <Compile Include="Users\Service\DoctorSurveyService.cs" />
     <Compile Include="Users\View\PatientAccountView.cs" />
-    <Compile Include="Users\View\PatientHospitalSurvey.cs" />
     <Compile Include="Users\View\PatientRequestView.cs" />
     <Compile Include="Users\View\Secretary.cs" />
     <Compile Include="Users\View\Doctor.cs" />
