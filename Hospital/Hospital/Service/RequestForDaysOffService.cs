@@ -28,7 +28,7 @@ namespace Hospital.Service
         }
 
 
-        public List<RequestForDaysOff> RequirementsForDaysOff { get { return _requestsForDaysOff; } set { _requestsForDaysOff = value; } }
+        public List<RequestForDaysOff> RequestsForDaysOff { get { return _requestsForDaysOff; } set { _requestsForDaysOff = value; } }
 
        
         public string GetNewRequestId()

@@ -65,5 +65,19 @@ namespace Hospital.Service
             return "";
         }
 
+        public List<DynamicEquipment> GetMissingEquipment()
+        {
+            List<DynamicEquipment> missingEquipment = new List<DynamicEquipment>();
+
+            foreach (DynamicEquipment equipment in _warehouseEquipment)
+            {
+                if (equipment.Amount == 0)
+                {
+                    missingEquipment.Add(equipment);
+                }
+            }
+            return missingEquipment;
+        }
+
     }
 }

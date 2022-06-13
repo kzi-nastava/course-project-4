@@ -4,11 +4,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Hospital.Model;
+using Hospital.Service;
 
 namespace Hospital.SecretaryImplementation
 {
-	class DynamicEquipmentRequestView
+	class DynamicEquipmentRequestSending
 	{
+		private WarehouseService _warehouseService;
+
+		public DynamicEquipmentRequestSending()
+		{
+			this._warehouseService = new WarehouseService();
+		}
+
 		public static void ShowEquipment(List<DynamicEquipment> dynamicEquipment)
 		{
 			int i = 1;
@@ -19,7 +27,7 @@ namespace Hospital.SecretaryImplementation
 			}
 		}
 
-		public static int EnterEquipmentIndex()
+		public int EnterEquipmentIndex()
 		{
 			string indexInput;
 			int index;
@@ -36,7 +44,7 @@ namespace Hospital.SecretaryImplementation
 			return index;
 		}
 
-		public static int InputAmount()
+		public int InputAmount()
 		{
 			string userInput;
 			int amount;
@@ -50,7 +58,7 @@ namespace Hospital.SecretaryImplementation
 
 		}
 
-		public static DynamicEquipment SelectEquipment(List<DynamicEquipment> dynamicEquipment)
+		public DynamicEquipment SelectEquipment(List<DynamicEquipment> dynamicEquipment)
 		{
 			if (dynamicEquipment.Count == 0)
 			{
@@ -68,6 +76,19 @@ namespace Hospital.SecretaryImplementation
 			if (index == 0)
 				return null;
 			return dynamicEquipment[index - 1];
+		}
+
+		public void SendRequestForProcurment()
+		{
+			List<DynamicEquipment> missingEquipment = _warehouseService.GetMissingEquipment();
+			DynamicEquipment chosenEquipment = SelectEquipment(missingEquipment);
+			if (chosenEquipment is null)
+				return;
+			int amount = InputAmount();
+			DynamicEquipmentRequest request = new DynamicEquipmentRequest(chosenEquipment.Id, amount, DateTime.Now.AddHours(24), false);
+			_warehouseService.Requests.Add(request);
+			_warehouseService.DynamicEquipmentRequestRepository.Save(_warehouseService.Requests);
+			Console.WriteLine("Zahtev za nabavku opreme je uspesno poslat.\nZeljena kolicina bice dodata nakon 24h.");
 		}
 	}
 }
