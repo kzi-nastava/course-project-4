@@ -31,6 +31,7 @@ namespace Hospital.Users.View
         private DrugNotificationService _drugNotificationService;
         private PatientModifyAppointment _modifyAppointment;
         private RecommendedAppointment _recommendedAppointment;
+        private HospitalSurveyService _hospitalSurveyService;
 
         public string Email { get { return _email; } }
         public List<Appointment> PatientAppointments
@@ -49,13 +50,14 @@ namespace Hospital.Users.View
             this._userActionService = new UserActionService(this);
             this._patientService = new PatientAppointmentsService(this, _appointmentService);
             this._patientScheduling = new PatientSchedulingAppointment(this, _appointmentService, _userService, _patientService, _userActionService);
-            this._patientAnamnesis = new PatientAnamnesis(this, _appointmentService, _userService);
+            this._patientAnamnesis = new PatientAnamnesis(this, _appointmentService, _userService, _patientService);
             this._currentAppointments = this._patientService.RefreshPatientAppointments();
             this._doctorSearch = new PatientDoctorSearch(this, _userService, _patientScheduling);
-            this._doctorSurvey = new PatientDoctorSurvey(_userService);
+            this._doctorSurvey = new PatientDoctorSurvey(_userService, _patientService);
             this._drugNotification = new PatientDrugNotification(this, _appointmentService, _drugNotificationService);
             this._modifyAppointment = new PatientModifyAppointment(this, _patientService, _userActionService, _appointmentService);
             this._recommendedAppointment = new RecommendedAppointment(this, _userService, _patientService, _userActionService, _patientScheduling, _appointmentService);
+            this._hospitalSurveyService = new HospitalSurveyService(this._email);
         }
 
         // methods
@@ -64,7 +66,7 @@ namespace Hospital.Users.View
             // the menu
             string choice;
             Console.WriteLine("\n\tMENI");
-            Console.Write("------------------");
+            Console.Write("-------------------------");
             do
             {
                 Console.WriteLine("\n1. Lista sopstvenih pregleda");
@@ -75,7 +77,9 @@ namespace Hospital.Users.View
                 Console.WriteLine("6. Pregled i pretraga anamneza");
                 Console.WriteLine("7. Pretrazi doktora");
                 Console.WriteLine("8. Pogledaj obavestenja");
-                Console.WriteLine("9. Odjava");
+                Console.WriteLine("9. Anketa bolnice");
+                Console.WriteLine("10. Oceni doktora");
+                Console.WriteLine("11. Odjava");
                 Console.Write(">> ");
                 choice = Console.ReadLine();
 
@@ -97,6 +101,10 @@ namespace Hospital.Users.View
                 else if (choice.Equals("8"))
                     this._drugNotification.ShowDrugNotification();
                 else if (choice.Equals("9"))
+                    this._hospitalSurveyService.EvaluateHospitalSurvey();
+                else if (choice.Equals("10"))
+                    this._doctorSurvey.GetAppointmentsForEvaluation();
+                else if (choice.Equals("11"))
                     this.LogOut();
             } while (true);
         }

@@ -184,7 +184,6 @@ namespace Hospital.Appointments.Service
             {
                 if (updateAppointment.AppointmentId.Equals(appointmentChange.AppointmentId))
                 {
-                    Console.WriteLine("proslo");
                     updateAppointment.PatientEmail = appointmentChange.PatientEmail;
                     updateAppointment.DoctorEmail = appointmentChange.DoctorEmail;
                     updateAppointment.DateAppointment = appointmentChange.DateAppointment;

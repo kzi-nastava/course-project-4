@@ -19,12 +19,14 @@ namespace Hospital.Appointments.View
         private HealthRecordService _healthRecordService;
         private UserService _userService;
         private Patient _currentRegisteredUser;
+        private PatientAppointmentsService _patientAppointments;
 
-        public PatientAnamnesis(Patient patient, AppointmentService appointmentService, UserService userService)
+        public PatientAnamnesis(Patient patient, AppointmentService appointmentService, UserService userService, PatientAppointmentsService patientAppointments)
         {
             this._currentRegisteredUser = patient;
             this._userService = userService;
             this._appointmentService = appointmentService;
+            this._patientAppointments = patientAppointments;
             this._medicalRecordService = new MedicalRecordService();
             this._healthRecordService = new HealthRecordService();
         }
@@ -61,7 +63,7 @@ namespace Hospital.Appointments.View
 
         public void AppointmentHistory()
         {
-            List<Appointment> performedAppointment = this.GetPerformedAppointmentForPatient();
+            List<Appointment> performedAppointment = this._patientAppointments.GetPerformedAppointmentForPatient();
             List<MedicalRecord> patientMedicalRecords = this.GetMedicalRecordForPatient(performedAppointment);
             string choice = this.MenuForAppointmentHistory();
             if (choice == "1")
@@ -70,21 +72,6 @@ namespace Hospital.Appointments.View
                 this.SearchAnamnesisBasedOnKeyword(patientMedicalRecords);
             else if (choice == "3")
                 this.SortAnamnesis(performedAppointment, patientMedicalRecords);
-        }
-
-        public List<Appointment> GetPerformedAppointmentForPatient()
-        {
-            List<Appointment> performedAppointment = new List<Appointment>();
-            this._currentRegisteredUser.TableHeaderForPatient();
-            foreach (Appointment appointment in this._appointmentService.Appointments)
-            {
-                if (appointment.PatientEmail.Equals(this._currentRegisteredUser.Email) && appointment.AppointmentPerformed)
-                {
-                    performedAppointment.Add(appointment);
-                    Console.Write("\n"+performedAppointment.Count + ". " + appointment.DisplayOfPatientAppointment());
-                }
-            }
-            return performedAppointment;
         }
 
         public List<MedicalRecord> GetMedicalRecordForPatient(List<Appointment> performedAppointments)
