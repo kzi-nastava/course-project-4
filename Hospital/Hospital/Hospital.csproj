@@ -110,12 +110,11 @@
     <Compile Include="Repository\WarehouseRepository.cs" />
     <Compile Include="SecretaryImplementation\DynamicEquipmentMovingService.cs" />
     <Compile Include="SecretaryImplementation\DynamicEquipmentMovingView.cs" />
-    <Compile Include="SecretaryImplementation\DynamicEquipmentRequestSending.cs" />
+    <Compile Include="SecretaryImplementation\DynamicEquipmentRequestView.cs" />
     <Compile Include="SecretaryImplementation\PatientAccountView.cs" />
     <Compile Include="SecretaryImplementation\ReferralSchedulingView.cs" />
     <Compile Include="SecretaryImplementation\PatientRequestView.cs" />
-    <Compile Include="SecretaryImplementation\RequestForDaysOffManagment.cs" />
-    <Compile Include="SecretaryImplementation\RequestForDaysOffView.cs" />
+    <Compile Include="SecretaryImplementation\AnswerRequestsForDaysOffView.cs" />
     <Compile Include="SecretaryImplementation\Secretary.cs" />
     <Compile Include="SecretaryImplementation\UrgentSchedulingView.cs" />
     <Compile Include="Service\DoctorSurveyService.cs" />

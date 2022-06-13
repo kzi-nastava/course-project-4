@@ -8,11 +8,11 @@ using Hospital.Service;
 
 namespace Hospital.SecretaryImplementation
 {
-	class DynamicEquipmentRequestSending
+	class DynamicEquipmentRequestView
 	{
 		private WarehouseService _warehouseService;
 
-		public DynamicEquipmentRequestSending()
+		public DynamicEquipmentRequestView()
 		{
 			this._warehouseService = new WarehouseService();
 		}

@@ -76,6 +76,19 @@ namespace Hospital.Service
             this._requestForDaysOffRepository.Save(this._requestsForDaysOff);
         }
 
+        public void AnswerRequest(RequestForDaysOff pendingRequest)
+		{
+            foreach(RequestForDaysOff request in _requestsForDaysOff)
+			{
+                if(request.Id == pendingRequest.Id)
+				{
+                    request.StateRequired = pendingRequest.StateRequired;
+                    request.ReasonRequired = pendingRequest.ReasonRequired;
+                    break;
+				}
+			}
+            this._requestForDaysOffRepository.Save(this._requestsForDaysOff);
+		}
 
     }
 }
