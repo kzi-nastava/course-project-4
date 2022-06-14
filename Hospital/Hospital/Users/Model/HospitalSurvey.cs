@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Hospital.Users.Model
 {
-    class HospitalSurvey
+    public class HospitalSurvey
     {
         private string _patientEmail;
         private int _quality;
