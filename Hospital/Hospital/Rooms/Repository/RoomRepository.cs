@@ -13,6 +13,47 @@ namespace Hospital.Rooms.Repository
     public class RoomRepository
     {
         private static string s_filePath = @"..\..\Data\rooms.csv";
+        private List<Room> _allRooms;
+
+        public RoomRepository()
+        {
+            _allRooms = Load();
+        }
+
+        public List<Room> AllRooms { get { return _allRooms; } }
+
+        public Room GetRoomById(string id)
+        {
+            foreach (Room room in _allRooms)
+            {
+                if (room.Id == id)
+                    return room;
+            }
+            return null;
+        }
+
+        public void CreateRoom(string id, string name, Room.Type type)
+        {
+            Room room = new Room(id, name, type, false);
+            _allRooms.Add(room);
+            Save(_allRooms);
+        }
+
+        public void UpdateRoom(string id, string name, Room.Type type)
+        {
+            DeleteRoom(id);
+            CreateRoom(id, name, type);
+        }
+
+        public void DeleteRoom(string id)
+        {
+            foreach (Room room in _allRooms)
+            {
+                if (room.Id.Equals(id))
+                    room.IsDeleted = true;
+            }
+            Save(_allRooms);
+        }
 
         public List<Room> Load()
         {

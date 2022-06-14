@@ -12,24 +12,16 @@ namespace Hospital.Rooms.Service
     public class RoomService
     {
         private RoomRepository _roomRepository;
-        private List<Room> _allRooms;
-
-        public List<Room> AllRooms { get { return _allRooms; } }
         
         public RoomService()
         {
             _roomRepository = new RoomRepository();
-            _allRooms = _roomRepository.Load();
         }
+        public List<Room> AllRooms { get { return _roomRepository.AllRooms; } }
 
         public Room GetRoomById(string id)
         {
-            foreach (Room room in _allRooms)
-            {
-                if (room.Id == id)
-                    return room;
-            }
-            return null;
+            return _roomRepository.GetRoomById(id);
         }
 
         public bool IdExists(string id)
@@ -41,9 +33,7 @@ namespace Hospital.Rooms.Service
         {
             if (IdExists(id))
                 return false;
-            Room room = new Room(id, name, type, false);
-            _allRooms.Add(room);
-            _roomRepository.Save(_allRooms);
+            _roomRepository.CreateRoom(id, name, type);
             return true;
         }
 
@@ -51,8 +41,7 @@ namespace Hospital.Rooms.Service
         {
             if (!IdExists(id))
                 return false;
-            DeleteRoom(id);
-            CreateRoom(id, name, type);
+            _roomRepository.UpdateRoom(id, name, type);
             return true;
         }
 
@@ -60,18 +49,13 @@ namespace Hospital.Rooms.Service
         {
             if (!IdExists(id))
                 return false;
-            foreach (Room room in _allRooms)
-            {
-                if (room.Id.Equals(id))
-                    room.IsDeleted = true;
-            }
-            _roomRepository.Save(_allRooms);
+            _roomRepository.DeleteRoom(id);
             return true;
         }
 
         public bool IsRoomNumberValid(string roomNumber)
         {
-            foreach (Room room in _allRooms)
+            foreach (Room room in AllRooms)
             {
                 if (room.Id.Equals(roomNumber))
                 {
