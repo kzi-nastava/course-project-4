@@ -21,7 +21,6 @@ namespace Hospital.Appointments.Service
     {
         private AppointmentRepository _appointmentRepository;
         private UserService _userService;
-        private NotificationService _notificationService;
         private List<Appointment> _appointments;
         private List<User> _users;
         private IRoomRepository _roomRepository;
@@ -34,7 +33,6 @@ namespace Hospital.Appointments.Service
             _appointmentRepository = new AppointmentRepository();
             _userService = new UserService();
             _roomRepository = new RoomRepository();
-            _notificationService = new NotificationService();
             _appointments = _appointmentRepository.Load();
             _users = _userService.Users;
             _rooms = _roomRepository.Load();

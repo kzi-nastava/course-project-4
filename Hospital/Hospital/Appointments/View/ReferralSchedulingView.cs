@@ -10,6 +10,7 @@ using Hospital.Appointments.Model;
 using Hospital.Users.View;
 using Hospital.Users.Model;
 using Hospital.Rooms.Model;
+using Hospital.Users.Service;
 
 namespace Hospital.Appointments.View
 {
@@ -17,16 +18,81 @@ namespace Hospital.Appointments.View
 	{
 		private ReferralService _referralService;
 		private AppointmentService _appointmentService;
+		private UserService _userService;
 
 		public ReferralSchedulingView()
 		{
 			this._appointmentService = new AppointmentService();
 			this._referralService = new ReferralService();
+			this._userService = new UserService();
+		}
+
+		public void ShowReferrals(List<Referral> referrals)
+		{
+			int i = 1;
+			foreach (Referral referral in referrals)
+			{
+
+				if (referral.Doctor != "null")
+				{
+					Console.Write("{0}. Pacijent: {1} | Doktor: {2} | ", i,
+						_userService.GetUserFullName(referral.Patient), _userService.GetUserFullName(referral.Doctor));
+
+					i++;
+				}
+				else
+				{
+					Console.Write("{0}. Pacijent: {1} | Specijalnost: {2} | ", i,
+						_userService.GetUserFullName(referral.Patient), SpecialityToString(referral.DoctorSpeciality));
+					i++;
+				}
+				Console.WriteLine("Tip: " + AppointmentType(referral));
+
+			}
+		}
+
+		public Referral SelectReferral()
+		{
+			List<Referral> unusedReferrals = _referralService.FilterUnused();
+			if (unusedReferrals.Count == 0)
+			{
+				Console.WriteLine("Trenutno nema neiskoriscenih uputa u sistemu.");
+				return null;
+			}
+			this.ShowReferrals(unusedReferrals);
+			Console.WriteLine("x. Odustani");
+			Console.WriteLine("-------------------------------------------------------------");
+			string referralIndexInput;
+			int referralIndex;
+			do
+			{
+				Console.WriteLine("Unesite redni broj uputa koji zelite da obradite.");
+				Console.Write(">>");
+				referralIndexInput = Console.ReadLine();
+				if (referralIndexInput == "x")
+				{
+					return null;
+				}
+			} while (!int.TryParse(referralIndexInput, out referralIndex) || referralIndex < 1 || referralIndex > unusedReferrals.Count);
+			return unusedReferrals[referralIndex - 1];
+		}
+
+		public Appointment MakeAppointmentWithFreeDoctor(Referral referral)
+		{
+			User freeDoctor;
+			Appointment newAppointment;
+			do
+			{
+				newAppointment = CreateAppointment(referral);
+				freeDoctor = _appointmentService.FindFreeDoctor(referral.DoctorSpeciality, newAppointment);
+			} while (freeDoctor is null);
+			newAppointment.DoctorEmail = freeDoctor.Email;
+			return newAppointment;
 		}
 
 		public void ScheduleAppointmentWithReferral()
 		{
-			Referral referral = _referralService.SelectReferral();
+			Referral referral = SelectReferral();
 			if (referral is null)
 			{
 				return;
@@ -48,19 +114,6 @@ namespace Hospital.Appointments.View
 			_appointmentService.Add(newAppointment);
 			_referralService.UseReferral(referral);
 
-		}
-
-		public Appointment MakeAppointmentWithFreeDoctor(Referral referral)
-		{
-			User freeDoctor;
-			Appointment newAppointment;
-			do
-			{
-				newAppointment = CreateAppointment(referral);
-				freeDoctor = _appointmentService.FindFreeDoctor(referral.DoctorSpeciality, newAppointment);
-			} while (freeDoctor is null);
-			newAppointment.DoctorEmail = freeDoctor.Email;
-			return newAppointment;
 		}
 
 		public string EnterDate()
@@ -112,6 +165,40 @@ namespace Hospital.Appointments.View
 			return new Appointment(id, referral.Patient, referral.Doctor, dateOfAppointment,
 				startTime, endTime, Appointment.State.Created, roomId, referral.TypeProp, false, false);
 
+		}
+
+		public string AppointmentType(Referral referral)
+		{
+			if (referral.TypeProp == Appointment.Type.Examination)
+			{
+				return "Pregled";
+			}
+			return "Operacija";
+		}
+
+		public string SpecialityToString(DoctorUser.Speciality speciality)
+		{
+			if (speciality == DoctorUser.Speciality.Cardiologist)
+			{
+				return "Kardiologija";
+			}
+			else if (speciality == DoctorUser.Speciality.Neurologist)
+			{
+				return "Neurologija";
+			}
+			else if (speciality == DoctorUser.Speciality.Pediatrician)
+			{
+				return "Pedijatrija";
+			}
+			else if (speciality == DoctorUser.Speciality.Psychologist)
+			{
+				return "Psihologija";
+			}
+			else if (speciality == DoctorUser.Speciality.General)
+			{
+				return "Opsta praksa";
+			}
+			return "Hirurgija";
 		}
 	}
 }
