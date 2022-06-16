@@ -13,7 +13,7 @@ using Hospital.Users.View;
 
 namespace Hospital.Appointments.Service
 {
-    public class ReferralService
+    public class ReferralService: IReferralService
 	{
 		private UserService _userService;
 		private ReferralRepository _referralRepository;

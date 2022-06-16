@@ -11,7 +11,7 @@ using Hospital.Users.View;
 
 namespace Hospital.Users.Service
 {
-    public class UserService
+    public class UserService: IUserService
     {
         private UserRepository _userRepository;
         private List<User> _users;
@@ -35,7 +35,7 @@ namespace Hospital.Users.Service
             return false;
         }
 
-        public void AddUser(User user)
+        public void Add(User user)
         {
             this._users.Add(user);
             this._userRepository.Save(this._users);
@@ -152,7 +152,7 @@ namespace Hospital.Users.Service
 
         }
 
-        private void UpdateFile()
+        public void UpdateFile()
         {
             this._userRepository.Save(this._users);
         }

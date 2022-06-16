@@ -13,7 +13,7 @@ using Hospital.Drugs.Service;
 
 namespace Hospital.Appointments.Service
 {
-    public class PrescriptionService
+    public class PrescriptionService: IPrescriptionService
     {
         private PrescriptionRepository _prescriptionRepository;
         private List<Prescription> _prescriptions;

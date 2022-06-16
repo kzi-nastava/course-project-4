@@ -80,7 +80,7 @@ namespace Hospital.Users.Service
 
 		public void CreatePatientAccount(User newPatient)
 		{
-			this._userService.AddUser(newPatient);
+			this._userService.Add(newPatient);
 			this._patients.Add(newPatient);
 
 			

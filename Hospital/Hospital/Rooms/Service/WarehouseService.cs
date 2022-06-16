@@ -9,7 +9,7 @@ using Hospital.Rooms.Model;
 
 namespace Hospital.Rooms.Service
 {
-    public class WarehouseService
+    public class WarehouseService: IWarehouseService
     {
         private WarehouseRepository _warehouseRepository;
         private List<DynamicEquipment> _warehouseEquipment;
