@@ -26,7 +26,6 @@ namespace Hospital.Appointments.View
 
         public RecommendedAppointment(Patient patient, PatientAppointmentsService patientAppointmentsService, PatientSchedulingAppointment patientScheduling)
         {
-
             this._patientAppointmentsService = patientAppointmentsService;
             this._currentPatient = patient;
             this._userActionService = Globals.container.Resolve<IUserActionService>();
@@ -86,8 +85,8 @@ namespace Hospital.Appointments.View
 
             this._appointmentService.Add(newAppointment);
             this._currentPatient.PatientAppointments = _patientAppointmentsService.RefreshPatientAppointments();
-            this._userActionService.ActionRepository.AppendToActionFile("create");
-            this._userActionService.AntiTrolMechanism();
+            this._userActionService.ActionRepository.AppendToActionFile("create", _currentPatient.Email);
+            this._userActionService.AntiTrolMechanism(_currentPatient);
         }
 
         public Appointment FindAppointmentsClosestPatientWishes(string[] inputValues)

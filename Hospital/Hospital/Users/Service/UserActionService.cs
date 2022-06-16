@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Hospital.Users.Repository;
 using Hospital.Users.Model;
 using Hospital.Users.View;
+using Autofac;
 
 namespace Hospital.Users.Service
 {
@@ -14,37 +15,35 @@ namespace Hospital.Users.Service
     {
         private IUserActionRepository _actionRepository;
         private List<UserAction> _actions;
-        private Patient _currentPatient;
 
         public List<UserAction> Actions { get { return _actions; } }
         public IUserActionRepository ActionRepository { get { return _actionRepository; } }
 
-        public UserActionService(Patient currentPatient)
+        public UserActionService()
         {
-            this._actionRepository = new UserActionRepository(currentPatient.Email); //ovde
+            this._actionRepository = Globals.container.Resolve<IUserActionRepository>();
             this._actions = _actionRepository.Load();
-            this._currentPatient = currentPatient;
         }
 
-        public List<UserAction> LoadMyActions()
+        public List<UserAction> LoadMyActions(string patientEmail)
         {
             List<UserAction> myActions = new List<UserAction>();
 
             foreach (UserAction action in this._actions)
             {
-                if (this._currentPatient.Email.Equals(action.PatientEmail) && (DateTime.Now - action.ActionDate).TotalDays <= 30)
+                if (patientEmail.Equals(action.PatientEmail) && (DateTime.Now - action.ActionDate).TotalDays <= 30)
                     myActions.Add(action);
             }
             return myActions;
         }
 
-        public void AntiTrolMechanism()
+        public void AntiTrolMechanism(Patient patient)
         {
             int changed = 0;
             int deleted = 0;
             int created = 0;
 
-            List<UserAction> myCurrentActions = this.LoadMyActions();
+            List<UserAction> myCurrentActions = this.LoadMyActions(patient.Email);
 
             foreach (UserAction action in myCurrentActions)
             {
@@ -66,7 +65,7 @@ namespace Hospital.Users.Service
                 return;
 
             this._actionRepository.Save(this._actions);
-            this._currentPatient.LogOut(); //log out from account
+            patient.LogOut(); //log out from account
         }
     }
 }

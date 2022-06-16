@@ -13,12 +13,12 @@ namespace Hospital.Users.Repository
 {
     public class UserActionRepository: IUserActionRepository
     {
-        private string _userEmail;
+        //private string _userEmail;
 
-        public UserActionRepository(string userEmail)
-        {
-            this._userEmail = userEmail;
-        }
+        //public UserActionRepository(string userEmail)
+        //{
+        //    this._userEmail = userEmail;
+        //}
 
         public List<UserAction> Load()
         {
@@ -52,25 +52,25 @@ namespace Hospital.Users.Repository
             {
                 string[] fields = lines[i].Split(new[] { ',' });
                 string userEmailFromFile = fields[1];
-                if (_userEmail.Equals(userEmailFromFile))
-                    lines[i] = fields[0] + "," + fields[1] + "," + fields[2] + "," + fields[3] + "," + fields[4]
-                        + "," + (int)User.State.BlockedBySystem + "," + "null";
+                //if (_userEmail.Equals(userEmailFromFile))
+                lines[i] = fields[0] + "," + fields[1] + "," + fields[2] + "," + fields[3] + "," + fields[4]
+                    + "," + (int)User.State.BlockedBySystem + "," + "null";
             }
             // saving changes
             File.WriteAllLines(filePath, lines);
         }
 
-        public void AppendToActionFile(string typeAction)
+        public void AppendToActionFile(string typeAction, string userEmail)
         {
             string filePath = @"..\..\Data\actions.csv";
 
             UserAction newAction;
             if (typeAction.Equals("create"))
-                newAction = new UserAction(_userEmail, DateTime.Now, UserAction.State.Created);
+                newAction = new UserAction(userEmail, DateTime.Now, UserAction.State.Created);
             else if (typeAction.Equals("update"))
-                newAction = new UserAction(_userEmail, DateTime.Now, UserAction.State.Modified);
+                newAction = new UserAction(userEmail, DateTime.Now, UserAction.State.Modified);
             else
-                newAction = new UserAction(_userEmail, DateTime.Now, UserAction.State.Deleted);
+                newAction = new UserAction(userEmail, DateTime.Now, UserAction.State.Deleted);
 
             File.AppendAllText(filePath, newAction.ToString());
         }
