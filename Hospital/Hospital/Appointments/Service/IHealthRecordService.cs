@@ -8,7 +8,7 @@ using Hospital.Users.Model;
 
 namespace Hospital.Appointments.Service
 {
-    public interface IHealthRecordService: IService<HealthRecord>
+    public interface IHealthRecordService
     {
         List<HealthRecord> HealthRecords { get; }
         void DisplayOfPatientsHealthRecord(string patientEmail);

@@ -5,12 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Hospital.Drugs.Model;
 
-namespace Hospital.Drugs.Service
+namespace Hospital.Drugs.Repository
 {
-    public interface  IDrugService
+    public interface IDrugNotificationRepository: IRepository<DrugNotification>
     {
-        List<Drug> Drugs { get; }
-        int GetNewDrugId();
-        void AddDrug(Drug drug);
     }
 }

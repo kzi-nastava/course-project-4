@@ -8,15 +8,11 @@ using Hospital.Users.Model;
 
 namespace Hospital.Appointments.Service
 {
-    public interface IReferralService: IService<Referral>
+    public interface IReferralService
     {
-        void ShowReferrals(List<Referral> referrals);
-        Referral SelectReferral();
         void Add(Referral referral);
         void UseReferral(Referral usedReferral);
         List<Referral> FilterUnused();
-        string SpecialityToString(DoctorUser.Speciality speciality);
-        string AppointmentType(Referral referral);
         int GetNewReferralId();
 
     }

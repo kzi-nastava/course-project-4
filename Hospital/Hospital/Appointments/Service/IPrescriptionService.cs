@@ -8,7 +8,7 @@ using Hospital.Drugs.Model;
 
 namespace Hospital.Appointments.Service
 {
-    public interface IPrescriptionService: IService<Prescription>
+    public interface IPrescriptionService
     {
         void Add(Prescription prescription);
         bool IsDrugValid(string drugCheck);

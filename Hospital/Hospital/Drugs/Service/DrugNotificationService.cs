@@ -11,7 +11,7 @@ using Hospital.Drugs.Model;
 
 namespace Hospital.Drugs.Service
 {
-    public class DrugNotificationService
+    public class DrugNotificationService: IDrugNotificationService
     {
 		private DrugNotificationRepository _drugNotificationRepository;
 		private List<DrugNotification> _drugNotifications;
@@ -23,6 +23,23 @@ namespace Hospital.Drugs.Service
 		{
 			_drugNotificationRepository = new DrugNotificationRepository();
 			_drugNotifications = _drugNotificationRepository.Load();
+		}
+
+		public void ChangeNotificationTime(string patientEmail)
+		{
+			Console.Write("\nUnesite koliko vremena ranije zelite da dobije obavestenje: ");
+			string inputTime = Console.ReadLine();
+			DateTime newTime = DateTime.ParseExact(inputTime, "HH:mm", CultureInfo.InvariantCulture);
+
+			foreach (DrugNotification notification in this._drugNotifications)
+			{
+				if (notification.PatientEmail.Equals(patientEmail))
+				{
+					notification.TimeNotification = newTime;
+				}
+			}
+
+			this._drugNotificationRepository.Save(this._drugNotifications);
 		}
 	}
 }

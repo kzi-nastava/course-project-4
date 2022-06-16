@@ -11,7 +11,7 @@ using Hospital.Users.Model;
 
 namespace Hospital.Users.Repository
 {
-    public class UserActionRepository
+    public class UserActionRepository: IUserActionRepository
     {
         private string _userEmail;
 
@@ -43,7 +43,7 @@ namespace Hospital.Users.Repository
             return allActions;
         }
 
-        public void BlockAccessApplication()
+        public void Save(List<UserAction> actions)
         {
             // read from file
             string filePath = @"..\..\Data\users.csv";

@@ -81,7 +81,7 @@ namespace Hospital.Users.View
                 choice = Console.ReadLine();
             } while (!int.TryParse(choice, out numAppointment) || numAppointment < 1 || numAppointment > appointmentsForEvaluation.Count);
 
-            DoctorSurvey evaluatedDoctor = this._doctorSurveyService.DoctorSurveyRepository.EvaluateDoctor(appointmentsForEvaluation[numAppointment-1]);
+            DoctorSurvey evaluatedDoctor = this._doctorSurveyService.EvaluateDoctor(appointmentsForEvaluation[numAppointment-1]);
 
             this._doctorSurveyService.AddEvaluatedDoctor(evaluatedDoctor);
         }

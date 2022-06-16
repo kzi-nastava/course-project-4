@@ -7,7 +7,8 @@ using Hospital.Drugs.Model;
 
 namespace Hospital.Drugs.Service
 {
-    public interface IDrugProposalService : IService<DrugProposal>
+
+    public interface IDrugProposalService
     {
         List<DrugProposal> DrugProposals { get; }
         List<DrugProposal> GetDrugProposalsByStatus(DrugProposal.Status status);

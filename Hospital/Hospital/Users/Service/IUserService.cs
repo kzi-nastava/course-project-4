@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Hospital.Users.Model;
 namespace Hospital.Users.Service
 {
-    public interface IUserService: IService<User>
+    public interface IUserService
     {
         List<User> AllDoctors();
         bool IsPatientEmailValid(string patientEmail);
