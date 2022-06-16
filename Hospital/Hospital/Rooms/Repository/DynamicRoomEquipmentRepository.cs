@@ -10,7 +10,7 @@ using Hospital.Rooms.Model;
 
 namespace Hospital.Rooms.Repository
 {
-    public class DynamicRoomEquipmentRepository
+    public class DynamicRoomEquipmentRepository: IDynamicRoomEquipmentRepository
     {
         public List<DynamicRoomEquipment> Load()
         {

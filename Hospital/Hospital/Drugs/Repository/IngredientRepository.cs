@@ -10,7 +10,7 @@ using Hospital.Drugs.Model;
 
 namespace Hospital.Drugs.Repository
 {
-    public class IngredientRepository
+    public class IngredientRepository: IIngredientRepository
     {
         private static string s_filePath = @"..\..\Data\ingredients.csv";
         

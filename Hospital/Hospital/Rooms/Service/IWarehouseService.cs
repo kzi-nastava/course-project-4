@@ -9,5 +9,10 @@ namespace Hospital.Rooms.Service
 {
     public interface IWarehouseService: IService<DynamicEquipment>
     {
+        List<DynamicEquipment> GetMissingEquipment();
+        string GetNameEquipment(string id);
+        void AddRequestedAmount(DynamicEquipmentRequest request);
+        void UpdateWarehouse();
+
     }
 }

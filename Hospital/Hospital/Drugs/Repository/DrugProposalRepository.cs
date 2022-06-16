@@ -11,7 +11,7 @@ using Hospital.Drugs.Model;
 
 namespace Hospital.Drugs.Repository
 {
-    public class DrugProposalRepository
+    public class DrugProposalRepository: IDrugProposalRepository
     {
         private IngredientService _ingredientService; 
         private List<DrugProposal> _drugProposals;

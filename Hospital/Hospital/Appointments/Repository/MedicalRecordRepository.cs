@@ -10,7 +10,7 @@ using Hospital.Appointments.Model;
 
 namespace Hospital.Appointments.Repository
 {
-    public class MedicalRecordRepository
+    public class MedicalRecordRepository: IMedicalRecordRepository
     {
         public List<MedicalRecord> Load()
         {

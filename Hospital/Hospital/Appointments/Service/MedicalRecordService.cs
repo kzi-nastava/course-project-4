@@ -10,7 +10,7 @@ using Hospital.Appointments.Model;
 
 namespace Hospital.Appointments.Service
 {
-    public class MedicalRecordService
+    public class MedicalRecordService: IMedicalRecordService
     {
         private MedicalRecordRepository _medicalRecordRepository;
         private List<MedicalRecord> _medicalRecords;

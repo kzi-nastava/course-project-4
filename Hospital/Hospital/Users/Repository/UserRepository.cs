@@ -11,7 +11,7 @@ using Hospital.Users.View;
 
 namespace Hospital.Users.Repository
 {
-    public class UserRepository
+    public class UserRepository: IUserRepository
     {
         private List<User> users = new List<User>();
         private List<DoctorUser> doctorUsers = new List<DoctorUser>();
