@@ -10,7 +10,7 @@ namespace Hospital.Users.Service
 {
     public interface IUserActionService
     {
-        UserActionRepository ActionRepository { get; }
+        IUserActionRepository ActionRepository { get; }
         List<UserAction> LoadMyActions();
         void AntiTrolMechanism();
     }

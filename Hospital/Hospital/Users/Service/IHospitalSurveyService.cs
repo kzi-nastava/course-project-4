@@ -9,9 +9,8 @@ namespace Hospital.Users.Service
 {
     public interface IHospitalSurveyService
     {
-        void EvaluateHospitalSurvey();
+        void EvaluateHospitalSurvey(string patientEmail);
         HospitalSurvey InputValuesForServey(string patientEmail);
-        void AddNewSurvey(HospitalSurvey newRatedSurvey);
         HospitalSurveyResult GetResult();
         List<HospitalSurvey> SurveyResults { get; }
     }

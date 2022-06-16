@@ -10,31 +10,29 @@ using Hospital;
 
 namespace Hospital.Users.Service
 {
-    public class HospitalSurveyService
+    public class HospitalSurveyService : IHospitalSurveyService
     {
         private IHospitalSurveyRepository _hospitalServiceRepository;
         private List<HospitalSurvey> _surveyResults;
         private IUserService _userService;
-        private string _patientEmail;
 
         public List<HospitalSurvey> SurveyResults { get { return _surveyResults; } }
 
-        public HospitalSurveyService(string patientEmail)
+        public HospitalSurveyService()
         {
-            this._patientEmail = patientEmail;
             this._hospitalServiceRepository = Globals.container.Resolve<IHospitalSurveyRepository>();
             this._surveyResults = _hospitalServiceRepository.Load();
             this._userService = Globals.container.Resolve<IUserService>();
         }
 
-        public void EvaluateHospitalSurvey()
+        public void EvaluateHospitalSurvey(string patientEmail)
         {
             foreach (HospitalSurvey hospitalSurvey in this._surveyResults)
             {
-                if (hospitalSurvey.PatientEmail.Equals(this._patientEmail))
+                if (hospitalSurvey.PatientEmail.Equals(patientEmail))
                 { Console.WriteLine("Vec ste ocenili rad bolnice."); return; }
             }
-            HospitalSurvey surveyResult = this.InputValuesForServey(this._patientEmail);
+            HospitalSurvey surveyResult = this.InputValuesForServey(patientEmail);
             this.AddNewSurvey(surveyResult);
         }
 

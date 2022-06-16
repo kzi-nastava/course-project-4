@@ -15,8 +15,13 @@ namespace Hospital.Users.View
 {
     public class Login
     {
-        IUserService _userService = Globals.container.Resolve<IUserService>();
-        User _registeredUser;
+        private IUserService _userService;
+        private User _registeredUser;
+
+        public Login()
+        {
+            _userService = Globals.container.Resolve<IUserService>();
+        }
 
         public void LogIn()
         {

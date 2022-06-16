@@ -12,6 +12,7 @@ namespace Hospital
     { 
         static void Main(string[] args)
         {
+            Globals.Load();
             Login login = new Login();
             login.LogIn();
         }

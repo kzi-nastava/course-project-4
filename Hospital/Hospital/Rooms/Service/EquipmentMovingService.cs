@@ -10,7 +10,7 @@ using Hospital.Rooms.Model;
 
 namespace Hospital.Rooms.Service
 {
-    public class EquipmentMovingService
+    public class EquipmentMovingService : IEquipmentMovingService
     {
         private IEquipmentMovingRepository _equipmentMovingRepository;
         private IEquipmentService _equipmentService;
