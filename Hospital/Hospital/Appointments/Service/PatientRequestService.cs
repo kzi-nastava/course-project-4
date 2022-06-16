@@ -11,17 +11,17 @@ using Hospital.Appointments.Model;
 
 namespace Hospital.Appointments.Service
 {
-	public class PatientRequestService
+	public class PatientRequestService : IPatientRequestService
 	{
 		private IAppointmentService _appointmentService;
-		private PatientRequestRepository _requestRepository;
+		private IPatientRequestRepository _requestRepository;
 		private List<Appointment> _requests;
 
 		public List<Appointment> Requests { get { return this._requests; } }
 
 		public PatientRequestService()
 		{
-			_requestRepository = new PatientRequestRepository(); //ovde
+			_requestRepository = Globals.container.Resolve<IPatientRequestRepository>();
 			_requests = _requestRepository.Load();
 			this._appointmentService = Globals.container.Resolve<IAppointmentService>();
 		}

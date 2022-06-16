@@ -53,6 +53,7 @@
     <Compile Include="Rooms\Model\Renovation.cs" />
     <Compile Include="Rooms\Model\MergeRenovation.cs" />
     <Compile Include="Rooms\Model\SplitRenovation.cs" />
+    <Compile Include="Rooms\Repository\IDynamicEquipmentRequestRepository.cs" />
     <Compile Include="Rooms\Repository\IEquipmentMovingRepository.cs" />
     <Compile Include="Rooms\Repository\IEquipmentRepository.cs" />
     <Compile Include="Rooms\Repository\IRenovationRepository.cs" />
@@ -66,6 +67,7 @@
     <Compile Include="Rooms\Repository\RenovationRepository.cs" />
     <Compile Include="Rooms\Repository\WarehouseRepository.cs" />
     <Compile Include="Rooms\Repository\IWarehouseRepository.cs" />
+    <Compile Include="Rooms\Service\IDynamicEquipmentMovingService.cs" />
     <Compile Include="Rooms\Service\IEquipmentMovingService.cs" />
     <Compile Include="Rooms\Service\IEquipmentService.cs" />
     <Compile Include="Rooms\Service\IRenovationService.cs" />
