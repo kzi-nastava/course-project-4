@@ -39,7 +39,6 @@
     <Compile Include="Drugs\Repository\IDrugNotificationRepository.cs" />
     <Compile Include="Drugs\Service\IDrugNotificationService.cs" />
     <Compile Include="IRepository.cs" />
-    <Compile Include="IService.cs" />
     <Compile Include="Rooms\Model\Room.cs" />
     <Compile Include="Rooms\Model\DynamicRoomEquipment.cs" />
     <Compile Include="Rooms\Model\DynamicEquipment.cs" />
