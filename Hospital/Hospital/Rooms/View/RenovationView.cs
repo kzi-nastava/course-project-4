@@ -11,13 +11,13 @@ using Hospital.Rooms.Model;
 
 namespace Hospital.Rooms.View
 {
-    public class RenovationView
+    public class RenovationView : IRenovationView
     {
-        private RoomService _roomService;
+        private IRoomService _roomService;
         private AppointmentService _appointmentService;
-        private RenovationService _renovationService;
+        private IRenovationService _renovationService;
 
-        public RenovationView(RoomService roomService, AppointmentService appointmentService, RenovationService renovationService)
+        public RenovationView(IRoomService roomService, AppointmentService appointmentService, IRenovationService renovationService)
         {
             this._roomService = roomService;
             this._appointmentService = appointmentService;

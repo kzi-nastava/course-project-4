@@ -8,7 +8,7 @@ using Hospital.Users.Model;
 using System.IO;
 namespace Hospital.Users.Repository
 {
-    class HospitalSurveyRepository
+    class HospitalSurveyRepository : IHospitalSurveyRepository
     {
         public List<HospitalSurvey> Load()
         {

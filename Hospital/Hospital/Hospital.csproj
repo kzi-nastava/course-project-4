@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -36,9 +36,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Drugs\View\IDrugView.cs" />
+    <Compile Include="Drugs\View\IIngredientView.cs" />
     <Compile Include="IRepository.cs" />
     <Compile Include="IService.cs" />
-
     <Compile Include="Rooms\Model\Room.cs" />
     <Compile Include="Rooms\Model\DynamicRoomEquipment.cs" />
     <Compile Include="Rooms\Model\DynamicEquipment.cs" />
@@ -48,26 +49,35 @@
     <Compile Include="Rooms\Model\Renovation.cs" />
     <Compile Include="Rooms\Model\MergeRenovation.cs" />
     <Compile Include="Rooms\Model\SplitRenovation.cs" />
+    <Compile Include="Rooms\Repository\IEquipmentMovingRepository.cs" />
+    <Compile Include="Rooms\Repository\IEquipmentRepository.cs" />
+    <Compile Include="Rooms\Repository\IRenovationRepository.cs" />
+    <Compile Include="Rooms\Repository\IRoomRepository.cs" />
     <Compile Include="Rooms\Repository\RoomRepository.cs" />
     <Compile Include="Rooms\Repository\DynamicEquipmentRequestRepository.cs" />
     <Compile Include="Rooms\Repository\DynamicRoomEquipmentRepository.cs" />
-<Compile Include="Rooms\Repository\IDynamicRoomEquipmentRepository.cs" />
+    <Compile Include="Rooms\Repository\IDynamicRoomEquipmentRepository.cs" />
     <Compile Include="Rooms\Repository\EquipmentRepository.cs" />
     <Compile Include="Rooms\Repository\EquipmentMovingRepository.cs" />
     <Compile Include="Rooms\Repository\RenovationRepository.cs" />
     <Compile Include="Rooms\Repository\WarehouseRepository.cs" />
-<Compile Include="Rooms\Repository\IWarehouseRepository.cs" />
-
+    <Compile Include="Rooms\Repository\IWarehouseRepository.cs" />
+    <Compile Include="Rooms\Service\IEquipmentMovingService.cs" />
+    <Compile Include="Rooms\Service\IEquipmentService.cs" />
+    <Compile Include="Rooms\Service\IRenovationService.cs" />
+    <Compile Include="Rooms\Service\IRoomService.cs" />
     <Compile Include="Rooms\Service\RoomService.cs" />
     <Compile Include="Rooms\Service\DynamicRoomEquipmentService.cs" />
-<Compile Include="Rooms\Service\IDynamicRoomEquipmentService.cs" />
+    <Compile Include="Rooms\Service\IDynamicRoomEquipmentService.cs" />
     <Compile Include="Rooms\Service\DynamicEquipmentMovingService.cs" />
     <Compile Include="Rooms\Service\EquipmentService.cs" />
     <Compile Include="Rooms\Service\EquipmentMovingService.cs" />
     <Compile Include="Rooms\Service\RenovationService.cs" />
     <Compile Include="Rooms\Service\WarehouseService.cs" />
-<Compile Include="Rooms\Service\IWarehouseService.cs" />
-
+    <Compile Include="Rooms\Service\IWarehouseService.cs" />
+    <Compile Include="Rooms\View\IEquipmentView.cs" />
+    <Compile Include="Rooms\View\IRenovationView.cs" />
+    <Compile Include="Rooms\View\IRoomView.cs" />
     <Compile Include="Rooms\View\RoomView.cs" />
     <Compile Include="Rooms\View\EquipmentView.cs" />
     <Compile Include="Rooms\View\RenovationView.cs" />
@@ -84,25 +94,27 @@
     <Compile Include="Users\Model\DoctorSurvey.cs" />
     <Compile Include="Users\Model\DoctorSurveyResult.cs" />
     <Compile Include="Users\Repository\HospitalSurveyRepository.cs" />
+    <Compile Include="Users\Repository\IDoctorSurveyRepository.cs" />
+    <Compile Include="Users\Repository\IHospitalSurveyRepository.cs" />
     <Compile Include="Users\Repository\UserRepository.cs" />
-<Compile Include="Users\Repository\IUserRepository.cs" />
-
+    <Compile Include="Users\Repository\IUserRepository.cs" />
     <Compile Include="Users\Repository\NotificationRepository.cs" />
     <Compile Include="Users\Repository\RequestForDaysOffRepository.cs" />
-<Compile Include="Users\Repository\IRequestForDaysOffRepository.cs" />
-
+    <Compile Include="Users\Repository\IRequestForDaysOffRepository.cs" />
     <Compile Include="Users\Repository\UserActionRepository.cs" />
     <Compile Include="Users\Repository\DoctorSurveyRepository.cs" />
     <Compile Include="Users\Service\HospitalSurveyService.cs" />
+    <Compile Include="Users\Service\IDoctorSurveyService.cs" />
+    <Compile Include="Users\Service\IHospitalSurveyService.cs" />
     <Compile Include="Users\Service\UserService.cs" />
-<Compile Include="Users\Service\IUserService.cs" />
-
+    <Compile Include="Users\Service\IUserService.cs" />
     <Compile Include="Users\Service\NotificationService.cs" />
     <Compile Include="Users\Service\PatientAccountService.cs" />
     <Compile Include="Users\Service\RequestForDaysOffService.cs" />
-<Compile Include="Users\Service\IRequestForDaysOffService.cs" />
+    <Compile Include="Users\Service\IRequestForDaysOffService.cs" />
     <Compile Include="Users\Service\UserActionService.cs" />
     <Compile Include="Users\Service\DoctorSurveyService.cs" />
+    <Compile Include="Users\View\ISurveyView.cs" />
     <Compile Include="Users\View\PatientAccountView.cs" />
     <Compile Include="Users\View\PatientRequestView.cs" />
     <Compile Include="Users\View\Secretary.cs" />
@@ -122,36 +134,26 @@
     <Compile Include="Appointments\Model\Prescription.cs" />
     <Compile Include="Appointments\Model\Referral.cs" />
     <Compile Include="Appointments\Repository\AppointmentRepository.cs" />
-<Compile Include="Appointments\Repository\IAppointmentRepository.cs" />
-
+    <Compile Include="Appointments\Repository\IAppointmentRepository.cs" />
     <Compile Include="Appointments\Repository\HealthRecordRepository.cs" />
-<Compile Include="Appointments\Repository\IHealthRecordRepository.cs" />
-
+    <Compile Include="Appointments\Repository\IHealthRecordRepository.cs" />
     <Compile Include="Appointments\Repository\MedicalRecordRepository.cs" />
-<Compile Include="Appointments\Repository\IMedicalRecordRepository.cs" />
-
+    <Compile Include="Appointments\Repository\IMedicalRecordRepository.cs" />
     <Compile Include="Appointments\Repository\PrescriptionRepository.cs" />
-<Compile Include="Appointments\Repository\IPrescriptionRepository.cs" />
-
+    <Compile Include="Appointments\Repository\IPrescriptionRepository.cs" />
     <Compile Include="Appointments\Repository\ReferralRepository.cs" />
-<Compile Include="Appointments\Repository\IReferralRepository.cs" />
-
+    <Compile Include="Appointments\Repository\IReferralRepository.cs" />
     <Compile Include="Appointments\Repository\PatientRequestRepository.cs" />
     <Compile Include="Appointments\Service\AppointmentService.cs" />
-<Compile Include="Appointments\Service\IAppointmentService.cs" />
-
+    <Compile Include="Appointments\Service\IAppointmentService.cs" />
     <Compile Include="Appointments\Service\HealthRecordService.cs" />
-<Compile Include="Appointments\Service\IHealthRecordService.cs" />
-
+    <Compile Include="Appointments\Service\IHealthRecordService.cs" />
     <Compile Include="Appointments\Service\MedicalRecordService.cs" />
-<Compile Include="Appointments\Service\IMedicalRecordService.cs" />
-
+    <Compile Include="Appointments\Service\IMedicalRecordService.cs" />
     <Compile Include="Appointments\Service\PrescriptionService.cs" />
-<Compile Include="Appointments\Service\IPrescriptionService.cs" />
-
+    <Compile Include="Appointments\Service\IPrescriptionService.cs" />
     <Compile Include="Appointments\Service\ReferralService.cs" />
-<Compile Include="Appointments\Service\IReferralService.cs" />
-
+    <Compile Include="Appointments\Service\IReferralService.cs" />
     <Compile Include="Appointments\Service\PatientRequestService.cs" />
     <Compile Include="Appointments\View\DoctorEnter.cs" />
     <Compile Include="Appointments\View\DoctorIssuingPrescription.cs" />
@@ -170,25 +172,19 @@
     <Compile Include="Drugs\Model\DrugProposal.cs" />
     <Compile Include="Drugs\Model\Ingredient.cs" />
     <Compile Include="Drugs\Repository\DrugRepository.cs" />
-<Compile Include="Drugs\Repository\IDrugRepository.cs" />
-
+    <Compile Include="Drugs\Repository\IDrugRepository.cs" />
     <Compile Include="Drugs\Repository\DrugNotificationRepository.cs" />
     <Compile Include="Drugs\Repository\DrugProposalRepository.cs" />
-<Compile Include="Drugs\Repository\IDrugProposalRepository.cs" />
-
+    <Compile Include="Drugs\Repository\IDrugProposalRepository.cs" />
     <Compile Include="Drugs\Repository\IngredientRepository.cs" />
-<Compile Include="Drugs\Repository\IIngredientRepository.cs" />
-
+    <Compile Include="Drugs\Repository\IIngredientRepository.cs" />
     <Compile Include="Drugs\Service\DrugService.cs" />
-<Compile Include="Drugs\Service\IDrugService.cs" />
-
+    <Compile Include="Drugs\Service\IDrugService.cs" />
     <Compile Include="Drugs\Service\DrugNotificationService.cs" />
     <Compile Include="Drugs\Service\DrugProposalService.cs" />
     <Compile Include="Drugs\Service\IDrugProposalService.cs" />
-
     <Compile Include="Drugs\Service\IngredientService.cs" />
-<Compile Include="Drugs\Service\IIngredientService.cs" />
-
+    <Compile Include="Drugs\Service\IIngredientService.cs" />
     <Compile Include="Drugs\View\DrugVerification.cs" />
     <Compile Include="Drugs\View\PatientDrugNotification.cs" />
     <Compile Include="Drugs\View\DrugView.cs" />

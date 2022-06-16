@@ -11,14 +11,14 @@ using Hospital.Drugs.Model;
 
 namespace Hospital.Drugs.Repository
 {
-    public class DrugProposalRepository: IDrugProposalRepository
+    public class DrugProposalRepository : IDrugProposalRepository
     {
-        private IngredientService _ingredientService; 
+        private IIngredientService _ingredientService; 
         private List<DrugProposal> _drugProposals;
 
-        public DrugProposalRepository()
+        public DrugProposalRepository(IIngredientService ingredientService)
         {
-            _ingredientService = new IngredientService();
+            _ingredientService = ingredientService;
             _drugProposals = Load();
         }
 

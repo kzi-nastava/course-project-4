@@ -11,42 +11,59 @@ using Hospital.Appointments.Service;
 using Hospital.Drugs.Service;
 using Hospital.Users.Service;
 using Hospital.Rooms.View;
+using Hospital.Rooms.Repository;
 using Hospital.Drugs.View;
+using Hospital.Drugs.Repository;
+using Hospital.Users.Repository;
 
 namespace Hospital.Users.View
 {
     public class Manager : IMenuView
     {
         private User _currentRegisteredManager;
-        private RoomService _roomService;
-        private EquipmentService _equipmentService;
-        private EquipmentMovingService _equipmentMovingService;
-        private AppointmentService _appointmentService;
-        private RenovationService _renovationService;
-        private IngredientService _ingredientService;
-        private DrugProposalService _drugProposalService;
-        private DoctorSurveyService _doctorSurveyService;
-        private HospitalSurveyService _hospitalSurveyService;
 
-        private RoomView _roomView;
-        private EquipmentView _equipmentView;
-        private RenovationView _renovationView;
-        private IngredientView _ingredientView;
-        private DrugView _drugView;
-        private SurveyView _surveyView;
+        private IRoomService _roomService;
+        private IEquipmentService _equipmentService;
+        private IEquipmentMovingService _equipmentMovingService;
+        private AppointmentService _appointmentService;
+        private IRenovationService _renovationService;
+        private IIngredientService _ingredientService;
+        private IDrugProposalService _drugProposalService;
+        private IDoctorSurveyService _doctorSurveyService;
+        private IHospitalSurveyService _hospitalSurveyService;
+
+        private IRoomView _roomView;
+        private IEquipmentView _equipmentView;
+        private IRenovationView _renovationView;
+        private IIngredientView _ingredientView;
+        private IDrugView _drugView;
+        private ISurveyView _surveyView;
 
         public Manager(User currentRegisteredManager)
         {
+            IRoomRepository roomRepository = new RoomRepository();
+            IEquipmentMovingRepository equipmentMovingRepository = new EquipmentMovingRepository();
+            IRenovationRepository renovationRepository = new RenovationRepository();
+
             this._currentRegisteredManager = currentRegisteredManager;
-            this._roomService = new RoomService();
-            this._equipmentService = new EquipmentService(_roomService);
-            this._equipmentMovingService = new EquipmentMovingService(_equipmentService, _roomService);
+            this._roomService = new RoomService(roomRepository);
+
+            IEquipmentRepository equipmentRepository = new EquipmentRepository(_roomService);
+
+            this._equipmentService = new EquipmentService(equipmentRepository, _roomService);
+            this._equipmentMovingService = new EquipmentMovingService(equipmentMovingRepository, _equipmentService, _roomService);
             this._appointmentService = new AppointmentService();
-            this._renovationService = new RenovationService(_roomService, _appointmentService, _equipmentService);
-            this._ingredientService = new IngredientService();
-            this._drugProposalService = new DrugProposalService();
-            this._doctorSurveyService = new DoctorSurveyService();
-            this._hospitalSurveyService = new HospitalSurveyService("");
+            this._renovationService = new RenovationService(renovationRepository, _roomService, _appointmentService, _equipmentService);
+
+            IIngredientRepository ingredientRepository = new IngredientRepository();
+            this._ingredientService = new IngredientService(ingredientRepository);
+            IDrugProposalRepository drugProposalRepository = new DrugProposalRepository(_ingredientService);
+            this._drugProposalService = new DrugProposalService(drugProposalRepository);
+
+            IDoctorSurveyRepository doctorSurveyRepository = new DoctorSurveyRepository();
+            this._doctorSurveyService = new DoctorSurveyService(doctorSurveyRepository);
+            IHospitalSurveyRepository hospitalSurveyRepository = new HospitalSurveyRepository();
+            this._hospitalSurveyService = new HospitalSurveyService("", hospitalSurveyRepository);
 
             this._roomView = new RoomView(_roomService);
             this._equipmentView = new EquipmentView(_roomService, _equipmentService, _equipmentMovingService);

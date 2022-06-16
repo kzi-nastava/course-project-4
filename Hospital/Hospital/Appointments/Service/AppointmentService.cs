@@ -24,7 +24,7 @@ namespace Hospital.Appointments.Service
         private NotificationService _notificationService;
         private List<Appointment> _appointments;
         private List<User> _users;
-        private RoomRepository _roomRepository;
+        private IRoomRepository _roomRepository;
         private List<Room> _rooms;
 
         public AppointmentRepository AppointmentRepository { get { return _appointmentRepository; } }
@@ -236,7 +236,7 @@ namespace Hospital.Appointments.Service
 
         public Room FindFreeRoom(DateTime newDate, DateTime newStartTime)
         {
-            RoomService roomService = new RoomService();
+            IRoomService roomService = new RoomService(_roomRepository);
             List<Room> freeRooms = roomService.AllRooms;  // at the beginning all the rooms are free
 
             foreach (Appointment appointment in this._appointments)

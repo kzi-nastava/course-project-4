@@ -9,5 +9,10 @@ namespace Hospital.Drugs.Repository
 {
     public interface IDrugRepository: IRepository<Drug>
     {
+        List<Drug> Drugs { get; }
+
+        int GetNewDrugId();
+
+        void AddDrug(Drug drug);
     }
 }

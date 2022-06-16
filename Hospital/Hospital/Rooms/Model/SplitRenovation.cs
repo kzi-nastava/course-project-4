@@ -14,7 +14,7 @@ namespace Hospital.Rooms.Model
         {
         }
 
-        public override void Renovate(RoomService roomService, EquipmentService equipmentService)
+        public override void Renovate(IRoomService roomService, IEquipmentService equipmentService)
         {
             base.Renovate(roomService, equipmentService);
 

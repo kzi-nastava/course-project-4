@@ -14,7 +14,6 @@ namespace Hospital.Appointments.Service
         bool IsDrugValid(string drugCheck);
         bool IsTimeOfConsumingValid(string selectedTimeOfConsuming);
         string GetId(string drugName);
-        bool ContainsIngredient(Drug drug, HealthRecord healthRecord);
         bool CheckAllergicToDrug(HealthRecord healthRecord, string drugCheck);
     }
 }

@@ -9,13 +9,13 @@ using Hospital.Drugs.Model;
 
 namespace Hospital.Drugs.Service
 {
-    public class IngredientService: IIngredientService
+    public class IngredientService : IIngredientService
     {
-        private IngredientRepository _ingredientRepository;
+        private IIngredientRepository _ingredientRepository;
         
-        public IngredientService()
+        public IngredientService(IIngredientRepository ingredientRepository)
         {
-            this._ingredientRepository = new IngredientRepository();
+            this._ingredientRepository = ingredientRepository;
         }
 
         public List<Ingredient> Ingredients { get { return _ingredientRepository.Ingredients; } }

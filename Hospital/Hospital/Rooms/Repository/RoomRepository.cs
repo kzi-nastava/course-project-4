@@ -10,7 +10,7 @@ using Hospital.Rooms.Model;
 
 namespace Hospital.Rooms.Repository
 {
-    public class RoomRepository
+    public class RoomRepository : IRoomRepository
     {
         private static string s_filePath = @"..\..\Data\rooms.csv";
         private List<Room> _allRooms;

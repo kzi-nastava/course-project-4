@@ -10,7 +10,7 @@ using Hospital.Appointments.Model;
 
 namespace Hospital.Users.Repository
 {
-    public class DoctorSurveyRepository
+    public class DoctorSurveyRepository : IDoctorSurveyRepository
     {
         public List<DoctorSurvey> Load()
         {
