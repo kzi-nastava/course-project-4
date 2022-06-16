@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Globalization;
-
 using Hospital.Appointments.View;
 using Hospital.Appointments.Service;
 using Hospital.Appointments.Model;
@@ -15,12 +14,13 @@ using Hospital.Drugs.Service;
 using Hospital.Users.Repository;
 using Hospital;
 using Autofac;
+
 namespace Hospital.Users.View
 {
     public class Patient : IMenuView
     {
         private string _email;
-        private PatientAppointmentsService _patientService; //ovde
+        private PatientAppointmentsService _patientService; 
         private IAppointmentService _appointmentService;
         private PatientSchedulingAppointment _patientScheduling;
         private PatientAnamnesis _patientAnamnesis;

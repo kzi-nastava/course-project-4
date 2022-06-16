@@ -39,8 +39,8 @@ namespace Hospital.Appointments.View
 
             this.DeleteAppointment(appointmentForDelete);
             this._currentPatient.PatientAppointments = _patientAppointment.RefreshPatientAppointments();
-            this._userActionService.ActionRepository.AppendToActionFile("delete");
-            this._userActionService.AntiTrolMechanism();
+            this._userActionService.ActionRepository.AppendToActionFile("delete", _currentPatient.Email);
+            this._userActionService.AntiTrolMechanism(_currentPatient);
         }
 
         public void UpdateOwnAppointment()
@@ -59,8 +59,8 @@ namespace Hospital.Appointments.View
             }
 
             this.UpdateAppointment(appointmentForUpdate, inputValues);
-            this._userActionService.ActionRepository.AppendToActionFile("update");
-            this._userActionService.AntiTrolMechanism();
+            this._userActionService.ActionRepository.AppendToActionFile("update", _currentPatient.Email);
+            this._userActionService.AntiTrolMechanism(_currentPatient);
         }
 
         public List<Appointment> FindAppointmentsForDeleteAndUpdate()

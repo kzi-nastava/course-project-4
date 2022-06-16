@@ -129,8 +129,8 @@ namespace Hospital.Appointments.View
             Appointment newAppointment = this.CreateAppointment(inputValues);
             this._appointmentService.Add(newAppointment);
             this._currentRegisteredUser.PatientAppointments = _patientAppointmentsService.RefreshPatientAppointments();
-            this._userActionService.ActionRepository.AppendToActionFile("create");
-            this._userActionService.AntiTrolMechanism();
+            this._userActionService.ActionRepository.AppendToActionFile("create", _currentRegisteredUser.Email);
+            this._userActionService.AntiTrolMechanism(_currentRegisteredUser);
 
             Console.WriteLine("Uspesno ste kreirali nov pregled!");
         }

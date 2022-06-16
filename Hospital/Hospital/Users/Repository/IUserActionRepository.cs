@@ -9,6 +9,6 @@ namespace Hospital.Users.Repository
 {
     public interface IUserActionRepository: IRepository<UserAction>
     {
-        void AppendToActionFile(string typeAction);
+        void AppendToActionFile(string typeAction, string userEmail);
     }
 }
