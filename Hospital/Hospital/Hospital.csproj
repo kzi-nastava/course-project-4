@@ -46,6 +46,10 @@
     <Compile Include="Rooms\Model\Renovation.cs" />
     <Compile Include="Rooms\Model\MergeRenovation.cs" />
     <Compile Include="Rooms\Model\SplitRenovation.cs" />
+    <Compile Include="Rooms\Repository\IEquipmentMovingRepository.cs" />
+    <Compile Include="Rooms\Repository\IEquipmentRepository.cs" />
+    <Compile Include="Rooms\Repository\IRenovationRepository.cs" />
+    <Compile Include="Rooms\Repository\IRoomRepository.cs" />
     <Compile Include="Rooms\Repository\RoomRepository.cs" />
     <Compile Include="Rooms\Repository\DynamicEquipmentRequestRepository.cs" />
     <Compile Include="Rooms\Repository\DynamicRoomEquipmentRepository.cs" />
@@ -53,6 +57,10 @@
     <Compile Include="Rooms\Repository\EquipmentMovingRepository.cs" />
     <Compile Include="Rooms\Repository\RenovationRepository.cs" />
     <Compile Include="Rooms\Repository\WarehouseRepository.cs" />
+    <Compile Include="Rooms\Service\IEquipmentMovingService.cs" />
+    <Compile Include="Rooms\Service\IEquipmentService.cs" />
+    <Compile Include="Rooms\Service\IRenovationService.cs" />
+    <Compile Include="Rooms\Service\IRoomService.cs" />
     <Compile Include="Rooms\Service\RoomService.cs" />
     <Compile Include="Rooms\Service\DynamicRoomEquipmentService.cs" />
     <Compile Include="Rooms\Service\DynamicEquipmentMovingService.cs" />
@@ -60,6 +68,9 @@
     <Compile Include="Rooms\Service\EquipmentMovingService.cs" />
     <Compile Include="Rooms\Service\RenovationService.cs" />
     <Compile Include="Rooms\Service\WarehouseService.cs" />
+    <Compile Include="Rooms\View\IEquipmentView.cs" />
+    <Compile Include="Rooms\View\IRenovationView.cs" />
+    <Compile Include="Rooms\View\IRoomView.cs" />
     <Compile Include="Rooms\View\RoomView.cs" />
     <Compile Include="Rooms\View\EquipmentView.cs" />
     <Compile Include="Rooms\View\RenovationView.cs" />

@@ -11,6 +11,7 @@ using Hospital.Appointments.Service;
 using Hospital.Drugs.Service;
 using Hospital.Users.Service;
 using Hospital.Rooms.View;
+using Hospital.Rooms.Repository;
 using Hospital.Drugs.View;
 
 namespace Hospital.Users.View
@@ -18,31 +19,39 @@ namespace Hospital.Users.View
     public class Manager : IMenuView
     {
         private User _currentRegisteredManager;
-        private RoomService _roomService;
-        private EquipmentService _equipmentService;
-        private EquipmentMovingService _equipmentMovingService;
+
+        private IRoomService _roomService;
+        private IEquipmentService _equipmentService;
+        private IEquipmentMovingService _equipmentMovingService;
         private AppointmentService _appointmentService;
-        private RenovationService _renovationService;
+        private IRenovationService _renovationService;
         private IngredientService _ingredientService;
         private DrugProposalService _drugProposalService;
         private DoctorSurveyService _doctorSurveyService;
         private HospitalSurveyService _hospitalSurveyService;
 
-        private RoomView _roomView;
-        private EquipmentView _equipmentView;
-        private RenovationView _renovationView;
-        private IngredientView _ingredientView;
-        private DrugView _drugView;
-        private SurveyView _surveyView;
+        private IRoomView _roomView;
+        private IEquipmentView _equipmentView;
+        private IRenovationView _renovationView;
+        private IIngredientView _ingredientView;
+        private IDrugView _drugView;
+        private ISurveyView _surveyView;
 
         public Manager(User currentRegisteredManager)
         {
+            IRoomRepository roomRepository = new RoomRepository();
+            IEquipmentMovingRepository equipmentMovingRepository = new EquipmentMovingRepository();
+            IRenovationRepository renovationRepository = new RenovationRepository();
+
             this._currentRegisteredManager = currentRegisteredManager;
-            this._roomService = new RoomService();
-            this._equipmentService = new EquipmentService(_roomService);
-            this._equipmentMovingService = new EquipmentMovingService(_equipmentService, _roomService);
+            this._roomService = new RoomService(roomRepository);
+
+            IEquipmentRepository equipmentRepository = new EquipmentRepository(_roomService);
+
+            this._equipmentService = new EquipmentService(equipmentRepository, _roomService);
+            this._equipmentMovingService = new EquipmentMovingService(equipmentMovingRepository, _equipmentService, _roomService);
             this._appointmentService = new AppointmentService();
-            this._renovationService = new RenovationService(_roomService, _appointmentService, _equipmentService);
+            this._renovationService = new RenovationService(renovationRepository, _roomService, _appointmentService, _equipmentService);
             this._ingredientService = new IngredientService();
             this._drugProposalService = new DrugProposalService();
             this._doctorSurveyService = new DoctorSurveyService();

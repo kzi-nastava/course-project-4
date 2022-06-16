@@ -11,13 +11,13 @@ using Hospital.Rooms.Service;
 
 namespace Hospital.Rooms.Repository
 {
-    public class EquipmentRepository
+    public class EquipmentRepository : IEquipmentRepository
     {
         private static string s_filePath = @"..\..\Data\equipment.csv"; 
-        private RoomService _roomService;
+        private IRoomService _roomService;
         private List<Equipment> _allEquipment;
 
-        public EquipmentRepository(RoomService roomService)
+        public EquipmentRepository(IRoomService roomService)
         {
             _roomService = roomService;
             _allEquipment = Load();

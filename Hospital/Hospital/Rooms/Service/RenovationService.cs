@@ -10,22 +10,22 @@ using Hospital.Rooms.Model;
 
 namespace Hospital.Rooms.Service
 {
-    public class RenovationService
+    public class RenovationService : IRenovationService
     {
-        private RenovationRepository _renovationRepository;
-        private RoomService _roomService;
+        private IRenovationRepository _renovationRepository;
+        private IRoomService _roomService;
         private AppointmentService _appointmentService;
-        private EquipmentService _equipmentService;
+        private IEquipmentService _equipmentService;
         
-        public List<Renovation> AllRenovations { get { return _renovationRepository.AllRenovations; } }
-
-        public RenovationService(RoomService roomService, AppointmentService appointmentService, EquipmentService equipmentService) 
+        public RenovationService(IRenovationRepository renovationRepository, IRoomService roomService, AppointmentService appointmentService, IEquipmentService equipmentService) 
         {
-            this._renovationRepository = new RenovationRepository();
+            this._renovationRepository = renovationRepository;
             this._roomService = roomService;
             this._appointmentService = appointmentService;
             this._equipmentService = equipmentService;
         }
+        
+        public List<Renovation> AllRenovations { get { return _renovationRepository.AllRenovations; } }
 
         public bool IdExists(string id) 
         {

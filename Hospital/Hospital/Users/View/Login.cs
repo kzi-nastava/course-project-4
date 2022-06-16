@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Hospital.Users.Service;
 using Hospital.Users.Model;
 using Hospital.Rooms.Service;
+using Hospital.Rooms.Repository;
 using Hospital.Appointments.Service;
 
 namespace Hospital.Users.View
@@ -56,14 +57,18 @@ namespace Hospital.Users.View
             Console.WriteLine($"\nDobrodosli {this._registeredUser.Name + " " + this._registeredUser.Surname}");
 
             // Move equipment if scheduled time has passed
-            RoomService roomService = new RoomService();
-            EquipmentService equipmentService = new EquipmentService(roomService);
-            EquipmentMovingService equipmentMovingService = new EquipmentMovingService(equipmentService, roomService);
+            IRoomRepository roomRepository = new RoomRepository();
+            IRoomService roomService = new RoomService(roomRepository);
+            IEquipmentRepository equipmentRepository = new EquipmentRepository(roomService);
+            IEquipmentService equipmentService = new EquipmentService(equipmentRepository, roomService);
+            IEquipmentMovingRepository equipmentMovingRepository = new EquipmentMovingRepository();
+            IEquipmentMovingService equipmentMovingService = new EquipmentMovingService(equipmentMovingRepository, equipmentService, roomService);
             equipmentMovingService.MoveEquipment();
 
             // Merge or split rooms if complex renovations are finished
             AppointmentService appointmentService = new AppointmentService();
-            RenovationService renovationService = new RenovationService(roomService, appointmentService, equipmentService);
+            IRenovationRepository renovationRepository = new RenovationRepository();
+            IRenovationService renovationService = new RenovationService(renovationRepository, roomService, appointmentService, equipmentService);
             renovationService.Renovate();
 
             if (this._registeredUser.UserRole == User.Role.Patient)

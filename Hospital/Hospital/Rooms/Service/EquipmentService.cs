@@ -9,18 +9,18 @@ using Hospital.Rooms.Model;
 
 namespace Hospital.Rooms.Service
 {
-    public class EquipmentService
+    public class EquipmentService : IEquipmentService
     {
-        private EquipmentRepository _equipmentRepository;
-        private RoomService _roomService;
+        private IEquipmentRepository _equipmentRepository;
+        private IRoomService _roomService;
         
-        public List<Equipment> AllEquipment { get { return _equipmentRepository.AllEquipment; } }
-
-        public EquipmentService(RoomService roomService)
+        public EquipmentService(IEquipmentRepository equipmentRepository, IRoomService roomService)
         {
-            this._roomService = roomService;
-            _equipmentRepository = new EquipmentRepository(roomService);
+            _roomService = roomService;
+            _equipmentRepository = equipmentRepository;
         }
+
+        public List<Equipment> AllEquipment { get { return _equipmentRepository.AllEquipment; } }
 
         public Equipment GetEquipmentById(string id)
         {

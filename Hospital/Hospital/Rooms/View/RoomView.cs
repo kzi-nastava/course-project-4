@@ -9,11 +9,11 @@ using Hospital.Rooms.Model;
 
 namespace Hospital.Rooms.View
 {
-    public class RoomView
+    public class RoomView : IRoomView
     {
-        private RoomService _roomService;
+        private IRoomService _roomService;
 
-        public RoomView(RoomService roomService)
+        public RoomView(IRoomService roomService)
         {
             this._roomService = roomService;
         }

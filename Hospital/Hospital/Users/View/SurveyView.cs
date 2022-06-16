@@ -9,7 +9,7 @@ using Hospital.Users.Model;
 
 namespace Hospital.Users.View
 {
-    public class SurveyView
+    public class SurveyView : ISurveyView
     {
         DoctorSurveyService _doctorSurveyService;
         HospitalSurveyService _hospitalSurveyService;
@@ -33,7 +33,7 @@ namespace Hospital.Users.View
                 ViewDoctorSurveyResults();
         }
 
-        private void ViewHospitalSurveyResults()
+        public void ViewHospitalSurveyResults()
         {
             HospitalSurveyResult result = _hospitalSurveyService.GetResult();
             Console.WriteLine("Rezultat ankete o bolnici");
@@ -123,7 +123,7 @@ namespace Hospital.Users.View
             PrintDoctors(worstDoctors);
         }
 
-        private void ViewDoctorSurveyResults()
+        public void ViewDoctorSurveyResults()
         {
             List<DoctorSurveyResult> results = _doctorSurveyService.GetResults();
             Console.WriteLine("Rezultati anketa o svim doktorima");

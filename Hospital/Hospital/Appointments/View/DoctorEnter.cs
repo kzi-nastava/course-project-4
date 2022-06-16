@@ -82,7 +82,7 @@ namespace Hospital.Appointments.View
             return newDurationOperation;
         }
 
-        public static string EnterRoomNumber(RoomService roomService)
+        public static string EnterRoomNumber(IRoomService roomService)
         {
             string newRoomNumber;
             do
