@@ -45,6 +45,7 @@
     <Compile Include="Rooms\Model\EquipmentMoving.cs" />
     <Compile Include="Rooms\Model\Renovation.cs" />
     <Compile Include="Rooms\Model\MergeRenovation.cs" />
+    <Compile Include="Rooms\Model\SplitRenovation.cs" />
     <Compile Include="Rooms\Repository\RoomRepository.cs" />
     <Compile Include="Rooms\Repository\DynamicEquipmentRequestRepository.cs" />
     <Compile Include="Rooms\Repository\DynamicRoomEquipmentRepository.cs" />

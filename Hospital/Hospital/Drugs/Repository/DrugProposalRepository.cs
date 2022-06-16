@@ -13,11 +13,58 @@ namespace Hospital.Drugs.Repository
 {
     public class DrugProposalRepository
     {
-        private IngredientService _ingredientService;
+        private IngredientService _ingredientService; 
+        private List<DrugProposal> _drugProposals;
 
         public DrugProposalRepository()
         {
             _ingredientService = new IngredientService();
+            _drugProposals = Load();
+        }
+
+        public List<DrugProposal> DrugProposals { get { return _drugProposals; } }
+
+        public List<DrugProposal> GetDrugProposalsByStatus(DrugProposal.Status status)
+        {
+            List<DrugProposal> proposals = new List<DrugProposal>();
+            foreach (DrugProposal drugProposal in this._drugProposals)
+            {
+                if (drugProposal.ProposalStatus == status)
+                {
+                    proposals.Add(drugProposal);
+                }
+            }
+            return proposals;
+        }
+
+        public void UpdateDrugProposal(DrugProposal drugProposalForChange)
+        {
+            foreach (DrugProposal drugProposal in this._drugProposals)
+            {
+                if (drugProposal.Id.Equals(drugProposalForChange.Id))
+                {
+                    drugProposal.ProposalStatus = drugProposalForChange.ProposalStatus;
+                    drugProposal.Comment = drugProposalForChange.Comment;
+                }
+            }
+            Save(this._drugProposals);
+        }
+
+        public DrugProposal Get(string id)
+        {
+            foreach (DrugProposal drugProposal in _drugProposals)
+            {
+                if (drugProposal.Id.Equals(id))
+                    return drugProposal;
+            }
+            return null;
+        }
+
+        public void CreateDrugProposal(string id, string drugName, List<Ingredient> ingredients)
+        {
+            DrugProposal drugProposal = new DrugProposal(id, drugName, ingredients, DrugProposal.Status.Waiting, "");
+            _drugProposals.Add(drugProposal);
+            Save(_drugProposals);
         }
 
         public List<DrugProposal> Load()

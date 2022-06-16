@@ -14,6 +14,48 @@ namespace Hospital.Rooms.Repository
     public class RenovationRepository
     {
         private static string s_filePath = @"..\..\Data\renovations.csv";
+        private List<Renovation> _allRenovations;
+
+        public RenovationRepository()
+        {
+            _allRenovations = Load();
+        }
+
+        public List<Renovation> AllRenovations { get { return _allRenovations; } }
+
+        public bool IdExists(string id)
+        {
+            foreach (Renovation renovation in _allRenovations)
+            {
+                if (renovation.Id.Equals(id))
+                    return true;
+            }
+            return false;
+        }
+
+        public void CreateRenovation(string id, DateTime startDate, DateTime endDate, string roomId, Renovation.Type type)
+        {
+            Renovation renovation = new Renovation(id, startDate, endDate, roomId, true, type);
+            _allRenovations.Add(renovation);
+            Save(_allRenovations);
+        }
+
+        public void CreateSimpleRenovation(string id, DateTime startDate, DateTime endDate, string roomId)
+        {
+            CreateRenovation(id, startDate, endDate, roomId, Renovation.Type.SimpleRenovation);
+        }
+
+        public void CreateSplitRenovation(string id, DateTime startDate, DateTime endDate, string roomId)
+        {
+            CreateRenovation(id, startDate, endDate, roomId, Renovation.Type.SplitRenovation);
+        }
+
+        public void CreateMergeRenovation(string id, DateTime startDate, DateTime endDate, string roomId, string otherRoomId)
+        {
+            Renovation renovation = new MergeRenovation(id, startDate, endDate, roomId, true, otherRoomId);
+            _allRenovations.Add(renovation);
+            Save(_allRenovations);
+        }
 
         public List<Renovation> Load()
         {
@@ -40,6 +82,10 @@ namespace Hospital.Rooms.Repository
                     {
                         string otherRoomId = fields[6];
                         renovation = new MergeRenovation(id, startDate, endDate, roomId, active, otherRoomId);
+                    }
+                    else if (type == Renovation.Type.SplitRenovation)
+                    {
+                        renovation = new SplitRenovation(id, startDate, endDate, roomId, active);
                     }
                     else
                     {

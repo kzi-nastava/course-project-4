@@ -12,37 +12,22 @@ namespace Hospital.Drugs.Service
     public class IngredientService
     {
         private IngredientRepository _ingredientRepository;
-        private List<Ingredient> _ingredients;
-
+        
         public IngredientService()
         {
             this._ingredientRepository = new IngredientRepository();
-            this._ingredients = _ingredientRepository.Load();
         }
 
-        public IngredientRepository IngredientRepository{get{ return _ingredientRepository; }set { _ingredientRepository = value; } }
-        public List<Ingredient> Ingredients { get { return _ingredients; } set { _ingredients = value; } }
-
+        public List<Ingredient> Ingredients { get { return _ingredientRepository.Ingredients; } }
+        
         public Ingredient Get(string id)
         {
-            foreach (Ingredient ingredient in _ingredients)
-            {
-                if (ingredient.Id.Equals(id))
-                    return ingredient; 
-            }
-            return null;
+            return _ingredientRepository.Get(id);
         }
 
         public bool IsIngredientNameValid(string name)
         {
-            foreach (Ingredient ingredient in _ingredients)
-            {
-                if (ingredient.IngredientName.ToLower().Equals(name.ToLower()))
-                {
-                    return true;
-                }
-            }
-            return false;
+            return _ingredientRepository.IsIngredientNameValid(name);
         }
         public bool IdExists(string id)
         {
@@ -53,9 +38,7 @@ namespace Hospital.Drugs.Service
         {
             if (IdExists(id))
                 return false;
-            Ingredient ingredient = new Ingredient(id, name);
-            _ingredients.Add(ingredient);
-            _ingredientRepository.Save(_ingredients);
+            _ingredientRepository.CreateIngredient(id, name);
             return true;
         }
 
@@ -63,8 +46,7 @@ namespace Hospital.Drugs.Service
         {
             if (!IdExists(id))
                 return false;
-            DeleteIngredient(id);
-            CreateIngredient(id, name);
+            _ingredientRepository.UpdateIngredient(id, name);
             return true;
         }
 
@@ -72,8 +54,7 @@ namespace Hospital.Drugs.Service
         {
             if (!IdExists(id))
                 return false;
-            _ingredients.Remove(Get(id));
-            _ingredientRepository.Save(_ingredients);
+            _ingredientRepository.DeleteIngredient(id);
             return true;
         }
     }

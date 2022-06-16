@@ -13,28 +13,22 @@ namespace Hospital.Drugs.Service
     public class DrugService
     {
         private DrugRepository _drugRepository;
-        private List<Drug> _drugs;
-
+        
         public DrugService()
         {
             this._drugRepository = new DrugRepository();
-            this._drugs = _drugRepository.Load();
         }
 
-        public DrugRepository DrugRepository { get { return _drugRepository; } set { _drugRepository = value; } }
-
-        public List<Drug> Drugs { get { return _drugs; } set { _drugs = value; } }
+        public List<Drug> Drugs { get { return _drugRepository.Drugs; } }
 
         public int GetNewDrugId()
         {
-            return _drugs.Count + 1;
+            return _drugRepository.GetNewDrugId();
         }
 
         public void AddDrug(Drug drug)
         {
-            this._drugs.Add(drug);
-            this._drugRepository.Save(this._drugs);
+            _drugRepository.AddDrug(drug);
         }
-
     }
 }

@@ -14,10 +14,25 @@ namespace Hospital.Drugs.Repository
     public class DrugRepository
     {
         private IngredientService _ingredientService;
+        private List<Drug> _drugs;
 
         public DrugRepository()
         {
             _ingredientService = new IngredientService();
+            this._drugs = Load();
+        }
+
+        public List<Drug> Drugs { get { return _drugs; } }
+
+        public int GetNewDrugId()
+        {
+            return _drugs.Count + 1;
+        }
+
+        public void AddDrug(Drug drug)
+        {
+            this._drugs.Add(drug);
+            Save(this._drugs);
         }
 
         public List<Drug> Load()

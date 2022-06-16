@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Hospital.Rooms.Service;
 
 namespace Hospital.Rooms.Model
 {
@@ -16,12 +17,12 @@ namespace Hospital.Rooms.Model
             MergeRenovation = 3
         }
 
-        private string _id;
-        private DateTime _startDate;
-        private DateTime _endDate;
-        private string _roomId;
-        private bool _active;
-        private Type _type;
+        protected string _id;
+        protected DateTime _startDate;
+        protected DateTime _endDate;
+        protected string _roomId;
+        protected bool _active;
+        protected Type _type;
 
         public string Id { get { return _id; } }
         public DateTime StartDate { get { return _startDate; } }
@@ -38,6 +39,11 @@ namespace Hospital.Rooms.Model
             this._roomId = roomId;
             this._active = active;
             this._type = type;
+        }
+
+        virtual public void Renovate(RoomService roomService, EquipmentService equipmentService)
+        {
+            this._active = false;
         }
     }
 }

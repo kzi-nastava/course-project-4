@@ -13,29 +13,17 @@ namespace Hospital.Drugs.Service
     public class DrugProposalService
     {
         private DrugProposalRepository _drugProposalRepository;
-        private List<DrugProposal> _drugProposals;
-
+        
         public DrugProposalService()
         {
             this._drugProposalRepository = new DrugProposalRepository();
-            this._drugProposals = _drugProposalRepository.Load();
         }
 
-        public List<DrugProposal> DrugProposals { get { return _drugProposals; }set { _drugProposals = value; } }
-
-        
+        public List<DrugProposal> DrugProposals { get { return _drugProposalRepository.DrugProposals; } }
 
         public List<DrugProposal> GetDrugProposalsByStatus(DrugProposal.Status status)
         {
-            List<DrugProposal> proposals = new List<DrugProposal>();
-            foreach (DrugProposal drugProposal in this._drugProposals)
-            {
-                if (drugProposal.ProposalStatus == status)
-                {
-                    proposals.Add(drugProposal);
-                }
-            }
-            return proposals;
+            return _drugProposalRepository.GetDrugProposalsByStatus(status);
         }
 
         public List<DrugProposal> WaitingStatusDrugProposals()
@@ -50,31 +38,14 @@ namespace Hospital.Drugs.Service
 
         public void UpdateDrugProposal(DrugProposal drugProposalForChange)
         {
-            foreach(DrugProposal drugProposal in this._drugProposals)
-            {
-                if (drugProposal.Id.Equals(drugProposalForChange.Id))
-                {
-                    drugProposal.ProposalStatus = drugProposalForChange.ProposalStatus;
-                    drugProposal.Comment = drugProposalForChange.Comment;
-                }
-            }
-            UpdateDrugProposalFile();
-        }
-
-        public void UpdateDrugProposalFile()
-        {
-            this._drugProposalRepository.Save(this._drugProposals);
+            _drugProposalRepository.UpdateDrugProposal(drugProposalForChange);
         }
 
         public DrugProposal Get(string id)
         {
-            foreach (DrugProposal drugProposal in _drugProposals)
-            {
-                if (drugProposal.Id.Equals(id))
-                    return drugProposal;
-            }
-            return null;
+            return _drugProposalRepository.Get(id);
         }
+
         public bool IdExists(string id)
         {
             return Get(id) != null;
@@ -84,9 +55,7 @@ namespace Hospital.Drugs.Service
         {
             if (IdExists(id))
                 return false;
-            DrugProposal drugProposal = new DrugProposal(id, drugName, ingredients, DrugProposal.Status.Waiting, "");
-            _drugProposals.Add(drugProposal);
-            UpdateDrugProposalFile();
+            _drugProposalRepository.CreateDrugProposal(id, drugName, ingredients);
             return true;
         }
 
@@ -94,7 +63,7 @@ namespace Hospital.Drugs.Service
         {
             if (!IdExists(id) || Get(id).ProposalStatus != DrugProposal.Status.Rejected)
                 return false;
-            foreach (DrugProposal proposal in _drugProposals) 
+            foreach (DrugProposal proposal in DrugProposals) 
             {
                 if (proposal.Id.Equals(id))
                 {
@@ -103,7 +72,7 @@ namespace Hospital.Drugs.Service
                     proposal.ProposalStatus = DrugProposal.Status.Waiting;
                 }
             }
-            UpdateDrugProposalFile();
+            _drugProposalRepository.Save(DrugProposals);
             return true;
         }
     }

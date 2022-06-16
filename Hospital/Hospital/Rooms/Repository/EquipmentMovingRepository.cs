@@ -14,6 +14,43 @@ namespace Hospital.Rooms.Repository
     public class EquipmentMovingRepository
     {
         private static string s_filePath = @"..\..\Data\equipmentMovings.csv";
+        private List<EquipmentMoving> _allEquipmentMovings;
+
+        public EquipmentMovingRepository()
+        {
+            _allEquipmentMovings = Load();
+        }
+
+        public List<EquipmentMoving> AllEquipmentMovings { get { return _allEquipmentMovings; } }
+
+        public bool IdExists(string id)
+        {
+            foreach (EquipmentMoving equipmentMoving in _allEquipmentMovings)
+            {
+                if (equipmentMoving.Id.Equals(id))
+                    return true;
+            }
+            return false;
+        }
+
+        public bool ActiveMovingExists(string equipmentId)
+        {
+            foreach (EquipmentMoving equipmentMoving in _allEquipmentMovings)
+            {
+                if (equipmentMoving.IsActive && equipmentMoving.EquipmentId.Equals(equipmentId))
+                    return true;
+            }
+            return false;
+        }
+
+        public void CreateEquipmentMoving(string id, string equipmentId, DateTime scheduledTime,
+            string sourceRoomId, string destinationRoomId)
+        {
+            EquipmentMoving equipmentMoving = new EquipmentMoving(id, equipmentId, scheduledTime,
+                sourceRoomId, destinationRoomId, true);
+            _allEquipmentMovings.Add(equipmentMoving);
+            Save(_allEquipmentMovings);
+        }
 
         public List<EquipmentMoving> Load()
         {

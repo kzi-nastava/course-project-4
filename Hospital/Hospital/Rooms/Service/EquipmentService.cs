@@ -13,25 +13,18 @@ namespace Hospital.Rooms.Service
     {
         private EquipmentRepository _equipmentRepository;
         private RoomService _roomService;
-        private List<Equipment> _allEquipment;
-
-        public List<Equipment> AllEquipment { get { return _allEquipment; } }
+        
+        public List<Equipment> AllEquipment { get { return _equipmentRepository.AllEquipment; } }
 
         public EquipmentService(RoomService roomService)
         {
             this._roomService = roomService;
-            _equipmentRepository = new EquipmentRepository();
-            _allEquipment = _equipmentRepository.Load();
+            _equipmentRepository = new EquipmentRepository(roomService);
         }
 
         public Equipment GetEquipmentById(string id)
         {
-            foreach (Equipment equipment in _allEquipment)
-            {
-                if (equipment.Id.Equals(id))
-                    return equipment;
-            }
-            return null;
+            return _equipmentRepository.GetEquipmentById(id);
         }
 
         public bool IdExist(string id)
@@ -43,9 +36,7 @@ namespace Hospital.Rooms.Service
         {
             if (IdExist(id))
                 return false;
-            Equipment equipment = new Equipment(id, name, type, quantity, roomId);
-            _allEquipment.Add(equipment);
-            _equipmentRepository.Save(_allEquipment);
+            _equipmentRepository.CreateEquipment(id, name, type, quantity, roomId);
             return true;
         }
 
@@ -53,8 +44,7 @@ namespace Hospital.Rooms.Service
         {
             if (!IdExist(id))
                 return false;
-            DeleteEquipment(id);
-            CreateEquipment(id, name, type, quantity, roomId);
+            _equipmentRepository.UpdateEquipment(id, name, type, quantity, roomId);
             return true;
         }
 
@@ -62,70 +52,33 @@ namespace Hospital.Rooms.Service
         {
             if (!IdExist(id))
                 return false;
-            Equipment equipment = GetEquipmentById(id);
-            _allEquipment.Remove(equipment);
-            _equipmentRepository.Save(_allEquipment);
+            _equipmentRepository.DeleteEquipment(id);
             return true;
         }
 
         public List<Equipment> Search(string query)
         {
-            List<Equipment> answer = new List<Equipment>();
-            query = query.ToLower();
-            foreach (Equipment equipment in _allEquipment)
-            {
-                if (equipment.Name.ToLower().Contains(query) || equipment.Id.ToLower().Contains(query)
-                    || equipment.TypeDescription.ToLower().Contains(query))
-                    answer.Add(equipment);
-            }
-            return answer;
+            return _equipmentRepository.Search(query);
         }
 
         public List<Equipment> FilterByRoomType(Room.Type roomType)
         {
-            List<Equipment> answer = new List<Equipment>();
-            foreach (Equipment equipment in _allEquipment)
-            {
-                Room room = _roomService.GetRoomById(equipment.RoomId);
-                if (room.RoomType == roomType)
-                    answer.Add(equipment);
-            }
-            return answer;
+            return _equipmentRepository.FilterByRoomType(roomType);
         }
 
         public List<Equipment> FilterByQuantity(int lowerBound, int upperBound) // If bound is set to -1 it is ignored
         {
-            List<Equipment> answer = new List<Equipment>();
-            foreach (Equipment equipment in _allEquipment)
-            {
-                if (lowerBound != -1 && lowerBound > equipment.Quantity)
-                    continue;
-                if (upperBound != -1 && upperBound < equipment.Quantity)
-                    continue;
-                answer.Add(equipment);
-            }
-            return answer;
+            return _equipmentRepository.FilterByQuantity(lowerBound, upperBound);
         }
 
         public List<Equipment> FilterByEquipmentType(Equipment.Type equipmentType)
         {
-            List<Equipment> answer = new List<Equipment>();
-            foreach (Equipment equipment in _allEquipment)
-            {
-                if (equipment.EquipmentType == equipmentType)
-                    answer.Add(equipment);
-            }
-            return answer;
+            return _equipmentRepository.FilterByEquipmentType(equipmentType);
         }
 
         public void ChangeRoom(string roomBefore, string roomAfter)
         {
-            foreach (Equipment equipment in _allEquipment)
-            {
-                if (equipment.RoomId.Equals(roomBefore))
-                    equipment.RoomId = roomAfter;
-            }
-            _equipmentRepository.Save(_allEquipment);
+            _equipmentRepository.ChangeRoom(roomBefore, roomAfter);
         }
     }
 }
