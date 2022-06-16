@@ -10,13 +10,12 @@ using Hospital.Users.Model;
 
 namespace Hospital.Users.Service
 {
-	public class NotificationService
+	public class NotificationService : INotificationService
 	{
 		private NotificationRepository _notificationRepository;
 		private List<Notification> _notifications;
 
 		public List<Notification> Notifications { get { return _notifications; } }
-		public NotificationRepository Repository { get { return _notificationRepository; } }
 
 		public NotificationService()
 		{

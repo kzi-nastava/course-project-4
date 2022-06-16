@@ -10,7 +10,7 @@ using Hospital.Users.View;
 
 namespace Hospital.Users.Service
 {
-    public class PatientAccountService
+    public class PatientAccountService : IPatientAccountService
 	{
 		private List<User> _patients;
 		private UserService _userService;

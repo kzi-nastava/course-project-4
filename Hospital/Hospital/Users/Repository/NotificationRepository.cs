@@ -10,7 +10,7 @@ using Hospital.Users.Model;
 
 namespace Hospital.Users.Repository
 {
-	public class NotificationRepository
+	public class NotificationRepository : INotificationRepository
 	{
 		public List<Notification> Load()
 		{
