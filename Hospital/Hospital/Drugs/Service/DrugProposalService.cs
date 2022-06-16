@@ -10,7 +10,7 @@ using Hospital.Drugs.Model;
 
 namespace Hospital.Drugs.Service
 {
-    public class DrugProposalService
+    public class DrugProposalService: IDrugProposalService
     {
         private DrugProposalRepository _drugProposalRepository;
         

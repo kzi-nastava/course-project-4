@@ -12,7 +12,7 @@ using Hospital.Users.View;
 
 namespace Hospital.Appointments.Repository
 {
-    public class ReferralRepository
+    public class ReferralRepository: IReferralRepository
 	{
         public List<Referral> Load()
         {

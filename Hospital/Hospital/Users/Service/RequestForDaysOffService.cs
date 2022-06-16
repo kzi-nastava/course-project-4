@@ -13,7 +13,7 @@ using Hospital.Users.Model;
 
 namespace Hospital.Users.Service
 {
-    public class RequestForDaysOffService
+    public class RequestForDaysOffService: IRequestForDaysOffService
     {
         private RequestForDaysOffRepository _requestForDaysOffRepository;
         private AppointmentRepository _appointmentRepository;

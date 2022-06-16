@@ -9,5 +9,9 @@ namespace Hospital.Rooms.Service
 {
     public interface IDynamicRoomEquipmentService: IService<DynamicEquipment>
     {
+        void UpdateFile();
+        void UpdateDictionary(Dictionary<string, int> amount, string idRoom);
+        void ChangeEquipmentAmount(string roomId, string equipmentId, int amount, bool add);
+
     }
 }

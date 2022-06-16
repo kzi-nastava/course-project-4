@@ -11,7 +11,7 @@ using Hospital.Users.Model;
 
 namespace Hospital.Users.Repository
 {
-    public class RequestForDaysOffRepository
+    public class RequestForDaysOffRepository: IRequestForDaysOffRepository
     {
         public List<RequestForDaysOff> Load()
         {

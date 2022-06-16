@@ -9,7 +9,7 @@ using Hospital.Drugs.Model;
 
 namespace Hospital.Drugs.Service
 {
-    public class IngredientService
+    public class IngredientService: IIngredientService
     {
         private IngredientRepository _ingredientRepository;
         

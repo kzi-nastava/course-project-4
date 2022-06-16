@@ -8,5 +8,12 @@ namespace Hospital.Drugs.Service
 {
      public interface IIngredientService: IService<Ingredient>
     {
+        bool DeleteIngredient(string id);
+        bool UpdateIngredient(string id, string name);
+        bool CreateIngredient(string id, string name);
+        bool IdExists(string id);
+        bool IsIngredientNameValid(string name);
+        Ingredient Get(string id);
+
     }
 }

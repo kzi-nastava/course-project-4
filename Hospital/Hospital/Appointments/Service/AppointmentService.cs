@@ -17,7 +17,7 @@ using Hospital.Rooms.Service;
 
 namespace Hospital.Appointments.Service
 {
-    public class AppointmentService
+    public class AppointmentService : IAppointmentService
     {
         private AppointmentRepository _appointmentRepository;
         private UserService _userService;

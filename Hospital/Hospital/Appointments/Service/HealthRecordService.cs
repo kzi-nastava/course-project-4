@@ -12,7 +12,7 @@ using Hospital.Users.Model;
 
 namespace Hospital.Appointments.Service
 {
-    public class HealthRecordService
+    public class HealthRecordService: IHealthRecordService
     {
         private HealthRecordRepository _healthRecordRepository;
         private UserRepository _userRepository;
