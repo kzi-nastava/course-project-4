@@ -13,9 +13,9 @@ using Hospital.Appointments.Model;
 
 namespace Hospital.Users.View
 {
-    public class Secretary : IMenuView
+	public class Secretary : IMenuView
 	{
-		
+
 		private PatientAccountView _patientAccountView;
 		private PatientRequestView _patientRequestView;
 		private UrgentSchedulingView _urgentSchedulingView;
@@ -24,7 +24,7 @@ namespace Hospital.Users.View
 		private DynamicEquipmentRequestView _dynamicEquipmentRequestView;
 		private AnswerRequestsForDaysOffView _answerRequestsForDaysOffView;
 
-		public Secretary(UserService service)
+		public Secretary()
 		{
 			this._patientAccountView = new PatientAccountView();
 			this._patientRequestView = new PatientRequestView();
@@ -94,19 +94,19 @@ namespace Hospital.Users.View
 				{
 					this._referralScheduling.ScheduleAppointmentWithReferral();
 				}
-				else if(choice == "9")
+				else if (choice == "9")
 				{
 					this._urgentSchedulingView.SelectValuesForUrgentSchedule();
 				}
-				else if(choice == "10")
+				else if (choice == "10")
 				{
 					this._dynamicEquipmentRequestView.SendRequestForProcurment();
 				}
-				else if(choice == "11")
+				else if (choice == "11")
 				{
 					this._dynamicEquipmentMovingView.MoveEquipment();
 				}
-				else if(choice == "12")
+				else if (choice == "12")
 				{
 					this._answerRequestsForDaysOffView.AnswerRequest();
 				}
@@ -151,7 +151,5 @@ namespace Hospital.Users.View
 			_patientRequestView._patientRequestService.ProcessRequest(activeRequest, actionIndex);
 			Console.WriteLine("\nZahtev je uspesno obradjen");
 		}
-
 	}
-
 }

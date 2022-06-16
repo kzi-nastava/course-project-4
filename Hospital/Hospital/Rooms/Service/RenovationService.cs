@@ -3,36 +3,36 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Hospital;
+using Autofac;
 using Hospital.Rooms.Repository;
 using Hospital.Appointments.Service;
 using Hospital.Rooms.Model;
 
 namespace Hospital.Rooms.Service
 {
-    public class RenovationService : IRenovationService
+    public class RenovationService
     {
+        public List<Renovation> AllRenovations { get { return _renovationRepository.AllRenovations; } }
         private IRenovationRepository _renovationRepository;
         private IRoomService _roomService;
-        private AppointmentService _appointmentService;
+        private IAppointmentService _appointmentService;
         private IEquipmentService _equipmentService;
-        
-        public RenovationService(IRenovationRepository renovationRepository, IRoomService roomService, AppointmentService appointmentService, IEquipmentService equipmentService) 
-        {
-            this._renovationRepository = renovationRepository;
-            this._roomService = roomService;
-            this._appointmentService = appointmentService;
-            this._equipmentService = equipmentService;
-        }
-        
-        public List<Renovation> AllRenovations { get { return _renovationRepository.AllRenovations; } }
 
-        public bool IdExists(string id) 
+        public RenovationService()
+        {
+            this._renovationRepository = Globals.container.Resolve<IRenovationRepository>();
+            this._roomService = Globals.container.Resolve<IRoomService>();
+            this._appointmentService = Globals.container.Resolve<IAppointmentService>();
+            this._equipmentService = Globals.container.Resolve<IEquipmentService>();
+        }
+
+        public bool IdExists(string id)
         {
             return _renovationRepository.IdExists(id);
         }
 
-        public bool ActiveRenovationExists(string roomId) 
+        public bool ActiveRenovationExists(string roomId)
         {
             foreach (Renovation renovation in AllRenovations)
             {

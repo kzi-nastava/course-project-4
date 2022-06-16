@@ -4,7 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-
+using Hospital;
+using Autofac;
 using Hospital.Drugs.Repository;
 using Hospital.Drugs.Model;
 
@@ -13,10 +14,10 @@ namespace Hospital.Drugs.Service
     public class DrugService : IDrugService
     {
         private IDrugRepository _drugRepository;
-        
-        public DrugService(IDrugRepository drugRepository)
+
+        public DrugService()
         {
-            this._drugRepository = drugRepository;
+            this._drugRepository = Globals.container.Resolve<IDrugRepository>();
         }
 
         public List<Drug> Drugs { get { return _drugRepository.Drugs; } }

@@ -3,19 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Autofac;
 using Hospital.Rooms.Repository;
 using Hospital.Rooms.Model;
+using Hospital;
 
 namespace Hospital.Rooms.Service
 {
-    public class RoomService : IRoomService
+    public class RoomService
     {
         private IRoomRepository _roomRepository;
-        
-        public RoomService(IRoomRepository roomRepository)
+
+        public RoomService()
         {
-            _roomRepository = roomRepository;
+            _roomRepository = Globals.container.Resolve<IRoomRepository>();
         }
         public List<Room> AllRooms { get { return _roomRepository.AllRooms; } }
 
@@ -64,6 +65,7 @@ namespace Hospital.Rooms.Service
             }
             Console.WriteLine("Broj sobe ne postoji!");
             return false;
+
         }
     }
 }

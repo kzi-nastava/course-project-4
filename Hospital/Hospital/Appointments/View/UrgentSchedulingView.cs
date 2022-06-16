@@ -11,24 +11,25 @@ using Hospital.Appointments.Service;
 using Hospital.Users.Model;
 using Hospital.Appointments.Model;
 using Hospital.Rooms.Model;
-
+using Hospital;
+using Autofac;
 namespace Hospital.Appointments.View
 {
-    public class UrgentSchedulingView
+	public class UrgentSchedulingView
 	{
 		private PatientAccountService _patientAccountService;
 		private PatientAccountView _patientAccountView;
-		private AppointmentService _appointmentService;
-		private NotificationService _notificationService;
-		private UserService _userService;
+		private IAppointmentService _appointmentService;
+		private NotificationService _notificationService; //ovde
+		private IUserService _userService;
 
 		public UrgentSchedulingView()
 		{
-			this._patientAccountService = new PatientAccountService();
+			this._patientAccountService = new PatientAccountService(); //ovde
 			this._patientAccountView = new PatientAccountView();
-			this._appointmentService = new AppointmentService();
-			this._notificationService = new NotificationService();
-			this._userService = new UserService();
+			this._appointmentService = Globals.container.Resolve<IAppointmentService>();
+			this._notificationService = new NotificationService(); //ovde
+			this._userService = Globals.container.Resolve<IUserService>();
 		}
 
 		public void SelectValuesForUrgentSchedule()

@@ -4,10 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Hospital.Users.Model;
+using Hospital.Users.Repository;
+
 namespace Hospital.Users.Service
 {
     public interface IUserService
     {
+        IUserRepository UserRepository { get; }
+        List<User> Users { get; }
         List<User> AllDoctors();
         bool IsPatientEmailValid(string patientEmail);
         void UpdateFile();

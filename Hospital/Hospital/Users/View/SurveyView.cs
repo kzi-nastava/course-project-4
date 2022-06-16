@@ -3,21 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Hospital;
+using Autofac;
 using Hospital.Users.Service;
 using Hospital.Users.Model;
 
 namespace Hospital.Users.View
 {
-    public class SurveyView : ISurveyView
+    public class SurveyView
     {
         private IDoctorSurveyService _doctorSurveyService;
         private IHospitalSurveyService _hospitalSurveyService;
 
-        public SurveyView(IDoctorSurveyService doctorSurveyService, IHospitalSurveyService hospitalSurveyService)
+        public SurveyView()
         {
-            _doctorSurveyService = doctorSurveyService;
-            _hospitalSurveyService = hospitalSurveyService;
+            _doctorSurveyService = Globals.container.Resolve<IDoctorSurveyService>();
+            _hospitalSurveyService = Globals.container.Resolve<IHospitalSurveyService>();
         }
 
         public void ViewSurveyResults()
@@ -33,13 +34,13 @@ namespace Hospital.Users.View
                 ViewDoctorSurveyResults();
         }
 
-        public void ViewHospitalSurveyResults()
+        private void ViewHospitalSurveyResults()
         {
             HospitalSurveyResult result = _hospitalSurveyService.GetResult();
             Console.WriteLine("Rezultat ankete o bolnici");
             Console.WriteLine("-------------------------");
             Console.WriteLine("Broj anketa: " + result.SurveyCount);
-            
+
             Console.Write("Prosecna ocena kvaliteta: " + result.AverageQuality + " ->");
             for (int i = 1; i <= 5; i++)
                 Console.Write(" " + i + "(" + result.QualityCount[i] + ")");
@@ -75,12 +76,12 @@ namespace Hospital.Users.View
             Console.WriteLine("Prezime: " + result.Doctor.Surname);
             Console.WriteLine("E-mail: " + result.Doctor.Email);
             Console.WriteLine("Broj anketa: " + result.SurveyCount);
-            
+
             Console.Write("Prosecna ocena kvaliteta: " + result.AverageQuality + " ->");
             for (int i = 1; i <= 5; i++)
                 Console.Write(" " + i + "(" + result.QualityCount[i] + ")");
             Console.WriteLine();
-            
+
             Console.Write("Prosecna ocena preporuke: " + result.AverageRecommendation + " ->");
             for (int i = 1; i <= 5; i++)
                 Console.Write(" " + i + "(" + result.RecommendationCount[i] + ")");
@@ -123,12 +124,12 @@ namespace Hospital.Users.View
             PrintDoctors(worstDoctors);
         }
 
-        public void ViewDoctorSurveyResults()
+        private void ViewDoctorSurveyResults()
         {
             List<DoctorSurveyResult> results = _doctorSurveyService.GetResults();
             Console.WriteLine("Rezultati anketa o svim doktorima");
             Console.WriteLine("---------------------------------");
-            
+
             foreach (DoctorSurveyResult result in results)
             {
                 PrintDoctorSurveyResult(result);

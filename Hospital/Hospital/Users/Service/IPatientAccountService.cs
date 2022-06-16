@@ -7,7 +7,7 @@ using Hospital.Users.Model;
 
 namespace Hospital.Users.Service
 {
-	public interface IPatientAccountService : IService<User>
+	public interface IPatientAccountService
 	{
 		List<User> Patients { get; }
 		List<User> FilterPatients(List<User> allUsers);

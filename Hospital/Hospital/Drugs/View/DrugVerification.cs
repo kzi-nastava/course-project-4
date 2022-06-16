@@ -3,24 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Hospital;
+using Autofac;
 using Hospital.Drugs.Service;
 using Hospital.Drugs.Model;
-using Hospital.Drugs.Repository;
 
 namespace Hospital.Drugs.View
 {
     public class DrugVerification
     {
-        IngredientService ingredientService;
-        DrugProposalService drugProposalService;
-        DrugService drugService;
+        private IIngredientService ingredientService;
+        private IDrugProposalService drugProposalService;
+        private IDrugService drugService;
 
         public DrugVerification()
         {
-            ingredientService = new IngredientService(new IngredientRepository());
-            drugProposalService = new DrugProposalService(new DrugProposalRepository(ingredientService));
-            drugService = new DrugService(new DrugRepository(ingredientService));
+            ingredientService = Globals.container.Resolve<IIngredientService>();
+            drugProposalService = Globals.container.Resolve<IDrugProposalService>();
+            drugService = Globals.container.Resolve<IDrugService>();
         }
 
         private void DrugVerificationManagement()
@@ -61,7 +61,7 @@ namespace Hospital.Drugs.View
             }
             else
             {
-                
+
                 Console.WriteLine("Unesite komentar odbijanja leka: ");
                 string comment = Console.ReadLine();
                 drugProposalSelected.Comment = comment;
@@ -79,7 +79,7 @@ namespace Hospital.Drugs.View
         public void DisplayDrugsForVerification()
         {
             List<DrugProposal> drugProposals = drugProposalService.WaitingStatusDrugProposals();
-            if(drugProposals.Count != 0)
+            if (drugProposals.Count != 0)
             {
                 int serialNumber = 1;
                 foreach (DrugProposal drugProposal in drugProposals)

@@ -11,27 +11,28 @@ using Hospital.Appointments.Service;
 using Hospital;
 using Hospital.Appointments.Model;
 using Hospital.Users.Model;
-
+using Hospital;
+using Autofac;
 namespace Hospital.Appointments.View
 {
     public class RecommendedAppointment
     {
         private PatientAppointmentsService _patientAppointmentsService;
         private Patient _currentPatient;
-        private UserActionService _userActionService;
-        private UserService _userService;
+        private IUserActionService _userActionService;
+        private IUserService _userService;
         private PatientSchedulingAppointment _patientScheduling;
-        private AppointmentService _appointmentService;
+        private IAppointmentService _appointmentService;
 
-        public RecommendedAppointment(Patient patient, UserService userService, PatientAppointmentsService patientAppointmentsService, UserActionService userActionService, PatientSchedulingAppointment patientScheduling, AppointmentService appointmentService)
+        public RecommendedAppointment(Patient patient, PatientAppointmentsService patientAppointmentsService, PatientSchedulingAppointment patientScheduling)
         {
-            
+
             this._patientAppointmentsService = patientAppointmentsService;
             this._currentPatient = patient;
-            this._userActionService = userActionService;
-            this._userService = userService;
+            this._userActionService = Globals.container.Resolve<IUserActionService>();
+            this._userService = Globals.container.Resolve<IUserService>();
             this._patientScheduling = patientScheduling;
-            this._appointmentService = appointmentService;
+            this._appointmentService = Globals.container.Resolve<IAppointmentService>();
         }
 
         public string[] InputValueForRecommendationAppointments()

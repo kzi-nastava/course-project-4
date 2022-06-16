@@ -7,16 +7,17 @@ using System.Threading.Tasks;
 using Hospital.Rooms.Service;
 using Hospital.Rooms.Model;
 using Hospital.Rooms.Repository;
-
+using Hospital;
+using Autofac;
 namespace Hospital.Rooms.View
 {
-    public class DynamicEquipmentRequestView
+	public class DynamicEquipmentRequestView
 	{
-		private WarehouseService _warehouseService;
+		private IWarehouseService _warehouseService;
 
 		public DynamicEquipmentRequestView()
 		{
-			this._warehouseService = new WarehouseService();
+			this._warehouseService = Globals.container.Resolve<IWarehouseService>();
 		}
 
 		public static void ShowEquipment(List<DynamicEquipment> dynamicEquipment)

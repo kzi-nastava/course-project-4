@@ -6,39 +6,40 @@ using System.Threading.Tasks;
 
 using Hospital.Rooms.Service;
 using Hospital.Rooms.Model;
-
+using Hospital;
+using Autofac;
 namespace Hospital.Rooms.View
 {
     public class DynamicEquipmentRecords
     {
-        DynamicRoomEquipmentService dynamicEquipmentService;
-        List<DynamicRoomEquipment> dynamicEquipments;
-        WarehouseService warehouseService;
+        private IDynamicRoomEquipmentService dynamicEquipmentService;
+        private List<DynamicRoomEquipment> dynamicEquipments;
+        private IWarehouseService warehouseService;
 
         public DynamicEquipmentRecords()
         {
-            dynamicEquipmentService = new DynamicRoomEquipmentService();
+            dynamicEquipmentService = Globals.container.Resolve<IDynamicRoomEquipmentService>();
             dynamicEquipments = dynamicEquipmentService.DynamicEquipments;
-            warehouseService = new WarehouseService();
+            warehouseService = Globals.container.Resolve<IWarehouseService>();
         }
 
-        public void  DisplayAmountOfDynamicEquipments(string idRoom)
+        public void DisplayAmountOfDynamicEquipments(string idRoom)
         {
             Console.WriteLine("------------------Stanje dinamičke opreme-----------------------");
             Console.WriteLine(String.Format("|{0,5}|{1,10}|{2,10}", "Br.", "Oprema", "Količina"));
             int serialNumber = 1;
-            foreach(DynamicRoomEquipment equipment in dynamicEquipments)
+            foreach (DynamicRoomEquipment equipment in dynamicEquipments)
             {
                 if (equipment.IdRoom.Equals(idRoom))
                 {
                     foreach (KeyValuePair<string, int> pair in equipment.AmountEquipment)
                     {
-                        Console.WriteLine("|{0,5}|{1,10}|{2,10}|",serialNumber, warehouseService.GetNameEquipment(pair.Key), pair.Value);
+                        Console.WriteLine("|{0,5}|{1,10}|{2,10}|", serialNumber, warehouseService.GetNameEquipment(pair.Key), pair.Value);
                         serialNumber += 1;
                     }
                     this.EntryOfSpentEquipment(equipment, idRoom);
                 }
-               
+
             }
         }
 
@@ -47,13 +48,13 @@ namespace Hospital.Rooms.View
             string amount;
             int tryIntConvert;
             Dictionary<string, int> remainingAmountAfterAppointment = new Dictionary<string, int>();
-            foreach(KeyValuePair<string, int> pair in equipment.AmountEquipment)
+            foreach (KeyValuePair<string, int> pair in equipment.AmountEquipment)
             {
                 do
                 {
                     do
                     {
-                        Console.WriteLine("Unesite koliko ste potrosili " + warehouseService.GetNameEquipment(pair.Key)  + ": ");
+                        Console.WriteLine("Unesite koliko ste potrosili " + warehouseService.GetNameEquipment(pair.Key) + ": ");
                         amount = Console.ReadLine();
                     } while (!int.TryParse(amount, out tryIntConvert));
 
@@ -65,8 +66,5 @@ namespace Hospital.Rooms.View
             Console.WriteLine("Uspesno ste uneli svu potrosenu robu!");
 
         }
-
-       
-
     }
 }

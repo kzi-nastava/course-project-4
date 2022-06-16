@@ -5,7 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Globalization;
 using System.IO;
-
+using Hospital;
+using Autofac;
 using Hospital.Users.View;
 using Hospital.Appointments.Service;
 using Hospital.Drugs.Service;
@@ -18,18 +19,18 @@ namespace Hospital.Drugs.View
     public class PatientDrugNotification
     {
         private Patient _currentPatient;
-        private AppointmentService _appointmentService;
-        private DrugNotificationService _drugNotificationService;
-        private DrugService _drugService;
-        private PrescriptionService _prescriptionService;
+        private IAppointmentService _appointmentService;
+        private IDrugNotificationService _drugNotificationService;
+        private IDrugService _drugService;
+        private IPrescriptionService _prescriptionService;
 
-        public PatientDrugNotification(Patient patient, AppointmentService appointmentService, DrugNotificationService drugNotificationService)
+        public PatientDrugNotification(Patient patient)
         {
             this._currentPatient = patient;
-            this._appointmentService = appointmentService;
-            this._drugNotificationService = drugNotificationService;
-            this._drugService = new DrugService(new DrugRepository(new IngredientService(new IngredientRepository())));
-            this._prescriptionService = new PrescriptionService();
+            this._appointmentService = Globals.container.Resolve<IAppointmentService>();
+            this._drugNotificationService = Globals.container.Resolve<IDrugNotificationService>();
+            this._drugService = Globals.container.Resolve<IDrugService>();
+            this._prescriptionService = Globals.container.Resolve<IPrescriptionService>();
         }
 
         public void ShowDrugNotification()
@@ -45,7 +46,7 @@ namespace Hospital.Drugs.View
                 if (choice.Equals("1"))
                 {
                     this._drugNotificationService.ChangeNotificationTime(this._currentPatient.Email);
-                    this._drugNotificationService.Notifications = this._drugNotificationService.DrugNotificationRepository.Load(); // refresh data
+                    this._drugNotificationService = Globals.container.Resolve<IDrugNotificationService>(); // refresh data
                 }
                 else if (choice.Equals("2"))
                     return;
@@ -98,7 +99,7 @@ namespace Hospital.Drugs.View
             foreach (DrugNotification notification in this._drugNotificationService.Notifications)
             {
                 if (notification.PatientEmail.Equals(this._currentPatient.Email))
-                    return notification.TimeNotification; 
+                    return notification.TimeNotification;
             }
             return DateTime.ParseExact("00:00", "HH:mm", CultureInfo.InvariantCulture);
         }

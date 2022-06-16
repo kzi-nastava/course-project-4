@@ -9,26 +9,29 @@ using Hospital.Users.Service;
 using Hospital.Users.View;
 using Hospital.Appointments.Model;
 using Hospital.Users.Model;
+using Hospital;
+using Autofac;
+
 
 namespace Hospital.Appointments.View
 {
     public class PatientAnamnesis
     {
-        private AppointmentService _appointmentService;
-        private MedicalRecordService _medicalRecordService; 
-        private HealthRecordService _healthRecordService;
-        private UserService _userService;
+        private IAppointmentService _appointmentService;
+        private IMedicalRecordService _medicalRecordService;
+        private IHealthRecordService _healthRecordService;
+        private IUserService _userService;
         private Patient _currentRegisteredUser;
         private PatientAppointmentsService _patientAppointments;
 
-        public PatientAnamnesis(Patient patient, AppointmentService appointmentService, UserService userService, PatientAppointmentsService patientAppointments)
+        public PatientAnamnesis(Patient patient, PatientAppointmentsService patientAppointments)
         {
             this._currentRegisteredUser = patient;
-            this._userService = userService;
-            this._appointmentService = appointmentService;
+            this._userService = Globals.container.Resolve<IUserService>();
+            this._appointmentService = Globals.container.Resolve<IAppointmentService>();
             this._patientAppointments = patientAppointments;
-            this._medicalRecordService = new MedicalRecordService();
-            this._healthRecordService = new HealthRecordService();
+            this._medicalRecordService = Globals.container.Resolve<IMedicalRecordService>();
+            this._healthRecordService = Globals.container.Resolve<IHealthRecordService>();
         }
 
         public void MainMenuForSearch()
@@ -57,7 +60,7 @@ namespace Hospital.Appointments.View
             foreach (HealthRecord healthRecord in _healthRecordService.HealthRecords)
             {
                 if (healthRecord.EmailPatient.Equals(this._currentRegisteredUser.Email))
-                    Console.WriteLine("\n"+healthRecord.ToString());
+                    Console.WriteLine("\n" + healthRecord.ToString());
             }
         }
 
@@ -123,7 +126,7 @@ namespace Hospital.Appointments.View
                 choice = Console.ReadLine();
             } while (!int.TryParse(choice, out numAnamnesis) || numAnamnesis < 1 || numAnamnesis > medicalRecords.Count);
 
-            Console.WriteLine("Anamneza:" +medicalRecords[numAnamnesis - 1].Anamnesis);
+            Console.WriteLine("Anamneza:" + medicalRecords[numAnamnesis - 1].Anamnesis);
         }
 
         private void SearchAnamnesisBasedOnKeyword(List<MedicalRecord> medicalRecords)
@@ -146,7 +149,7 @@ namespace Hospital.Appointments.View
 
         private void SortAnamnesis(List<Appointment> preformedAppointments, List<MedicalRecord> medicalRecords)
         {
-            foreach(MedicalRecord md in medicalRecords)
+            foreach (MedicalRecord md in medicalRecords)
                 Console.Write("\nAnamneza: " + md.Anamnesis);
 
             string choice;
@@ -177,7 +180,7 @@ namespace Hospital.Appointments.View
         private void SortByDoctor(List<Appointment> preformedAppointments)
         {
             preformedAppointments.Sort((x, y) => x.DoctorEmail.CompareTo(y.DoctorEmail));
-            this.PrintAppointmentAndAnamnesis(preformedAppointments);    
+            this.PrintAppointmentAndAnamnesis(preformedAppointments);
         }
 
         private void PrintAppointmentAndAnamnesis(List<Appointment> preformedAppointments)
@@ -193,12 +196,12 @@ namespace Hospital.Appointments.View
 
         private void SortBySpecialization(List<Appointment> preformedAppointments)
         {
-            this._userService.UsersRepository.DoctorUsers.Sort((x, y) => x.SpecialityDoctor.CompareTo(y.SpecialityDoctor));
+            this._userService.UserRepository.DoctorUsers.Sort((x, y) => x.SpecialityDoctor.CompareTo(y.SpecialityDoctor));
             List<Appointment> sortedAppointments = new List<Appointment>();
 
             this._currentRegisteredUser.TableHeaderForPatient();
             Console.WriteLine("|  Specijalizacija");
-            foreach (DoctorUser doctor in this._userService.UsersRepository.DoctorUsers)
+            foreach (DoctorUser doctor in this._userService.UserRepository.DoctorUsers)
             {
                 foreach (Appointment appointment in preformedAppointments)
                 {
@@ -206,7 +209,7 @@ namespace Hospital.Appointments.View
                     {
                         sortedAppointments.Add(appointment);
                         Console.WriteLine(sortedAppointments.Count + ". " + appointment.DisplayOfPatientAppointment()
-                            +"|    "+doctor.SpecialityDoctor);
+                            + "|    " + doctor.SpecialityDoctor);
                     }
                 }
             }

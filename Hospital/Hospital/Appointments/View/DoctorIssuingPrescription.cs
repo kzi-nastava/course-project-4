@@ -8,17 +8,20 @@ using System.Threading.Tasks;
 using Hospital.Appointments.Service;
 using Hospital.Appointments.Model;
 
+using Autofac;
+using Hospital;
+
 namespace Hospital.Appointments.View
 {
     public class DoctorIssuingPrescription
     {
-        PrescriptionService prescriptionService;
-        AppointmentService appointmentService;
+        private IPrescriptionService prescriptionService;
+        private IAppointmentService appointmentService;
 
-        public DoctorIssuingPrescription(AppointmentService serviceAppointment)
+        public DoctorIssuingPrescription()
         {
-            prescriptionService = new PrescriptionService();
-            appointmentService = serviceAppointment;
+            prescriptionService = Globals.container.Resolve<IPrescriptionService>();
+            appointmentService = Globals.container.Resolve<IAppointmentService>();
 
         }
 
@@ -42,7 +45,7 @@ namespace Hospital.Appointments.View
             } while (!choice.Equals("1") && !choice.Equals("2"));
 
         }
-    
+
         private void WritingPrescription(Appointment appointment, HealthRecord healthRecord)
         {
             string drug, startConsuming, dose, timeOfCnsuming;
@@ -51,7 +54,7 @@ namespace Hospital.Appointments.View
                 drug = this.EnterDrug();
                 startConsuming = this.EnterStartConsuming();
                 dose = this.EnterDose();
-                timeOfCnsuming = this.EnterTimeOfConsuming();           
+                timeOfCnsuming = this.EnterTimeOfConsuming();
             } while (!prescriptionService.CheckAllergicToDrug(healthRecord, drug));
 
             //saving precription

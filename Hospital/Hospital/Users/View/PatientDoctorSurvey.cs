@@ -8,27 +8,30 @@ using Hospital.Users.Model;
 using Hospital.Appointments.View;
 using Hospital.Appointments.Model;
 using Hospital.Users.Repository;
+using Hospital;
+using Autofac;
 
 namespace Hospital.Users.View
 {
     public class PatientDoctorSurvey
     {
         private IDoctorSurveyService _doctorSurveyService;
-        private UserService _userService;
+        private IUserService _userService;
+        private IUserRepository _userRepository;
         private PatientAppointmentsService _appointmentsService;
 
-        public PatientDoctorSurvey(UserService userService, PatientAppointmentsService appointmentsService)
+        public PatientDoctorSurvey(PatientAppointmentsService appointmentsService)
         {
-            this._doctorSurveyService = new DoctorSurveyService(new DoctorSurveyRepository());
-            this._userService = userService;
-            this._appointmentsService = appointmentsService;
+            this._doctorSurveyService = Globals.container.Resolve<IDoctorSurveyService>();
+            this._userService = Globals.container.Resolve<IUserService>();
+            this._appointmentsService = appointmentsService; //ovde
         }
 
         public IDictionary<string, double> CalculateAverageDoctorGrade()
         {
             IDictionary<string, double> averageGrades = new Dictionary<string, double>();
             double grades = 0.0, numberGrades = 0.0;
-            foreach (DoctorUser doctor in _userService.UsersRepository.DoctorUsers)
+            foreach (DoctorUser doctor in _userRepository.DoctorUsers)
             {
                 foreach (DoctorSurvey evaluatedDoctor in _doctorSurveyService.EvaluatedDoctors)
                 {
@@ -69,7 +72,7 @@ namespace Hospital.Users.View
         {
             if (appointmentsForEvaluation.Count == 0)
             { Console.WriteLine("Nemate nijedan pregled za ocenjivanje."); return; }
-            
+
             this._appointmentsService.PrintRecommendedAppointments(appointmentsForEvaluation);
 
             int numAppointment;
@@ -81,7 +84,7 @@ namespace Hospital.Users.View
                 choice = Console.ReadLine();
             } while (!int.TryParse(choice, out numAppointment) || numAppointment < 1 || numAppointment > appointmentsForEvaluation.Count);
 
-            DoctorSurvey evaluatedDoctor = this._doctorSurveyService.EvaluateDoctor(appointmentsForEvaluation[numAppointment-1]);
+            DoctorSurvey evaluatedDoctor = this._doctorSurveyService.EvaluateDoctor(appointmentsForEvaluation[numAppointment - 1]);
 
             this._doctorSurveyService.AddEvaluatedDoctor(evaluatedDoctor);
         }

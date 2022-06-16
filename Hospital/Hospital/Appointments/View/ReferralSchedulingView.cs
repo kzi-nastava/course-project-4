@@ -4,7 +4,8 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Hospital;
+using Autofac;
 using Hospital.Appointments.Service;
 using Hospital.Appointments.Model;
 using Hospital.Users.View;
@@ -14,17 +15,17 @@ using Hospital.Users.Service;
 
 namespace Hospital.Appointments.View
 {
-    public class ReferralSchedulingView
+	public class ReferralSchedulingView
 	{
-		private ReferralService _referralService;
-		private AppointmentService _appointmentService;
-		private UserService _userService;
+		private IReferralService _referralService;
+		private IAppointmentService _appointmentService;
+		private IUserService _userService;
 
 		public ReferralSchedulingView()
 		{
-			this._appointmentService = new AppointmentService();
-			this._referralService = new ReferralService();
-			this._userService = new UserService();
+			this._appointmentService = Globals.container.Resolve<IAppointmentService>();
+			this._referralService = Globals.container.Resolve<IReferralService>();
+			this._userService = Globals.container.Resolve<IUserService>();
 		}
 
 		public void ShowReferrals(List<Referral> referrals)
@@ -92,7 +93,7 @@ namespace Hospital.Appointments.View
 
 		public void ScheduleAppointmentWithReferral()
 		{
-			Referral referral = SelectReferral();
+			Referral referral = this.SelectReferral();
 			if (referral is null)
 			{
 				return;
@@ -164,7 +165,6 @@ namespace Hospital.Appointments.View
 
 			return new Appointment(id, referral.Patient, referral.Doctor, dateOfAppointment,
 				startTime, endTime, Appointment.State.Created, roomId, referral.TypeProp, false, false);
-
 		}
 
 		public string AppointmentType(Referral referral)

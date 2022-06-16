@@ -4,7 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Autofac;
+using Hospital;
 using Hospital.Appointments.Repository;
 using Hospital.Appointments.Model;
 using Hospital.Drugs.Repository;
@@ -13,9 +14,9 @@ using Hospital.Drugs.Service;
 
 namespace Hospital.Appointments.Service
 {
-    public class PrescriptionService: IPrescriptionService
+    public class PrescriptionService : IPrescriptionService
     {
-        private PrescriptionRepository _prescriptionRepository;
+        private IPrescriptionRepository _prescriptionRepository;
         private List<Prescription> _prescriptions;
         private IDrugRepository _drugRepository;
         private List<Drug> _drugs;
@@ -23,15 +24,15 @@ namespace Hospital.Appointments.Service
 
         public PrescriptionService()
         {
-            this._prescriptionRepository = new PrescriptionRepository();
+            this._prescriptionRepository = Globals.container.Resolve<IPrescriptionRepository>();
             this._prescriptions = _prescriptionRepository.Load();
-            IIngredientRepository ingredientRepository = new IngredientRepository();
-            this._ingredientService = new IngredientService(ingredientRepository);
-            this._drugRepository = new DrugRepository(_ingredientService);
+            IIngredientRepository ingredientRepository = Globals.container.Resolve<IIngredientRepository>();
+            this._ingredientService = Globals.container.Resolve<IIngredientService>();
+            this._drugRepository = Globals.container.Resolve<IDrugRepository>();
             this._drugs = _drugRepository.Load();
         }
 
-        public PrescriptionRepository PrescriptionRepository { get { return _prescriptionRepository; } set { _prescriptionRepository = value; } }
+        public IPrescriptionRepository PrescriptionRepository { get { return _prescriptionRepository; } set { _prescriptionRepository = value; } }
         public List<Prescription> Prescriptions { get { return _prescriptions; } set { _prescriptions = value; } }
 
         public bool CheckAllergicToDrug(HealthRecord healthRecord, string drugCheck)
@@ -46,9 +47,7 @@ namespace Hospital.Appointments.Service
                         Console.WriteLine("Pacijent je alergičan na neki od sastojaka iz " + drug.DrugName + " leka.");
                         return false;
                     }
-                    
                 }
-
             }
             return true;
 
@@ -58,7 +57,8 @@ namespace Hospital.Appointments.Service
         {
             foreach (Ingredient ingredient in drug.Ingredients)
             {
-                if ((ingredient.IngredientName.ToLower()).Equals(healthRecord.Allergen.ToLower())){
+                if ((ingredient.IngredientName.ToLower()).Equals(healthRecord.Allergen.ToLower()))
+                {
                     return true;
                 }
             }
@@ -66,7 +66,7 @@ namespace Hospital.Appointments.Service
 
         }
 
-        
+
         public string GetId(string drugName)
         {
             foreach (Drug drug in this._drugs)
@@ -83,7 +83,7 @@ namespace Hospital.Appointments.Service
 
         public bool IsTimeOfConsumingValid(string selectedTimeOfConsuming)
         {
-            if(selectedTimeOfConsuming.Equals("1") || selectedTimeOfConsuming.Equals("2") || selectedTimeOfConsuming.Equals("3") || selectedTimeOfConsuming.Equals("4"))
+            if (selectedTimeOfConsuming.Equals("1") || selectedTimeOfConsuming.Equals("2") || selectedTimeOfConsuming.Equals("3") || selectedTimeOfConsuming.Equals("4"))
             {
                 return true;
             }
@@ -107,6 +107,6 @@ namespace Hospital.Appointments.Service
             this._prescriptions.Add(prescription);
             this._prescriptionRepository.Save(this._prescriptions);
         }
-        
+
     }
 }

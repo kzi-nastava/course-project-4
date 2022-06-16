@@ -8,20 +8,21 @@ using System.Threading.Tasks;
 using Hospital.Rooms.Service;
 using Hospital.Appointments.Service;
 using Hospital.Rooms.Model;
-
+using Hospital;
+using Autofac;
 namespace Hospital.Rooms.View
 {
-    public class RenovationView : IRenovationView
+    public class RenovationView
     {
         private IRoomService _roomService;
-        private AppointmentService _appointmentService;
+        private IAppointmentService _appointmentService;
         private IRenovationService _renovationService;
 
-        public RenovationView(IRoomService roomService, AppointmentService appointmentService, IRenovationService renovationService)
+        public RenovationView()
         {
-            this._roomService = roomService;
-            this._appointmentService = appointmentService;
-            this._renovationService = renovationService;
+            this._roomService = Globals.container.Resolve<IRoomService>();
+            this._appointmentService = Globals.container.Resolve<IAppointmentService>();
+            this._renovationService = Globals.container.Resolve<IRenovationService>();
         }
 
         private string EnterRenovationId()
@@ -95,7 +96,7 @@ namespace Hospital.Rooms.View
 
             DateTime startDate = EnterDate(true);
             DateTime endDate = EnterDate(false);
-            
+
             while (endDate < startDate)
             {
                 Console.WriteLine("Datum kraja ne moze biti pre datuma pocetka!");

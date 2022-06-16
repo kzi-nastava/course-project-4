@@ -4,7 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Hospital;
+using Autofac;
 using Hospital.Users.Service;
 using Hospital.Appointments.Repository;
 using Hospital.Appointments.Model;
@@ -13,17 +14,19 @@ using Hospital.Users.View;
 
 namespace Hospital.Appointments.Service
 {
-    public class ReferralService: IReferralService
+	public class ReferralService : IReferralService
 	{
-		private ReferralRepository _referralRepository;
+		private IReferralRepository _referralRepository;
 		private List<Referral> _referrals;
-		private AppointmentService _appointmentService;
+		private IAppointmentService _appointmentService;
+		private IUserService _userService;
 
 		public List<Referral> Referrals { get { return this._referrals; } }
 
 		public ReferralService()
 		{
-			this._referralRepository = new ReferralRepository();
+			this._referralRepository = Globals.container.Resolve<IReferralRepository>();
+			this._userService = Globals.container.Resolve<IUserService>();
 			_referrals = this._referralRepository.Load();
 		}
 
@@ -36,7 +39,7 @@ namespace Hospital.Appointments.Service
 		{
 			List<Referral> unusedReferrals = new List<Referral>();
 
-			foreach(Referral referral in _referrals)
+			foreach (Referral referral in _referrals)
 			{
 				if (!referral.Used)
 				{
@@ -46,11 +49,9 @@ namespace Hospital.Appointments.Service
 			return unusedReferrals;
 		}
 
-		
-
 		public void UseReferral(Referral usedReferral)
 		{
-			foreach(Referral referral in _referrals)
+			foreach (Referral referral in _referrals)
 			{
 				if (referral.Id.Equals(usedReferral.Id))
 				{
@@ -62,11 +63,10 @@ namespace Hospital.Appointments.Service
 		}
 
 		public void Add(Referral referral)
-        {
+		{
 			this._referrals.Add(referral);
 			this._referralRepository.Save(this._referrals);
-        }
+		}
 
-	
 	}
 }

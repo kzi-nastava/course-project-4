@@ -5,7 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Hospital;
+using Autofac;
 using Hospital.Users.Repository;
 using Hospital.Appointments.Repository;
 using Hospital.Appointments.Model;
@@ -13,25 +14,25 @@ using Hospital.Users.Model;
 
 namespace Hospital.Users.Service
 {
-    public class RequestForDaysOffService: IRequestForDaysOffService
+    public class RequestForDaysOffService : IRequestForDaysOffService
     {
-        private RequestForDaysOffRepository _requestForDaysOffRepository;
-        private AppointmentRepository _appointmentRepository;
+        private IRequestForDaysOffRepository _requestForDaysOffRepository;
+        private IAppointmentRepository _appointmentRepository;
         private List<Appointment> _appointments;
         private List<RequestForDaysOff> _requestsForDaysOff;
 
         public RequestForDaysOffService()
         {
-            this._requestForDaysOffRepository = new RequestForDaysOffRepository();
+            this._requestForDaysOffRepository = Globals.container.Resolve<IRequestForDaysOffRepository>();
             this._requestsForDaysOff = this._requestForDaysOffRepository.Load();
-            this._appointmentRepository = new AppointmentRepository();
+            this._appointmentRepository = Globals.container.Resolve<IAppointmentRepository>();
             this._appointments = this._appointmentRepository.Load();
-            
+
         }
 
         public List<RequestForDaysOff> RequestsForDaysOff { get { return _requestsForDaysOff; } set { _requestsForDaysOff = value; } }
 
-       
+
         public string GetNewId()
         {
             return (this._requestsForDaysOff.Count + 1).ToString();
@@ -51,19 +52,18 @@ namespace Hospital.Users.Service
                 Console.WriteLine("Zahtev mora biti zatražen barem dva dana pre slobodnih dana ili ste uneli datum u proslosti! Pokusajte ponovo.");
                 return false;
             }
-  
-            return true;
 
+            return true;
         }
 
-            
+
         public bool CheckAlreadyAvailableForSelectedDate(DateTime startDate, DateTime endDate, User doctor)
         {
             foreach (RequestForDaysOff request in this._requestsForDaysOff)
             {
                 if (request.EmailDoctor.Equals(doctor.Email))
                 {
-                    if( CheckOverlapDate(startDate, endDate, request) && request.StateRequired != RequestForDaysOff.State.Rejected)
+                    if (CheckOverlapDate(startDate, endDate, request) && request.StateRequired != RequestForDaysOff.State.Rejected)
                     {
                         return true;
                     }
@@ -97,22 +97,25 @@ namespace Hospital.Users.Service
 
 
         public bool CheckOverlapDate(DateTime startDate, DateTime endDate, RequestForDaysOff request)
+        {
+            if ((startDate <= request.StartDate) && (request.EndDate <= endDate))
             {
-                if ((startDate <= request.StartDate) && (request.EndDate <= endDate))
-                {
-                    return true;
-                }else if((request.StartDate <=endDate)&&(endDate <= request.EndDate))
-                {
-                    return true;
-                }else if((request.StartDate<=startDate) && (startDate <= request.EndDate))
-                {
-                    return true;
-                }else if((request.StartDate <=startDate) && endDate <= request.EndDate)
-                {
-                    return true;
-                }
-                return false;
+                return true;
             }
+            else if ((request.StartDate <= endDate) && (endDate <= request.EndDate))
+            {
+                return true;
+            }
+            else if ((request.StartDate <= startDate) && (startDate <= request.EndDate))
+            {
+                return true;
+            }
+            else if ((request.StartDate <= startDate) && endDate <= request.EndDate)
+            {
+                return true;
+            }
+            return false;
+        }
 
         public void Add(RequestForDaysOff request)
         {
@@ -121,21 +124,18 @@ namespace Hospital.Users.Service
         }
 
         public void AnswerRequest(RequestForDaysOff pendingRequest)
-		{
-            foreach(RequestForDaysOff request in _requestsForDaysOff)
-			{
-                if(request.Id == pendingRequest.Id)
-				{
+        {
+            foreach (RequestForDaysOff request in _requestsForDaysOff)
+            {
+                if (request.Id == pendingRequest.Id)
+                {
                     request.StateRequired = pendingRequest.StateRequired;
                     request.ReasonRequired = pendingRequest.ReasonRequired;
                     break;
-				}
-			}
+                }
+            }
             this._requestForDaysOffRepository.Save(this._requestsForDaysOff);
-		}
+        }
 
     }
 }
-
-
-    

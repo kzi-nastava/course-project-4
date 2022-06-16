@@ -4,15 +4,16 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Autofac;
+using Hospital;
 using Hospital.Appointments.Repository;
 using Hospital.Appointments.Model;
 
 namespace Hospital.Appointments.Service
 {
-    public class PatientRequestService : IPatientRequestService
+	public class PatientRequestService
 	{
-		private AppointmentService _appointmentService;
+		private IAppointmentService _appointmentService;
 		private PatientRequestRepository _requestRepository;
 		private List<Appointment> _requests;
 
@@ -20,9 +21,9 @@ namespace Hospital.Appointments.Service
 
 		public PatientRequestService()
 		{
-			_requestRepository = new PatientRequestRepository();
+			_requestRepository = new PatientRequestRepository(); //ovde
 			_requests = _requestRepository.Load();
-			this._appointmentService = new AppointmentService();
+			this._appointmentService = Globals.container.Resolve<IAppointmentService>();
 		}
 
 		public Appointment FindInitialAppointment(string id)
@@ -54,7 +55,7 @@ namespace Hospital.Appointments.Service
 
 			}
 			this._appointmentService.Save();
-			
+
 		}
 
 		public void AcceptRequest(Appointment request)
@@ -82,7 +83,7 @@ namespace Hospital.Appointments.Service
 			}
 
 			this._appointmentService.Save();
-		
+
 		}
 
 		public void ProcessRequest(Appointment request, int choice)
@@ -114,6 +115,5 @@ namespace Hospital.Appointments.Service
 		{
 			this._requestRepository.Save(Requests);
 		}
-
 	}
 }

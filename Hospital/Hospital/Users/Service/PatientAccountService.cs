@@ -3,24 +3,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Hospital;
+using Autofac;
 using Hospital.Users.Model;
 using Hospital.Appointments.Service;
 using Hospital.Users.View;
 
 namespace Hospital.Users.Service
 {
-    public class PatientAccountService : IPatientAccountService
+	public class PatientAccountService
 	{
 		private List<User> _patients;
-		private UserService _userService;
-		private HealthRecordService _healthRecordService;
+		private IUserService _userService;
+		private IHealthRecordService _healthRecordService;
 
 		public PatientAccountService()
 		{
-			this._userService = new UserService();
+			this._userService = Globals.container.Resolve<IUserService>();
 			this._patients = FilterPatients(_userService.Users);
-			this._healthRecordService = new HealthRecordService();
+			this._healthRecordService = Globals.container.Resolve<IHealthRecordService>();
 		}
 
 		public List<User> Patients { get { return _patients; } }
@@ -83,7 +84,7 @@ namespace Hospital.Users.Service
 			this._userService.Add(newPatient);
 			this._patients.Add(newPatient);
 
-			
+
 			this._healthRecordService.CreateHealthRecord(newPatient);
 		}
 	}

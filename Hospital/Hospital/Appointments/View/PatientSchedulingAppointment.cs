@@ -5,7 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Globalization;
 using System.IO;
-
+using Hospital;
+using Autofac;
 using Hospital.Appointments.Service;
 using Hospital.Users.Service;
 using Hospital.Users.View;
@@ -17,21 +18,21 @@ namespace Hospital.Appointments.View
 {
     public class PatientSchedulingAppointment
     {
-        private AppointmentService _appointmentService;
-        private UserService _userService;
+        private IAppointmentService _appointmentService;
+        private IUserService _userService;
         private Patient _currentRegisteredUser;
         private PatientAppointmentsService _patientAppointmentsService;
-        private UserActionService _userActionService;
+        private IUserActionService _userActionService;
 
-        public AppointmentService AppointmentService { get { return _appointmentService; } }
+        public IAppointmentService AppointmentService { get { return _appointmentService; } }
 
-        public PatientSchedulingAppointment(Patient patient, AppointmentService appointmentService, UserService userService, PatientAppointmentsService patientAppointmentsService, UserActionService userActionService)
+        public PatientSchedulingAppointment(Patient patient, PatientAppointmentsService patientAppointmentsService)
         {
-            this._userService = userService;
-            this._appointmentService = appointmentService;
+            this._userService = Globals.container.Resolve<IUserService>();
+            this._appointmentService = Globals.container.Resolve<IAppointmentService>();
             this._currentRegisteredUser = patient;
             this._patientAppointmentsService = patientAppointmentsService;
-            this._userActionService = userActionService;
+            this._userActionService = Globals.container.Resolve<IUserActionService>();
         }
 
         public string AcceptAppointment(Appointment newAppointment)
@@ -74,10 +75,10 @@ namespace Hospital.Appointments.View
                 }
 
                 dataForAppointment = new string[] { inputValues[0], appointmentDate.ToString("MM/dd/yyyy"), startTime.ToString("HH:mm") };
-              
+
                 if (this._patientAppointmentsService.IsAppointmentFree("0", dataForAppointment))
                     appointmentsForChoosing.Add(this.CreateAppointment(dataForAppointment));
-                
+
                 startTime = startTime.AddMinutes(15);
             } while (appointmentsForChoosing.Count != 3);
 

@@ -10,6 +10,7 @@ namespace Hospital.Appointments.Service
 {
     public interface IPrescriptionService
     {
+        List<Prescription> Prescriptions { get; }
         void Add(Prescription prescription);
         bool IsDrugValid(string drugCheck);
         bool IsTimeOfConsumingValid(string selectedTimeOfConsuming);

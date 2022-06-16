@@ -4,23 +4,24 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Hospital;
+using Autofac;
 using Hospital.Rooms.Service;
 using Hospital.Rooms.Model;
 
 namespace Hospital.Rooms.View
 {
-    public class EquipmentView : IEquipmentView
+    public class EquipmentView
     {
         private IRoomService _roomService;
         private IEquipmentService _equipmentService;
         private IEquipmentMovingService _equipmentMovingService;
 
-        public EquipmentView(IRoomService roomService, IEquipmentService equipmentService, IEquipmentMovingService equipmentMovingService) 
+        public EquipmentView()
         {
-            this._roomService = roomService;
-            this._equipmentService = equipmentService;
-            this._equipmentMovingService = equipmentMovingService;
+            this._roomService = Globals.container.Resolve<IRoomService>();
+            this._equipmentService = Globals.container.Resolve<IEquipmentService>();
+            this._equipmentMovingService = Globals.container.Resolve<IEquipmentMovingService>();
         }
 
         private void PrintEquipment(List<Equipment> equipmentToPrint)
@@ -174,7 +175,7 @@ namespace Hospital.Rooms.View
             PrintEquipment(foundEquipment);
         }
 
-        private string EnterEquipmentMovingId() 
+        private string EnterEquipmentMovingId()
         {
             Console.Write("Unesite identifikator: ");
             string id = Console.ReadLine();

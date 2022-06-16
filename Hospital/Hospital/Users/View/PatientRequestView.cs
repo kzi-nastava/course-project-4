@@ -7,18 +7,20 @@ using System.Threading.Tasks;
 using Hospital.Appointments.Service;
 using Hospital.Users.Service;
 using Hospital.Appointments.Model;
+using Hospital;
+using Autofac;
 
 namespace Hospital.Users.View
 {
-    public class PatientRequestView
+	public class PatientRequestView
 	{
-		public PatientRequestService _patientRequestService;
-		private UserService _userService;
+		public PatientRequestService _patientRequestService; //ovde
+		private IUserService _userService;
 
 		public PatientRequestView()
 		{
-			this._patientRequestService = new PatientRequestService();
-			this._userService = new UserService();
+			this._patientRequestService = new PatientRequestService(); //ovde
+			this._userService = Globals.container.Resolve<IUserService>();
 		}
 
 		public Appointment SelectRequest()

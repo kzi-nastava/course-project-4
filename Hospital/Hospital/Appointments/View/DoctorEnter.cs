@@ -114,7 +114,7 @@ namespace Hospital.Appointments.View
             return newDate;
         }
 
-        public static string EnterPatientEmail(UserService userService)
+        public static string EnterPatientEmail(IUserService userService)
         {
             string patientEmail;
             do

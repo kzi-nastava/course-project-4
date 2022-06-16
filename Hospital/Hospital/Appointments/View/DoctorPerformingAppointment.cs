@@ -4,34 +4,34 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Autofac;
+using Hospital;
 using Hospital.Appointments.Service;
 using Hospital.Appointments.Model;
 using Hospital.Drugs.Service;
 using Hospital.Users.Model;
 using Hospital.Users.Service;
-using Hospital.Drugs.Repository;
 
 namespace Hospital.Appointments.View
 {
     public class DoctorPerformingAppointment
     {
-        AppointmentService appointmentService;
-        List<HealthRecord> healthRecords;
-        IIngredientService ingredientService;
-        HealthRecordService healthRecordService;
-        List<Appointment> allMyAppointments;
-        User currentRegisteredDoctor;
-        UserService userService;
-        public DoctorPerformingAppointment(AppointmentService service, List<HealthRecord> allHealthRecords,HealthRecordService serviceHealthRecord, User doctor, List<Appointment> appointments, UserService serviceUser)
+        private IAppointmentService appointmentService;
+        private List<HealthRecord> healthRecords;
+        private IIngredientService ingredientService;
+        private IHealthRecordService healthRecordService;
+        private List<Appointment> allMyAppointments;
+        private User currentRegisteredDoctor;
+        private IUserService userService;
+        public DoctorPerformingAppointment(List<HealthRecord> allHealthRecords, User doctor, List<Appointment> appointments)
         {
-            appointmentService = service;
+            appointmentService = Globals.container.Resolve<IAppointmentService>();
             healthRecords = allHealthRecords;
-            ingredientService = new IngredientService(new IngredientRepository());
-            healthRecordService = serviceHealthRecord;
+            ingredientService = Globals.container.Resolve<IIngredientService>();
+            healthRecordService = Globals.container.Resolve<IHealthRecordService>();
             currentRegisteredDoctor = doctor;
             allMyAppointments = appointments;
-            userService = serviceUser;
+            userService = Globals.container.Resolve<IUserService>();
         }
 
         public void PerformingAppointment()
@@ -125,7 +125,7 @@ namespace Hospital.Appointments.View
             {
                 if (healthRecord.EmailPatient.Equals(appointment.PatientEmail))
                 {
-                    DoctorIssuingPrescription doctorIssuing = new DoctorIssuingPrescription(appointmentService);
+                    DoctorIssuingPrescription doctorIssuing = new DoctorIssuingPrescription();
                     doctorIssuing.IssuingPrescription(appointment, healthRecord);
                     this.UpdatingSelectedHealthRecord(healthRecord);
 
