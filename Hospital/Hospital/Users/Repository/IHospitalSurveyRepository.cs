@@ -7,10 +7,7 @@ using Hospital.Users.Model;
 
 namespace Hospital.Users.Repository
 {
-    interface IHospitalSurveyRepository: IRepository<HospitalSurvey>
+    public interface IHospitalSurveyRepository: IRepository<HospitalSurvey>
     {
-    public interface IHospitalSurveyRepository : IRepository<HospitalSurvey>
-    {
-        HospitalSurvey InputValuesForServey(string patientEmail);
     }
 }

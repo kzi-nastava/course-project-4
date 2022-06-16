@@ -11,6 +11,5 @@ namespace Hospital.Users.Repository
 {
     public interface IDoctorSurveyRepository : IRepository<DoctorSurvey>
     {
-        DoctorSurvey EvaluateDoctor(Appointment appointment);
     }
 }

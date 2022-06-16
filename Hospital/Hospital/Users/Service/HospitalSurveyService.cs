@@ -15,7 +15,7 @@ namespace Hospital.Users.Service
         private UserService _userService;
         private string _patientEmail;
 
-        public HospitalSurveyService(string patientEmail)
+        public HospitalSurveyService(string patientEmail, HospitalSurveyRepository hospitalSurveyRepository)
         {
             this._patientEmail = patientEmail;
             this._hospitalServiceRepository = hospitalSurveyRepository;

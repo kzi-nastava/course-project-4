@@ -13,11 +13,6 @@ namespace Hospital.Users.Service
         HospitalSurvey InputValuesForServey(string patientEmail);
         void AddNewSurvey(HospitalSurvey newRatedSurvey);
         HospitalSurveyResult GetResult();
-
         List<HospitalSurvey> SurveyResults { get; }
-
-        void EvaluateHospitalSurvey();
-
-        HospitalSurveyResult GetResult();
     }
 }

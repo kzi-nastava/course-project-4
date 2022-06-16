@@ -18,7 +18,6 @@ namespace Hospital.Users.Service
         void AddEvaluatedDoctor(DoctorSurvey evaluatedDoctor);
         List<DoctorSurveyResult> GetResults();
         List<DoctorSurveyResult> GetBestDoctors();
-        IDoctorSurveyRepository DoctorSurveyRepository { get; }
         List<DoctorSurveyResult> GetWorstDoctors();
     }
 }
