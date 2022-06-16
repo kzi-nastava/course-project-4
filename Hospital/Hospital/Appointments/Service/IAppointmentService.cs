@@ -7,7 +7,7 @@ using Hospital.Appointments.Model;
 
 namespace Hospital.Appointments.Service
 {
-    public interface IAppointmentService: IService<Appointment>
+    public interface IAppointmentService
     {
     }
 }

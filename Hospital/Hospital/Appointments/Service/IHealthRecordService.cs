@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Hospital.Appointments.Model;
 namespace Hospital.Appointments.Service
 {
-    public interface IHealthRecordService: IService<HealthRecord>
+    public interface IHealthRecordService
     {
     }
 }

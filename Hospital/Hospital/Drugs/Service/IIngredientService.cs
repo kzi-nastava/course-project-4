@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Hospital.Drugs.Model;
 namespace Hospital.Drugs.Service
 {
-     public interface IIngredientService: IService<Ingredient>
+     public interface IIngredientService
     {
     }
 }

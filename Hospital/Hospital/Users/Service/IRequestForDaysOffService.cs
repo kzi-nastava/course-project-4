@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Hospital.Users.Model;
 namespace Hospital.Users.Service
 {
-    public interface IRequestForDaysOffService: IService<RequestForDaysOff>
+    public interface IRequestForDaysOffService
     {
     }
 }

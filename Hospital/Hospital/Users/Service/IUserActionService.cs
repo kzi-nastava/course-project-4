@@ -8,7 +8,7 @@ using Hospital.Users.Repository;
 
 namespace Hospital.Users.Service
 {
-    public interface IUserActionService: IService<UserAction>
+    public interface IUserActionService
     {
         UserActionRepository ActionRepository { get; }
         List<UserAction> LoadMyActions();

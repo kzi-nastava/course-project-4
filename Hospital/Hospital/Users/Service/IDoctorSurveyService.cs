@@ -8,7 +8,7 @@ using Hospital.Appointments.Model;
 
 namespace Hospital.Users.Service
 {
-    public interface IDoctorSurveyService: IService<DoctorSurvey>
+    public interface IDoctorSurveyService
     {
         List<DoctorSurvey> EvaluatedDoctors { get; }
         DoctorSurvey EvaluateDoctor(Appointment appointment);

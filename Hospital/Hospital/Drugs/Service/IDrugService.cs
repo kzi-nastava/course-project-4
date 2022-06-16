@@ -7,7 +7,7 @@ using Hospital.Drugs.Model;
 
 namespace Hospital.Drugs.Service
 {
-    public interface  IDrugService: IService<Drug>
+    public interface  IDrugService
     {
     }
 }

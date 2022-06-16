@@ -8,7 +8,7 @@ using Hospital.Drugs.Repository;
 
 namespace Hospital.Drugs.Service
 {
-    public interface IDrugNotificationService: IService<DrugNotification>
+    public interface IDrugNotificationService
     {
         DrugNotificationRepository DrugNotificationRepository { get; }
         List<DrugNotification> Notifications { get; set; }

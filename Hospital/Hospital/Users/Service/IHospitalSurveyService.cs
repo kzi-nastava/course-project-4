@@ -7,7 +7,7 @@ using Hospital.Users.Model;
 
 namespace Hospital.Users.Service
 {
-    public interface IHospitalSurveyService: IService<HospitalSurvey>
+    public interface IHospitalSurveyService
     {
         void EvaluateHospitalSurvey();
         HospitalSurvey InputValuesForServey(string patientEmail);
