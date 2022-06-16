@@ -9,13 +9,13 @@ using Hospital.Rooms.Model;
 
 namespace Hospital.Rooms.Service
 {
-    public class RoomService
+    public class RoomService : IRoomService
     {
-        private RoomRepository _roomRepository;
+        private IRoomRepository _roomRepository;
         
-        public RoomService()
+        public RoomService(IRoomRepository roomRepository)
         {
-            _roomRepository = new RoomRepository();
+            _roomRepository = roomRepository;
         }
         public List<Room> AllRooms { get { return _roomRepository.AllRooms; } }
 
@@ -64,7 +64,6 @@ namespace Hospital.Rooms.Service
             }
             Console.WriteLine("Broj sobe ne postoji!");
             return false;
-
         }
     }
 }

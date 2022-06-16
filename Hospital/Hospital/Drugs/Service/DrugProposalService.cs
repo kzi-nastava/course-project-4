@@ -10,13 +10,13 @@ using Hospital.Drugs.Model;
 
 namespace Hospital.Drugs.Service
 {
-    public class DrugProposalService
+    public class DrugProposalService : IDrugProposalService
     {
-        private DrugProposalRepository _drugProposalRepository;
+        private IDrugProposalRepository _drugProposalRepository;
         
-        public DrugProposalService()
+        public DrugProposalService(IDrugProposalRepository drugProposalRepository)
         {
-            this._drugProposalRepository = new DrugProposalRepository();
+            this._drugProposalRepository = drugProposalRepository;
         }
 
         public List<DrugProposal> DrugProposals { get { return _drugProposalRepository.DrugProposals; } }

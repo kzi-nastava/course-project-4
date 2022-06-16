@@ -10,18 +10,18 @@ using Hospital.Drugs.Model;
 
 namespace Hospital.Drugs.Repository
 {
-    public class IngredientRepository
+    public class IngredientRepository : IIngredientRepository
     {
         private static string s_filePath = @"..\..\Data\ingredients.csv";
         
         private List<Ingredient> _ingredients;
 
-        public List<Ingredient> Ingredients { get { return _ingredients; } set { _ingredients = value; } }
-
         public IngredientRepository()
         {
             _ingredients = Load();
         }
+        
+        public List<Ingredient> Ingredients { get { return _ingredients; } set { _ingredients = value; } }
 
         public Ingredient Get(string id)
         {

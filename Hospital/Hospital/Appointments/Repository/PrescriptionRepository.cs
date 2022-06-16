@@ -11,7 +11,7 @@ using Hospital.Appointments.Model;
 
 namespace Hospital.Appointments.Repository
 {
-    public class PrescriptionRepository
+    public class PrescriptionRepository: IPrescriptionRepository
     {
         public List<Prescription> Load()
         {

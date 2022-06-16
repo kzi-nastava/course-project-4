@@ -12,6 +12,7 @@ using Hospital.Appointments.Model;
 using Hospital.Drugs.View;
 using Hospital.Users.Service;
 using Hospital.Drugs.Service;
+using Hospital.Users.Repository;
 
 namespace Hospital.Users.View
 {
@@ -31,7 +32,7 @@ namespace Hospital.Users.View
         private DrugNotificationService _drugNotificationService;
         private PatientModifyAppointment _modifyAppointment;
         private RecommendedAppointment _recommendedAppointment;
-        private HospitalSurveyService _hospitalSurveyService;
+        private IHospitalSurveyService _hospitalSurveyService;
 
         public string Email { get { return _email; } }
         public List<Appointment> PatientAppointments
@@ -57,7 +58,7 @@ namespace Hospital.Users.View
             this._drugNotification = new PatientDrugNotification(this, _appointmentService, _drugNotificationService);
             this._modifyAppointment = new PatientModifyAppointment(this, _patientService, _userActionService, _appointmentService);
             this._recommendedAppointment = new RecommendedAppointment(this, _userService, _patientService, _userActionService, _patientScheduling, _appointmentService);
-            this._hospitalSurveyService = new HospitalSurveyService(this._email);
+            this._hospitalSurveyService = new HospitalSurveyService(this._email, new HospitalSurveyRepository());
         }
 
         // methods

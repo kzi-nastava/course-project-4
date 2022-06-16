@@ -12,15 +12,15 @@ namespace Hospital.Users.Service
 {
     public class DoctorSurveyService: IDoctorSurveyService
     {
-        private DoctorSurveyRepository _doctorServiceRepository;
+        private IDoctorSurveyRepository _doctorServiceRepository;
         private List<DoctorSurvey> _evaluatedDoctors;
         private UserService _userService;
 
         public List<DoctorSurvey> EvaluatedDoctors { get { return _evaluatedDoctors; } }
 
-        public DoctorSurveyService()
+        public DoctorSurveyService(IDoctorSurveyRepository doctorSurveyRepository)
         {
-            _doctorServiceRepository = new DoctorSurveyRepository();
+            _doctorServiceRepository = doctorSurveyRepository;
             _evaluatedDoctors = _doctorServiceRepository.Load();
             _userService = new UserService();
         }

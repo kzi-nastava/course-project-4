@@ -17,14 +17,13 @@ using Hospital.Rooms.Service;
 
 namespace Hospital.Appointments.Service
 {
-    public class AppointmentService
+    public class AppointmentService : IAppointmentService
     {
         private AppointmentRepository _appointmentRepository;
         private UserService _userService;
-        private NotificationService _notificationService;
         private List<Appointment> _appointments;
         private List<User> _users;
-        private RoomRepository _roomRepository;
+        private IRoomRepository _roomRepository;
         private List<Room> _rooms;
 
         public AppointmentRepository AppointmentRepository { get { return _appointmentRepository; } }
@@ -34,7 +33,6 @@ namespace Hospital.Appointments.Service
             _appointmentRepository = new AppointmentRepository();
             _userService = new UserService();
             _roomRepository = new RoomRepository();
-            _notificationService = new NotificationService();
             _appointments = _appointmentRepository.Load();
             _users = _userService.Users;
             _rooms = _roomRepository.Load();
@@ -236,7 +234,7 @@ namespace Hospital.Appointments.Service
 
         public Room FindFreeRoom(DateTime newDate, DateTime newStartTime)
         {
-            RoomService roomService = new RoomService();
+            IRoomService roomService = new RoomService(_roomRepository);
             List<Room> freeRooms = roomService.AllRooms;  // at the beginning all the rooms are free
 
             foreach (Appointment appointment in this._appointments)

@@ -11,7 +11,7 @@ using Hospital.Appointments.Model;
 
 namespace Hospital.Appointments.Repository
 {
-    public class AppointmentRepository
+    public class AppointmentRepository:IAppointmentRepository
     {
         public List<Appointment> Load()
         {

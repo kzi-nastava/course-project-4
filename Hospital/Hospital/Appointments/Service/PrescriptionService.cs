@@ -13,21 +13,22 @@ using Hospital.Drugs.Service;
 
 namespace Hospital.Appointments.Service
 {
-    public class PrescriptionService
+    public class PrescriptionService: IPrescriptionService
     {
         private PrescriptionRepository _prescriptionRepository;
         private List<Prescription> _prescriptions;
-        private DrugRepository _drugRepository;
+        private IDrugRepository _drugRepository;
         private List<Drug> _drugs;
-        private IngredientService _ingredientService;
+        private IIngredientService _ingredientService;
 
         public PrescriptionService()
         {
             this._prescriptionRepository = new PrescriptionRepository();
             this._prescriptions = _prescriptionRepository.Load();
-            this._drugRepository = new DrugRepository();
+            IIngredientRepository ingredientRepository = new IngredientRepository();
+            this._ingredientService = new IngredientService(ingredientRepository);
+            this._drugRepository = new DrugRepository(_ingredientService);
             this._drugs = _drugRepository.Load();
-            this._ingredientService = new IngredientService();
         }
 
         public PrescriptionRepository PrescriptionRepository { get { return _prescriptionRepository; } set { _prescriptionRepository = value; } }

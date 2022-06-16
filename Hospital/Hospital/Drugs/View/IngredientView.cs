@@ -9,11 +9,11 @@ using Hospital.Drugs.Model;
 
 namespace Hospital.Drugs.View
 {
-    public class IngredientView
+    public class IngredientView : IIngredientView
     {
-        private IngredientService _ingredientService;
+        private IIngredientService _ingredientService;
 
-        public IngredientView(IngredientService ingredientService)
+        public IngredientView(IIngredientService ingredientService)
         {
             this._ingredientService = ingredientService;
         }

@@ -14,5 +14,10 @@ namespace Hospital.Users.Service
         void AddNewSurvey(HospitalSurvey newRatedSurvey);
         HospitalSurveyResult GetResult();
 
+        List<HospitalSurvey> SurveyResults { get; }
+
+        void EvaluateHospitalSurvey();
+
+        HospitalSurveyResult GetResult();
     }
 }

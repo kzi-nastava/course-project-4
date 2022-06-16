@@ -28,7 +28,7 @@ namespace Hospital.Drugs.View
             this._currentPatient = patient;
             this._appointmentService = appointmentService;
             this._drugNotificationService = drugNotificationService;
-            this._drugService = new DrugService();
+            this._drugService = new DrugService(new DrugRepository(new IngredientService(new IngredientRepository())));
             this._prescriptionService = new PrescriptionService();
         }
 

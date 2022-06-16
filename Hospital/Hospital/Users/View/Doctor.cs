@@ -11,6 +11,7 @@ using Hospital.Users.Service;
 using Hospital.Appointments.Model;
 using Hospital.Users.Model;
 using Hospital.Rooms.Service;
+using Hospital.Rooms.Repository;
 using Hospital.Appointments.View;
 using Hospital.Drugs.View;
 
@@ -24,7 +25,7 @@ namespace Hospital.Users.View
         List<HealthRecord> healthRecords;
         List<Appointment> allMyAppointments;
         User currentRegisteredDoctor;
-        RoomService roomService = new RoomService(); 
+        IRoomService roomService = new RoomService(new RoomRepository()); 
         public Doctor(User currentRegisteredDoctor)
         {
             this.currentRegisteredDoctor = currentRegisteredDoctor;

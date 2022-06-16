@@ -10,13 +10,13 @@ using Hospital.Rooms.Model;
 
 namespace Hospital.Rooms.View
 {
-    public class EquipmentView
+    public class EquipmentView : IEquipmentView
     {
-        private RoomService _roomService;
-        private EquipmentService _equipmentService;
-        private EquipmentMovingService _equipmentMovingService;
+        private IRoomService _roomService;
+        private IEquipmentService _equipmentService;
+        private IEquipmentMovingService _equipmentMovingService;
 
-        public EquipmentView(RoomService roomService, EquipmentService equipmentService, EquipmentMovingService equipmentMovingService) 
+        public EquipmentView(IRoomService roomService, IEquipmentService equipmentService, IEquipmentMovingService equipmentMovingService) 
         {
             this._roomService = roomService;
             this._equipmentService = equipmentService;

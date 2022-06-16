@@ -41,7 +41,7 @@ namespace Hospital.Rooms.Model
             this._type = type;
         }
 
-        virtual public void Renovate(RoomService roomService, EquipmentService equipmentService)
+        virtual public void Renovate(IRoomService roomService, IEquipmentService equipmentService)
         {
             this._active = false;
         }

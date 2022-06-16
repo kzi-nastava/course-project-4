@@ -9,5 +9,6 @@ namespace Hospital.Appointments.Service
 {
     public interface IMedicalRecordService
     {
+        void Add(MedicalRecord medicalRecord);
     }
 }

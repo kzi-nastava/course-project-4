@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using Hospital.Drugs.Service;
 using Hospital.Drugs.Model;
+using Hospital.Drugs.Repository;
 
 namespace Hospital.Drugs.View
 {
@@ -17,9 +18,9 @@ namespace Hospital.Drugs.View
 
         public DrugVerification()
         {
-            ingredientService = new IngredientService();
-            drugProposalService = new DrugProposalService();
-            drugService = new DrugService();
+            ingredientService = new IngredientService(new IngredientRepository());
+            drugProposalService = new DrugProposalService(new DrugProposalRepository(ingredientService));
+            drugService = new DrugService(new DrugRepository(ingredientService));
         }
 
         private void DrugVerificationManagement()

@@ -9,12 +9,12 @@ using Hospital.Drugs.Model;
 
 namespace Hospital.Drugs.View
 {
-    public class DrugView
+    public class DrugView : IDrugView
     {
-        private IngredientService _ingredientService;
-        private DrugProposalService _drugProposalService;
+        private IIngredientService _ingredientService;
+        private IDrugProposalService _drugProposalService;
 
-        public DrugView(IngredientService ingredientService, DrugProposalService drugProposalService)
+        public DrugView(IIngredientService ingredientService, IDrugProposalService drugProposalService)
         {
             this._ingredientService = ingredientService;
             this._drugProposalService = drugProposalService;

@@ -20,7 +20,7 @@ namespace Hospital.Rooms.Model
             this._otherRoomId = otherRoomId;
         }
 
-        public override void Renovate(RoomService roomService, EquipmentService equipmentService)
+        public override void Renovate(IRoomService roomService, IEquipmentService equipmentService)
         {
             base.Renovate(roomService, equipmentService);
 

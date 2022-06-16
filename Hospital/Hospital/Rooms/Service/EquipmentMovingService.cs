@@ -9,20 +9,21 @@ using Hospital.Rooms.Model;
 
 namespace Hospital.Rooms.Service
 {
-    public class EquipmentMovingService
+    public class EquipmentMovingService : IEquipmentMovingService
     {
-        private EquipmentMovingRepository _equipmentMovingRepository;
-        private EquipmentService _equipmentService;
-        private RoomService _roomService;
+        private IEquipmentMovingRepository _equipmentMovingRepository;
+        private IEquipmentService _equipmentService;
+        private IRoomService _roomService;
         
-        public List<EquipmentMoving> AllEquipmentMovings { get { return _equipmentMovingRepository.AllEquipmentMovings; } }
-
-        public EquipmentMovingService(EquipmentService equipmentService, RoomService roomService)
+        public EquipmentMovingService(IEquipmentMovingRepository equipmentMovingRepository, IEquipmentService equipmentService, 
+            IRoomService roomService)
         {
-            this._equipmentMovingRepository = new EquipmentMovingRepository();
+            this._equipmentMovingRepository = equipmentMovingRepository;
             this._equipmentService = equipmentService;
             this._roomService = roomService;
         }
+
+        public List<EquipmentMoving> AllEquipmentMovings { get { return _equipmentMovingRepository.AllEquipmentMovings; } }
 
         public void MoveEquipment()
         {

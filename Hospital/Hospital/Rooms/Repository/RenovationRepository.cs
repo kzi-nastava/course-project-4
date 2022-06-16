@@ -11,7 +11,7 @@ using Hospital.Rooms.Model;
 
 namespace Hospital.Rooms.Repository
 {
-    public class RenovationRepository
+    public class RenovationRepository : IRenovationRepository
     {
         private static string s_filePath = @"..\..\Data\renovations.csv";
         private List<Renovation> _allRenovations;

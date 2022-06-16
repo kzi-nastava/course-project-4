@@ -7,18 +7,19 @@ using Hospital.Users.Service;
 using Hospital.Users.Model;
 using Hospital.Appointments.View;
 using Hospital.Appointments.Model;
+using Hospital.Users.Repository;
 
 namespace Hospital.Users.View
 {
     public class PatientDoctorSurvey
     {
-        private DoctorSurveyService _doctorSurveyService;
+        private IDoctorSurveyService _doctorSurveyService;
         private UserService _userService;
         private PatientAppointmentsService _appointmentsService;
 
         public PatientDoctorSurvey(UserService userService, PatientAppointmentsService appointmentsService)
         {
-            this._doctorSurveyService = new DoctorSurveyService();
+            this._doctorSurveyService = new DoctorSurveyService(new DoctorSurveyRepository());
             this._userService = userService;
             this._appointmentsService = appointmentsService;
         }

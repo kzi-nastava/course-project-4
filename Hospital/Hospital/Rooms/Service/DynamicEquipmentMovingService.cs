@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Hospital.Rooms.Model;
+using Hospital.Rooms.Repository;
 
 namespace Hospital.Rooms.Service
 {
@@ -12,12 +13,12 @@ namespace Hospital.Rooms.Service
 	{
 		private WarehouseService _warehouseService;
 		private DynamicRoomEquipmentService _dynamicRoomEquipmentService;
-		private RoomService _roomService;
+		private IRoomService _roomService;
 		public DynamicEquipmentMovingService()
 		{
 			this._warehouseService = new WarehouseService();
 			this._dynamicRoomEquipmentService = new DynamicRoomEquipmentService();
-			this._roomService = new RoomService();
+			this._roomService = new RoomService(new RoomRepository());
 		}
 
 		public List<KeyValuePair<string, DynamicEquipment>> GetMissingEquipmentInRooms()

@@ -10,7 +10,7 @@ namespace Hospital.Users.Service
 {
     public class HospitalSurveyService: IHospitalSurveyService
     {
-        private HospitalSurveyRepository _hospitalServiceRepository;
+        private IHospitalSurveyRepository _hospitalServiceRepository;
         private List<HospitalSurvey> _surveyResults;
         private UserService _userService;
         private string _patientEmail;
@@ -18,10 +18,12 @@ namespace Hospital.Users.Service
         public HospitalSurveyService(string patientEmail)
         {
             this._patientEmail = patientEmail;
-            this._hospitalServiceRepository = new HospitalSurveyRepository();
+            this._hospitalServiceRepository = hospitalSurveyRepository;
             this._surveyResults = _hospitalServiceRepository.Load();
             this._userService = new UserService();
         }
+
+        public List<HospitalSurvey> SurveyResults { get { return _surveyResults; } }
 
         public void EvaluateHospitalSurvey()
         {
