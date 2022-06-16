@@ -8,7 +8,7 @@ using Hospital.Users.Model;
 using System.IO;
 namespace Hospital.Users.Repository
 {
-    class HospitalSurveyRepository
+    class HospitalSurveyRepository: IHospitalSurveyRepository
     {
         public List<HospitalSurvey> Load()
         {
@@ -33,26 +33,6 @@ namespace Hospital.Users.Repository
                 }
             }
             return surveyResults;
-        }
-
-        public HospitalSurvey InputValuesForServey(string patientEmail)
-        {
-            Console.WriteLine("\nBolnicu ocenjujete ocenama od 1 do 5");
-            Console.Write("\nKvalitet usluga bolnice: ");
-            int quality = Int32.Parse(Console.ReadLine());
-            Console.Write("Koliko je cista bolnica? : ");
-            int cleanliness = Int32.Parse(Console.ReadLine());
-            Console.Write("Da li ste zadovoljni? : ");
-            int satisfied = Int32.Parse(Console.ReadLine());
-            Console.Write("Da li biste predlozili bolnicu prijateljima? : ");
-            int recommendation = Int32.Parse(Console.ReadLine());
-            Console.Write("Komentar: ");
-            string comment = Console.ReadLine();
-
-            HospitalSurvey hospitalSurvey =
-                new HospitalSurvey(patientEmail, quality, cleanliness, satisfied, recommendation, comment);
-
-            return hospitalSurvey;
         }
 
         public void Save(List<HospitalSurvey> hospitalSurveys)
