@@ -106,10 +106,13 @@
     <Compile Include="Users\Repository\IRequestForDaysOffRepository.cs" />
     <Compile Include="Users\Repository\UserActionRepository.cs" />
     <Compile Include="Users\Repository\DoctorSurveyRepository.cs" />
+    <Compile Include="Users\Repository\INotificationRepository.cs" />
     <Compile Include="Users\Service\HospitalSurveyService.cs" />
     <Compile Include="Users\Service\IDoctorSurveyService.cs" />
     <Compile Include="Users\Service\IHospitalSurveyService.cs" />
     <Compile Include="Users\Service\IUserActionService.cs" />
+    <Compile Include="Users\Service\INotificationService.cs" />
+    <Compile Include="Users\Service\IPatientAccountService.cs" />
     <Compile Include="Users\Service\UserService.cs" />
     <Compile Include="Users\Service\IUserService.cs" />
     <Compile Include="Users\Service\NotificationService.cs" />
@@ -148,6 +151,7 @@
     <Compile Include="Appointments\Repository\ReferralRepository.cs" />
     <Compile Include="Appointments\Repository\IReferralRepository.cs" />
     <Compile Include="Appointments\Repository\PatientRequestRepository.cs" />
+    <Compile Include="Appointments\Repository\IPatientRequestRepository.cs" />
     <Compile Include="Appointments\Service\AppointmentService.cs" />
     <Compile Include="Appointments\Service\IAppointmentService.cs" />
     <Compile Include="Appointments\Service\HealthRecordService.cs" />
@@ -156,6 +160,7 @@
     <Compile Include="Appointments\Service\IMedicalRecordService.cs" />
     <Compile Include="Appointments\Service\PrescriptionService.cs" />
     <Compile Include="Appointments\Service\IPrescriptionService.cs" />
+    <Compile Include="Appointments\Service\IPatientRequestService.cs" />
     <Compile Include="Appointments\Service\ReferralService.cs" />
     <Compile Include="Appointments\Service\IReferralService.cs" />
     <Compile Include="Appointments\Service\PatientRequestService.cs" />
