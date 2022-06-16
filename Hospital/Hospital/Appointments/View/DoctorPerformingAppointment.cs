@@ -10,6 +10,7 @@ using Hospital.Appointments.Model;
 using Hospital.Drugs.Service;
 using Hospital.Users.Model;
 using Hospital.Users.Service;
+using Hospital.Drugs.Repository;
 
 namespace Hospital.Appointments.View
 {
@@ -17,7 +18,7 @@ namespace Hospital.Appointments.View
     {
         AppointmentService appointmentService;
         List<HealthRecord> healthRecords;
-        IngredientService ingredientService;
+        IIngredientService ingredientService;
         HealthRecordService healthRecordService;
         List<Appointment> allMyAppointments;
         User currentRegisteredDoctor;
@@ -26,7 +27,7 @@ namespace Hospital.Appointments.View
         {
             appointmentService = service;
             healthRecords = allHealthRecords;
-            ingredientService = new IngredientService();
+            ingredientService = new IngredientService(new IngredientRepository());
             healthRecordService = serviceHealthRecord;
             currentRegisteredDoctor = doctor;
             allMyAppointments = appointments;

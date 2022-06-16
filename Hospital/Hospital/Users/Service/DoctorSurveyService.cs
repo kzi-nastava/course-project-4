@@ -9,21 +9,21 @@ using Hospital.Users.Model;
 
 namespace Hospital.Users.Service
 {
-    public class DoctorSurveyService
+    public class DoctorSurveyService : IDoctorSurveyService
     {
-        private DoctorSurveyRepository _doctorServiceRepository;
+        private IDoctorSurveyRepository _doctorServiceRepository;
         private List<DoctorSurvey> _evaluatedDoctors;
         private UserService _userService;
 
-        public List<DoctorSurvey> EvaluatedDoctors { get { return _evaluatedDoctors; } }
-        public DoctorSurveyRepository DoctorSurveyRepository { get { return _doctorServiceRepository; } }
-
-        public DoctorSurveyService()
+        public DoctorSurveyService(IDoctorSurveyRepository doctorSurveyRepository)
         {
-            _doctorServiceRepository = new DoctorSurveyRepository();
+            _doctorServiceRepository = doctorSurveyRepository;
             _evaluatedDoctors = _doctorServiceRepository.Load();
             _userService = new UserService();
         }
+
+        public List<DoctorSurvey> EvaluatedDoctors { get { return _evaluatedDoctors; } }
+        public IDoctorSurveyRepository DoctorSurveyRepository { get { return _doctorServiceRepository; } }
 
         public DoctorSurveyResult GetSurveyResultForDoctor(DoctorUser doctor)
         {

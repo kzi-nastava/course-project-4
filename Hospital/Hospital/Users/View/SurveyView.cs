@@ -11,10 +11,10 @@ namespace Hospital.Users.View
 {
     public class SurveyView : ISurveyView
     {
-        DoctorSurveyService _doctorSurveyService;
-        HospitalSurveyService _hospitalSurveyService;
+        private IDoctorSurveyService _doctorSurveyService;
+        private IHospitalSurveyService _hospitalSurveyService;
 
-        public SurveyView(DoctorSurveyService doctorSurveyService, HospitalSurveyService hospitalSurveyService)
+        public SurveyView(IDoctorSurveyService doctorSurveyService, IHospitalSurveyService hospitalSurveyService)
         {
             _doctorSurveyService = doctorSurveyService;
             _hospitalSurveyService = hospitalSurveyService;

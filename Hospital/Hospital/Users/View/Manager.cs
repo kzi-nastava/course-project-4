@@ -13,6 +13,8 @@ using Hospital.Users.Service;
 using Hospital.Rooms.View;
 using Hospital.Rooms.Repository;
 using Hospital.Drugs.View;
+using Hospital.Drugs.Repository;
+using Hospital.Users.Repository;
 
 namespace Hospital.Users.View
 {
@@ -25,10 +27,10 @@ namespace Hospital.Users.View
         private IEquipmentMovingService _equipmentMovingService;
         private AppointmentService _appointmentService;
         private IRenovationService _renovationService;
-        private IngredientService _ingredientService;
-        private DrugProposalService _drugProposalService;
-        private DoctorSurveyService _doctorSurveyService;
-        private HospitalSurveyService _hospitalSurveyService;
+        private IIngredientService _ingredientService;
+        private IDrugProposalService _drugProposalService;
+        private IDoctorSurveyService _doctorSurveyService;
+        private IHospitalSurveyService _hospitalSurveyService;
 
         private IRoomView _roomView;
         private IEquipmentView _equipmentView;
@@ -52,10 +54,16 @@ namespace Hospital.Users.View
             this._equipmentMovingService = new EquipmentMovingService(equipmentMovingRepository, _equipmentService, _roomService);
             this._appointmentService = new AppointmentService();
             this._renovationService = new RenovationService(renovationRepository, _roomService, _appointmentService, _equipmentService);
-            this._ingredientService = new IngredientService();
-            this._drugProposalService = new DrugProposalService();
-            this._doctorSurveyService = new DoctorSurveyService();
-            this._hospitalSurveyService = new HospitalSurveyService("");
+
+            IIngredientRepository ingredientRepository = new IngredientRepository();
+            this._ingredientService = new IngredientService(ingredientRepository);
+            IDrugProposalRepository drugProposalRepository = new DrugProposalRepository(_ingredientService);
+            this._drugProposalService = new DrugProposalService(drugProposalRepository);
+
+            IDoctorSurveyRepository doctorSurveyRepository = new DoctorSurveyRepository();
+            this._doctorSurveyService = new DoctorSurveyService(doctorSurveyRepository);
+            IHospitalSurveyRepository hospitalSurveyRepository = new HospitalSurveyRepository();
+            this._hospitalSurveyService = new HospitalSurveyService("", hospitalSurveyRepository);
 
             this._roomView = new RoomView(_roomService);
             this._equipmentView = new EquipmentView(_roomService, _equipmentService, _equipmentMovingService);

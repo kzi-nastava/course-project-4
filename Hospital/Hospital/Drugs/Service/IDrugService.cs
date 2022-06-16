@@ -9,5 +9,10 @@ namespace Hospital.Drugs.Service
 {
     public interface  IDrugService: IService<Drug>
     {
+        List<Drug> Drugs { get; }
+
+        int GetNewDrugId();
+
+        void AddDrug(Drug drug);
     }
 }
