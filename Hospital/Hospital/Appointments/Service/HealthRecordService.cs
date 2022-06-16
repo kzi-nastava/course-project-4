@@ -43,7 +43,7 @@ namespace Hospital.Appointments.Service
 
         }
 
-        public void UpdateHealthRecord(HealthRecord healthRecordForUpdate)
+        public void Update(HealthRecord healthRecordForUpdate)
         {
             foreach (HealthRecord healthRecord in this._healthRecords)
             {

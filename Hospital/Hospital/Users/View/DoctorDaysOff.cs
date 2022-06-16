@@ -64,8 +64,8 @@ namespace Hospital.Users.View
             } while (!requestForDaysOffService.CheckingAvailabilityOfDoctor(startDate, endDate, currentRegisteredDoctor));
 
             RequestForDaysOff.State state = this.GetState(urgent);
-            RequestForDaysOff newRequest = new RequestForDaysOff(requestForDaysOffService.GetNewRequestId(), currentRegisteredDoctor.Email, startDate, endDate, EnteringReasonsForDaysOff(), state, urgent);
-            requestForDaysOffService.AddRequest(newRequest);
+            RequestForDaysOff newRequest = new RequestForDaysOff(requestForDaysOffService.GetNewId(), currentRegisteredDoctor.Email, startDate, endDate, EnteringReasonsForDaysOff(), state, urgent);
+            requestForDaysOffService.Add(newRequest);
         }
 
         private string EnterNumberOfDays()

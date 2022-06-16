@@ -32,7 +32,7 @@ namespace Hospital.Users.Service
         public List<RequestForDaysOff> RequestsForDaysOff { get { return _requestsForDaysOff; } set { _requestsForDaysOff = value; } }
 
        
-        public string GetNewRequestId()
+        public string GetNewId()
         {
             return (this._requestsForDaysOff.Count + 1).ToString();
         }
@@ -114,7 +114,7 @@ namespace Hospital.Users.Service
                 return false;
             }
 
-        public void AddRequest(RequestForDaysOff request)
+        public void Add(RequestForDaysOff request)
         {
             this._requestsForDaysOff.Add(request);
             this._requestForDaysOffRepository.Save(this._requestsForDaysOff);

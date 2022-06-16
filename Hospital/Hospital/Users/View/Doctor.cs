@@ -110,7 +110,7 @@ namespace Hospital.Users.View
             else{
                 Console.WriteLine("Unesite validnu radnju!");
                 return; }
-            appointmentService.AddAppointment(newAppointment);
+            appointmentService.Add(newAppointment);
             this.allMyAppointments = appointmentService.GetDoctorAppointment(this.currentRegisteredDoctor);
             Console.WriteLine("Uspešno ste zakazali termin.");
         }
@@ -181,7 +181,7 @@ namespace Hospital.Users.View
                 string numberAppointment = DoctorEnter.EnterNumberAppointment(this.allMyAppointments);
                 Appointment appointmentForDelete = this.allMyAppointments[Int32.Parse(numberAppointment) - 1];
                 appointmentForDelete.AppointmentState = Appointment.State.Deleted;
-                appointmentService.UpdateAppointment(appointmentForDelete);
+                appointmentService.Update(appointmentForDelete);
                 this.allMyAppointments = appointmentService.GetDoctorAppointment(this.currentRegisteredDoctor);
                 Console.WriteLine("Uspesno ste obrisali termin!"); }
             else{ Console.WriteLine("\nJos uvek nemate zakazan termin!"); }
@@ -195,7 +195,7 @@ namespace Hospital.Users.View
                 Appointment newAppointment;
                 if (appointmentForUpdate.TypeOfTerm == Appointment.Type.Examination){newAppointment = this.PrintItemsToChangeExamination(appointmentForUpdate);}
                 else{ newAppointment = this.PrintItemsToChangeOperation(appointmentForUpdate); }               
-                appointmentService.UpdateAppointment(newAppointment);
+                appointmentService.Update(newAppointment);
                 this.allMyAppointments = appointmentService.GetDoctorAppointment(this.currentRegisteredDoctor);
                 Console.WriteLine("Uspesno ste izmenili termin!");}
             else{Console.WriteLine("\nJos uvek nemate zakazan termin!");}

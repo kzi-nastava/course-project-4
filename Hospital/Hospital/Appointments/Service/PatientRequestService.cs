@@ -53,7 +53,7 @@ namespace Hospital.Appointments.Service
 				}
 
 			}
-			this._appointmentService.Update();
+			this._appointmentService.Save();
 			
 		}
 
@@ -81,7 +81,7 @@ namespace Hospital.Appointments.Service
 				}
 			}
 
-			this._appointmentService.Update();
+			this._appointmentService.Save();
 		
 		}
 

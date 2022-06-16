@@ -124,7 +124,7 @@ namespace Hospital.Appointments.View
                     }
                 }
             }
-            _appointmentService.UpdateAppointment(appointmentForDelete);
+            _appointmentService.Update(appointmentForDelete);
             this._currentPatient.PatientAppointments = _patientAppointment.RefreshPatientAppointments();
         }
 
@@ -159,7 +159,7 @@ namespace Hospital.Appointments.View
                     }
                 }
             }
-            this._appointmentService.UpdateAppointment(updatedAppointment);
+            this._appointmentService.Update(updatedAppointment);
             this._currentPatient.PatientAppointments = _patientAppointment.RefreshPatientAppointments();
         }
     }

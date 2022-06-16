@@ -83,7 +83,7 @@ namespace Hospital.Appointments.View
             if (_patientScheduling.AcceptAppointment(newAppointment).Equals("2"))
                 return;
 
-            this._appointmentService.AddAppointment(newAppointment);
+            this._appointmentService.Add(newAppointment);
             this._currentPatient.PatientAppointments = _patientAppointmentsService.RefreshPatientAppointments();
             this._userActionService.ActionRepository.AppendToActionFile("create");
             this._userActionService.AntiTrolMechanism();

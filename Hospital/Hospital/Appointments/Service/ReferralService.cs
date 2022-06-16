@@ -91,7 +91,7 @@ namespace Hospital.Appointments.Service
 			}
 		}
 
-		public void AddReferral(Referral referral)
+		public void Add(Referral referral)
         {
 			this._referrals.Add(referral);
 			this._referralRepository.Save(this._referrals);

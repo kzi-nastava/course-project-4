@@ -55,8 +55,8 @@ namespace Hospital.Appointments.View
             } while (!prescriptionService.CheckAllergicToDrug(healthRecord, drug));
 
             //saving precription
-            Prescription newPrescription = new Prescription(appointment.AppointmentId, prescriptionService.GetIdDrug(drug), DateTime.ParseExact(startConsuming, "HH:mm", CultureInfo.InvariantCulture), Int32.Parse(dose), (Prescription.TimeOfConsuming)int.Parse(timeOfCnsuming));
-            prescriptionService.AddPrescription(newPrescription);
+            Prescription newPrescription = new Prescription(appointment.AppointmentId, prescriptionService.GetId(drug), DateTime.ParseExact(startConsuming, "HH:mm", CultureInfo.InvariantCulture), Int32.Parse(dose), (Prescription.TimeOfConsuming)int.Parse(timeOfCnsuming));
+            prescriptionService.Add(newPrescription);
         }
 
         private string EnterDrug()

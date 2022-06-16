@@ -177,7 +177,7 @@ namespace Hospital.Appointments.Service
             return true;
         }
 
-        public void UpdateAppointment(Appointment appointmentChange)
+        public void Update(Appointment appointmentChange)
         {
             this._appointments = _appointmentRepository.Load();
             foreach (Appointment updateAppointment in this._appointments)
@@ -195,7 +195,7 @@ namespace Hospital.Appointments.Service
                 }
                
             }
-            Update();
+            Save();
             
         }
 
@@ -228,7 +228,7 @@ namespace Hospital.Appointments.Service
             File.AppendAllText(filePath, newAppointment.ToString() + "\n");
         }
 
-        public void AddAppointment(Appointment appointment)
+        public void Add(Appointment appointment)
         {
             this._appointments.Add(appointment);
             this._appointmentRepository.Save(this._appointments);
@@ -273,7 +273,7 @@ namespace Hospital.Appointments.Service
             return false;
         }
 
-        public void Update()
+        public void Save()
         {
             _appointmentRepository.Save(this._appointments);
         }

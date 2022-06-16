@@ -24,7 +24,7 @@ namespace Hospital.Appointments.Service
 
         public List<MedicalRecord> MedicalRecords { get { return _medicalRecords; } }
 
-        public void AddMedicalRecord(MedicalRecord medicalRecord)
+        public void Add(MedicalRecord medicalRecord)
         {
             this._medicalRecords.Add(medicalRecord);
             this._medicalRecordRepository.Save(this._medicalRecords);

@@ -66,7 +66,7 @@ namespace Hospital.Appointments.Service
         }
 
         
-        public string GetIdDrug(string drugName)
+        public string GetId(string drugName)
         {
             foreach (Drug drug in this._drugs)
             {
@@ -101,7 +101,7 @@ namespace Hospital.Appointments.Service
             Console.WriteLine("Lek sa ovim nazivom ne postoji!");
             return false;
         }
-        public void AddPrescription(Prescription prescription)
+        public void Add(Prescription prescription)
         {
             this._prescriptions.Add(prescription);
             this._prescriptionRepository.Save(this._prescriptions);

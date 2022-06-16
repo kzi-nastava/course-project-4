@@ -126,7 +126,7 @@ namespace Hospital.Appointments.View
             }
 
             Appointment newAppointment = this.CreateAppointment(inputValues);
-            this._appointmentService.AddAppointment(newAppointment);
+            this._appointmentService.Add(newAppointment);
             this._currentRegisteredUser.PatientAppointments = _patientAppointmentsService.RefreshPatientAppointments();
             this._userActionService.ActionRepository.AppendToActionFile("create");
             this._userActionService.AntiTrolMechanism();

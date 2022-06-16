@@ -134,7 +134,7 @@ namespace Hospital.Appointments.View
 			{
 				rescheduledAppointment = RescheduleAppointment(leastUrgent);
 			} while (_appointmentService.IsAppointmentFreeForDoctor(rescheduledAppointment));
-			_appointmentService.UpdateAppointment(rescheduledAppointment);
+			_appointmentService.Update(rescheduledAppointment);
 
 			Appointment newAppointment = new Appointment(_appointmentService.GetNewAppointmentId().ToString(), patient.Email, doctor.Email,
 				leastUrgent.DateAppointment, leastUrgent.StartTime, leastUrgent.StartTime.AddMinutes(45), Appointment.State.Created,

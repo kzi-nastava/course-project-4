@@ -108,7 +108,7 @@ namespace Hospital.Appointments.View
 
             //the examination was performed
             appointmentService.PerformAppointment(appointment);
-            appointmentService.Update();
+            appointmentService.Save();
 
             Console.WriteLine("Uspešno ste uneli anamnezu.");
 
@@ -161,7 +161,7 @@ namespace Hospital.Appointments.View
             string bloodTypeInput = Console.ReadLine();
 
             HealthRecord newHealthRecord = new HealthRecord(healthRecordSelected.IdHealthRecord, healthRecordSelected.EmailPatient, Int32.Parse(patientHeightInput), double.Parse(patientWeightInput), previousIllnessesInput, allergenInput, bloodTypeInput);
-            healthRecordService.UpdateHealthRecord(newHealthRecord);
+            healthRecordService.Update(newHealthRecord);
         }
         private string EnterPatientHeight()
         {

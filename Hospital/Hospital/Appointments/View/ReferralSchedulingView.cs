@@ -45,7 +45,7 @@ namespace Hospital.Appointments.View
 				newAppointment = MakeAppointmentWithFreeDoctor(referral);
 			}
 			Console.WriteLine("Uspesno zakazan pregled!");
-			_appointmentService.AddAppointment(newAppointment);
+			_appointmentService.Add(newAppointment);
 			_referralService.UseReferral(referral);
 
 		}
