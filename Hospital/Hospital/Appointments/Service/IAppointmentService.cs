@@ -11,6 +11,7 @@ namespace Hospital.Appointments.Service
 {
     public interface IAppointmentService
     {
+        List<Appointment> Appointments { get; set; }
         void Save();
         bool OverlapingAppointmentExists(DateTime start, DateTime end, string roomId);
         bool IntervalsOverlap(DateTime firstStart, DateTime firstEnd, DateTime secondStart, DateTime secondEnd);

@@ -10,6 +10,7 @@ namespace Hospital.Appointments.Service
 {
     public interface IHealthRecordService
     {
+        List<HealthRecord> HealthRecords { get; }
         void DisplayOfPatientsHealthRecord(string patientEmail);
         void Update(HealthRecord healthRecordForUpdate);
         void CreateHealthRecord(User patient);
