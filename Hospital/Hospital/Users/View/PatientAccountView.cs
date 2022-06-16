@@ -3,21 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Hospital;
+using Autofac;
 using Hospital.Users.Service;
 using Hospital.Users.Model;
 
 namespace Hospital.Users.View
 {
-    public class PatientAccountView
+	public class PatientAccountView
 	{
-		private UserService _userService;
-		private PatientAccountService _patientAccountService;
+		private IUserService _userService;
+		private PatientAccountService _patientAccountService; //ovde
 
 		public PatientAccountView()
 		{
-			this._userService = new UserService();
-			this._patientAccountService = new PatientAccountService();
+			this._userService = Globals.container.Resolve<IUserService>();
+			this._patientAccountService = new PatientAccountService(); //ovde
 		}
 
 		public void ShowActivePatients()
@@ -91,7 +92,7 @@ namespace Hospital.Users.View
 			} while (patientIndex > patients.Count);
 			if (patientIndex == 0)
 				return null;
-			
+
 			return patients[patientIndex - 1];
 		}
 

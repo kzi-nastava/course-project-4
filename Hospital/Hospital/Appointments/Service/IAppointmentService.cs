@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Hospital.Appointments.Model;
+using Hospital.Appointments.Repository;
 using Hospital.Rooms.Model;
 using Hospital.Users.Model;
 
@@ -11,6 +12,7 @@ namespace Hospital.Appointments.Service
 {
     public interface IAppointmentService
     {
+        IAppointmentRepository AppointmentRepository { get; }
         List<Appointment> Appointments { get; set; }
         void Save();
         bool OverlapingAppointmentExists(DateTime start, DateTime end, string roomId);

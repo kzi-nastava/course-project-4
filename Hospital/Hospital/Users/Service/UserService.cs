@@ -4,24 +4,25 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Hospital;
+using Autofac;
 using Hospital.Users.Repository;
 using Hospital.Users.Model;
 using Hospital.Users.View;
 
 namespace Hospital.Users.Service
 {
-    public class UserService: IUserService
+    public class UserService : IUserService
     {
-        private UserRepository _userRepository;
+        private IUserRepository _userRepository;
         private List<User> _users;
 
         public List<User> Users { get { return this._users; } }
-        public UserRepository UsersRepository { get { return this._userRepository; } }
+        public IUserRepository UserRepository { get { return this._userRepository; } }
 
         public UserService()
         {
-            _userRepository = new UserRepository();
+            _userRepository = Globals.container.Resolve<IUserRepository>();
             _users = _userRepository.Load();
         }
 
@@ -63,17 +64,17 @@ namespace Hospital.Users.Service
         }
 
         public string GetUserFullName(string email)
-		{
+        {
             string fullName = "";
-            foreach(User user in _users)
-			{
-                if(user.Email == email)
-				{
+            foreach (User user in _users)
+            {
+                if (user.Email == email)
+                {
                     fullName = user.Name + " " + user.Surname;
-				}
-			}
+                }
+            }
             return fullName;
-		}
+        }
 
         public User TryLogin(string email, string password)
         {
@@ -86,58 +87,59 @@ namespace Hospital.Users.Service
         }
 
         public void BlockOrUnblockUser(User forUpdate, bool blocking)
-		{
-            foreach(User user in _users)
-			{
-                if(user.Email == forUpdate.Email)
-				{
-					if (blocking)
-					{
+        {
+            foreach (User user in _users)
+            {
+                if (user.Email == forUpdate.Email)
+                {
+                    if (blocking)
+                    {
                         user.UserState = User.State.BlockedBySecretary;
                         break;
-					}
-					else
-					{
+                    }
+                    else
+                    {
                         user.UserState = User.State.Active;
                         break;
-					}
-                    
-				}
-			}
+                    }
+
+                }
+            }
 
             UpdateFile();
-		}
+        }
 
         public void UpdateUserInfo(User forUpdate)
-		{
-            for(int i = 0; i < _users.Count; i++)
-			{
+        {
+            for (int i = 0; i < _users.Count; i++)
+            {
                 User user = Users[i];
-                if (user.Email == forUpdate.Email){
+                if (user.Email == forUpdate.Email)
+                {
                     _users[i] = forUpdate;
                     break;
-				}
-			}
+                }
+            }
             UpdateFile();
-		}
+        }
 
         public List<User> FilterDoctors(DoctorUser.Speciality speciality)
-		{
+        {
             List<User> allDoctors = new List<User>();
-            foreach(User user in _users)
-			{
-                if(user.UserRole == User.Role.Doctor)
-				{
+            foreach (User user in _users)
+            {
+                if (user.UserRole == User.Role.Doctor)
+                {
                     DoctorUser doctor = (DoctorUser)user;
-                    if(doctor.SpecialityDoctor == speciality)
-					{
+                    if (doctor.SpecialityDoctor == speciality)
+                    {
                         allDoctors.Add(user);
-					}
-                    
-				}
-			}
+                    }
+
+                }
+            }
             return allDoctors;
-		}     
+        }
 
         public void DisplayOfPatientData(string patientEmail)
         {

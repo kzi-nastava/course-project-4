@@ -3,24 +3,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Hospital;
+using Autofac;
 using Hospital.Rooms.Repository;
 using Hospital.Rooms.Model;
 
 namespace Hospital.Rooms.Service
 {
-    public class EquipmentService : IEquipmentService
+    public class EquipmentService
     {
         private IEquipmentRepository _equipmentRepository;
         private IRoomService _roomService;
-        
-        public EquipmentService(IEquipmentRepository equipmentRepository, IRoomService roomService)
-        {
-            _roomService = roomService;
-            _equipmentRepository = equipmentRepository;
-        }
 
         public List<Equipment> AllEquipment { get { return _equipmentRepository.AllEquipment; } }
+
+        public EquipmentService()
+        {
+            _roomService = Globals.container.Resolve<IRoomService>();
+            _equipmentRepository = Globals.container.Resolve<IEquipmentRepository>();
+        }
 
         public Equipment GetEquipmentById(string id)
         {

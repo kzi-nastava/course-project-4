@@ -4,7 +4,8 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Hospital;
+using Autofac;
 using Hospital.Users.Service;
 using Hospital.Users.Model;
 
@@ -12,15 +13,15 @@ namespace Hospital.Users.View
 {
     public class DoctorDaysOff
     {
-        RequestForDaysOffService requestForDaysOffService;
-        List<RequestForDaysOff> requestsForDaysOff;
-        User currentRegisteredDoctor;
+        private IRequestForDaysOffService _requestForDaysOffService;
+        private List<RequestForDaysOff> _requestsForDaysOff;
+        private User _currentRegisteredDoctor;
 
         public DoctorDaysOff(User doctor)
         {
-            requestForDaysOffService = new RequestForDaysOffService();
-            requestsForDaysOff = requestForDaysOffService.RequestsForDaysOff;
-            currentRegisteredDoctor = doctor;
+            _requestForDaysOffService = Globals.container.Resolve<IRequestForDaysOffService>();
+            _requestsForDaysOff = _requestForDaysOffService.RequestsForDaysOff;
+            _currentRegisteredDoctor = doctor;
 
         }
 
@@ -37,10 +38,12 @@ namespace Hospital.Users.View
                 } while (!int.TryParse(choice, out tryIntConvert));
             } while (!choice.Equals("1") && !choice.Equals("2"));
 
-            if (choice.Equals("1")){
+            if (choice.Equals("1"))
+            {
                 this.PrintRequestsForDaysOff();
             }
-            else{
+            else
+            {
                 this.SubmitRequestForDaysOff();
             }
 
@@ -61,11 +64,11 @@ namespace Hospital.Users.View
                 } while (!this.CheckNumberOFDaysForUrgency(int.Parse(numberOfDays), urgent));
                 startDate = DateTime.ParseExact(desiredDate, "MM/dd/yyyy", CultureInfo.InvariantCulture);
                 endDate = startDate.AddDays(int.Parse(numberOfDays));
-            } while (!requestForDaysOffService.CheckingAvailabilityOfDoctor(startDate, endDate, currentRegisteredDoctor));
+            } while (!_requestForDaysOffService.CheckingAvailabilityOfDoctor(startDate, endDate, _currentRegisteredDoctor));
 
             RequestForDaysOff.State state = this.GetState(urgent);
-            RequestForDaysOff newRequest = new RequestForDaysOff(requestForDaysOffService.GetNewId(), currentRegisteredDoctor.Email, startDate, endDate, EnteringReasonsForDaysOff(), state, urgent);
-            requestForDaysOffService.Add(newRequest);
+            RequestForDaysOff newRequest = new RequestForDaysOff(_requestForDaysOffService.GetNewId(), _currentRegisteredDoctor.Email, startDate, endDate, EnteringReasonsForDaysOff(), state, urgent);
+            _requestForDaysOffService.Add(newRequest);
         }
 
         private string EnterNumberOfDays()
@@ -87,7 +90,7 @@ namespace Hospital.Users.View
             {
                 Console.WriteLine("Unesite datum: ");
                 desiredDate = Console.ReadLine();
-            } while (!requestForDaysOffService.IsDateValid(desiredDate));
+            } while (!_requestForDaysOffService.IsDateValid(desiredDate));
             return desiredDate;
         }
 
@@ -114,7 +117,7 @@ namespace Hospital.Users.View
 
         }
 
-       
+
         private string EnteringReasonsForDaysOff()
         {
             Console.WriteLine("Unesite razlog za slobodne dane: ");
@@ -143,10 +146,10 @@ namespace Hospital.Users.View
         private void PrintRequestsForDaysOff()
         {
             int serialNumber = 1;
-            Console.WriteLine(String.Format("|{0,5}|{1,15}|{2,15}|{3,10}|{4,10}|","Br","Pocetak","Kraj", "Stanje","Hitno"));
-            foreach(RequestForDaysOff request in requestsForDaysOff)
+            Console.WriteLine(String.Format("|{0,5}|{1,15}|{2,15}|{3,10}|{4,10}|", "Br", "Pocetak", "Kraj", "Stanje", "Hitno"));
+            foreach (RequestForDaysOff request in _requestsForDaysOff)
             {
-                if (request.EmailDoctor.Equals(currentRegisteredDoctor.Email))
+                if (request.EmailDoctor.Equals(_currentRegisteredDoctor.Email))
                 {
                     Console.WriteLine(String.Format("|{0,5}|{1,15}|{2,15}|{3,10}|{4,10}|", serialNumber, request.StartDate.ToString("MM/dd/yyyy"), request.EndDate.ToString("MM/dd/yyyy"), request.StateRequired, request.Urgen));
                     serialNumber++;

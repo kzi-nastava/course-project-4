@@ -10,17 +10,18 @@ using Hospital.Users.View;
 
 namespace Hospital.Users.Service
 {
-    public class UserActionService: IUserActionService
+    public class UserActionService
     {
-        private UserActionRepository _actionRepository;
+        private IUserActionRepository _actionRepository;
         private List<UserAction> _actions;
         private Patient _currentPatient;
 
-        public UserActionRepository ActionRepository { get { return _actionRepository; } }
+        public List<UserAction> Actions { get { return _actions; } }
+        public IUserActionRepository ActionRepository { get { return _actionRepository; } }
 
         public UserActionService(Patient currentPatient)
         {
-            this._actionRepository = new UserActionRepository(currentPatient.Email);
+            this._actionRepository = new UserActionRepository(currentPatient.Email); //ovde
             this._actions = _actionRepository.Load();
             this._currentPatient = currentPatient;
         }

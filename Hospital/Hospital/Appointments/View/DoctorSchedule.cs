@@ -7,19 +7,20 @@ using System.Threading.Tasks;
 using Hospital.Appointments.Model;
 using Hospital.Users.Model;
 using Hospital.Appointments.Service;
-
+using Hospital;
+using Autofac;
 namespace Hospital.Appointments.View
 {
     public class DoctorSchedule
     {
-        List<Appointment> allMyAppointments;
-        User currentRegisteredDoctor;
-        List<HealthRecord> healthRecords;
-        AppointmentService appointmentService;
+        private List<Appointment> allMyAppointments;
+        private User currentRegisteredDoctor;
+        private List<HealthRecord> healthRecords;
+        private IAppointmentService appointmentService;
 
-        public DoctorSchedule(AppointmentService serviceAppointment, List<HealthRecord> allHealthRecords, List<Appointment> appointments, User doctor)
+        public DoctorSchedule(List<HealthRecord> allHealthRecords, List<Appointment> appointments, User doctor)
         {
-            appointmentService = serviceAppointment;
+            appointmentService = Globals.container.Resolve<IAppointmentService>();
             healthRecords = allHealthRecords;
             allMyAppointments = appointments;
             currentRegisteredDoctor = doctor;
@@ -48,7 +49,7 @@ namespace Hospital.Appointments.View
             {
                 Console.WriteLine("Nemate zakazanih termina za izabrani datum");
             }
-            
+
         }
 
         private List<Appointment> AppointmentForSelectedDate(DateTime selectedDate, DateTime dateForNextThreeDays)
@@ -92,7 +93,6 @@ namespace Hospital.Appointments.View
                     return;
                 }
             } while (!choice.Equals("1") && !choice.Equals("2"));
-
         }
 
         private void PrintPatientsHealthRecord(String patientEmail)

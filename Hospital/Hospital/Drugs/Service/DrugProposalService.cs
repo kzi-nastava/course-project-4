@@ -4,7 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-
+using Hospital;
+using Autofac;
 using Hospital.Drugs.Repository;
 using Hospital.Drugs.Model;
 
@@ -13,10 +14,10 @@ namespace Hospital.Drugs.Service
     public class DrugProposalService : IDrugProposalService
     {
         private IDrugProposalRepository _drugProposalRepository;
-        
-        public DrugProposalService(IDrugProposalRepository drugProposalRepository)
+
+        public DrugProposalService()
         {
-            this._drugProposalRepository = drugProposalRepository;
+            this._drugProposalRepository = Globals.container.Resolve<IDrugProposalRepository>();
         }
 
         public List<DrugProposal> DrugProposals { get { return _drugProposalRepository.DrugProposals; } }
@@ -31,7 +32,7 @@ namespace Hospital.Drugs.Service
             return GetDrugProposalsByStatus(DrugProposal.Status.Waiting);
         }
 
-        public List<DrugProposal> GetRejectedDrugProposals() 
+        public List<DrugProposal> GetRejectedDrugProposals()
         {
             return GetDrugProposalsByStatus(DrugProposal.Status.Rejected);
         }
@@ -63,7 +64,7 @@ namespace Hospital.Drugs.Service
         {
             if (!IdExists(id) || Get(id).ProposalStatus != DrugProposal.Status.Rejected)
                 return false;
-            foreach (DrugProposal proposal in DrugProposals) 
+            foreach (DrugProposal proposal in DrugProposals)
             {
                 if (proposal.Id.Equals(id))
                 {

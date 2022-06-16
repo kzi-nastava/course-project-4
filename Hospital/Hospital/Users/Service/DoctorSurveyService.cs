@@ -3,28 +3,29 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Hospital;
+using Autofac;
 using Hospital.Users.Repository;
 using Hospital.Users.Model;
 using Hospital.Appointments.Model;
 
 namespace Hospital.Users.Service
 {
-    public class DoctorSurveyService: IDoctorSurveyService
+    public class DoctorSurveyService
     {
         private IDoctorSurveyRepository _doctorServiceRepository;
         private List<DoctorSurvey> _evaluatedDoctors;
-        private UserService _userService;
+        private IUserService _userService;
 
         public List<DoctorSurvey> EvaluatedDoctors { get { return _evaluatedDoctors; } }
+        public IDoctorSurveyRepository DoctorSurveyRepository { get { return _doctorServiceRepository; } }
 
-        public DoctorSurveyService(IDoctorSurveyRepository doctorSurveyRepository)
+        public DoctorSurveyService()
         {
-            _doctorServiceRepository = doctorSurveyRepository;
+            _doctorServiceRepository = Globals.container.Resolve<IDoctorSurveyRepository>();
             _evaluatedDoctors = _doctorServiceRepository.Load();
-            _userService = new UserService();
+            _userService = Globals.container.Resolve<IUserService>();
         }
-
         public DoctorSurvey EvaluateDoctor(Appointment appointment)
         {
             Console.WriteLine("\nDoktora ocenjujete ocenama od 1 do 5");
@@ -63,7 +64,7 @@ namespace Hospital.Users.Service
             }
             float averageQuality = surveyCount > 0 ? qualitySum / surveyCount : 0.0f;
             float averageRecommendation = surveyCount > 0 ? recommendationSum / surveyCount : 0.0f;
-            return new DoctorSurveyResult(doctor, surveyCount, averageQuality, qualityCount, averageRecommendation, 
+            return new DoctorSurveyResult(doctor, surveyCount, averageQuality, qualityCount, averageRecommendation,
                 recommendationCount, comments);
         }
 

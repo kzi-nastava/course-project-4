@@ -6,18 +6,19 @@ using System.Threading.Tasks;
 
 using Hospital.Drugs.Service;
 using Hospital.Drugs.Model;
-
+using Hospital;
+using Autofac;
 namespace Hospital.Drugs.View
 {
-    public class DrugView : IDrugView
+    public class DrugView
     {
         private IIngredientService _ingredientService;
         private IDrugProposalService _drugProposalService;
 
-        public DrugView(IIngredientService ingredientService, IDrugProposalService drugProposalService)
+        public DrugView()
         {
-            this._ingredientService = ingredientService;
-            this._drugProposalService = drugProposalService;
+            this._ingredientService = Globals.container.Resolve<IIngredientService>();
+            this._drugProposalService = Globals.container.Resolve<IDrugProposalService>();
         }
 
         private string EnterId(bool existing)
@@ -124,7 +125,7 @@ namespace Hospital.Drugs.View
         {
             Console.WriteLine("Unesite izmenjene podatke o odbijenom leku");
             Console.WriteLine("------------------");
-            
+
             string id = EnterExistingId();
             string drugName = EnterDrugName();
             List<Ingredient> ingredients = EnterIngredients();

@@ -3,27 +3,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Hospital;
+using Autofac;
 using Hospital.Rooms.Model;
-using Hospital.Rooms.Repository;
 
 namespace Hospital.Rooms.Service
 {
-    public class DynamicEquipmentMovingService
+	public class DynamicEquipmentMovingService
 	{
-		private WarehouseService _warehouseService;
-		private DynamicRoomEquipmentService _dynamicRoomEquipmentService;
+		private IWarehouseService _warehouseService;
+		private IDynamicRoomEquipmentService _dynamicRoomEquipmentService;
 		private IRoomService _roomService;
 		public DynamicEquipmentMovingService()
 		{
-			this._warehouseService = new WarehouseService();
-			this._dynamicRoomEquipmentService = new DynamicRoomEquipmentService();
-			this._roomService = new RoomService(new RoomRepository());
+			this._warehouseService = Globals.container.Resolve<IWarehouseService>();
+			this._dynamicRoomEquipmentService = Globals.container.Resolve<IDynamicRoomEquipmentService>();
+			this._roomService = Globals.container.Resolve<IRoomService>();
 		}
 
 		public List<KeyValuePair<string, DynamicEquipment>> GetMissingEquipmentInRooms()
 		{
-			List<KeyValuePair<string, DynamicEquipment>> missingEquipment =new List<KeyValuePair<string, DynamicEquipment>>();
+			List<KeyValuePair<string, DynamicEquipment>> missingEquipment = new List<KeyValuePair<string, DynamicEquipment>>();
 			foreach (DynamicRoomEquipment roomEquipment in _dynamicRoomEquipmentService.DynamicEquipments)
 			{
 				foreach (KeyValuePair<string, int> pair in roomEquipment.AmountEquipment)
@@ -41,7 +41,7 @@ namespace Hospital.Rooms.Service
 		public List<Room> GetRoomsWithEnoughEquipment(string equipmentId, int amount, string roomId)
 		{
 			List<Room> rooms = new List<Room>();
-			foreach(DynamicRoomEquipment roomEquipment in _dynamicRoomEquipmentService.DynamicEquipments)
+			foreach (DynamicRoomEquipment roomEquipment in _dynamicRoomEquipmentService.DynamicEquipments)
 			{
 				if (roomId == roomEquipment.IdRoom)
 					continue;
@@ -52,5 +52,4 @@ namespace Hospital.Rooms.Service
 			return rooms;
 		}
 	}
-
 }

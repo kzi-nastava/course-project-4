@@ -8,6 +8,7 @@ namespace Hospital.Users.Service
 {
     public interface IRequestForDaysOffService
     {
+        List<RequestForDaysOff> RequestsForDaysOff { get; }
         void AnswerRequest(RequestForDaysOff pendingRequest);
         void Add(RequestForDaysOff request);
         bool CheckOverlapDate(DateTime startDate, DateTime endDate, RequestForDaysOff request);

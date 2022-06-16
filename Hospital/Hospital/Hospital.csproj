@@ -41,7 +41,9 @@
     <Compile Include="Drugs\Service\IDrugNotificationService.cs" />
     <Compile Include="Drugs\View\IDrugView.cs" />
     <Compile Include="Drugs\View\IIngredientView.cs" />
+    <Compile Include="Globals.cs" />
     <Compile Include="IRepository.cs" />
+    <Compile Include="ProgramModule.cs" />
     <Compile Include="Rooms\Model\Room.cs" />
     <Compile Include="Rooms\Model\DynamicRoomEquipment.cs" />
     <Compile Include="Rooms\Model\DynamicEquipment.cs" />

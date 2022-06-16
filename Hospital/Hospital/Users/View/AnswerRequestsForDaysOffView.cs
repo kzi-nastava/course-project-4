@@ -6,30 +6,31 @@ using System.Threading.Tasks;
 
 using Hospital.Users.Model;
 using Hospital.Users.Service;
-
+using Hospital;
+using Autofac;
 namespace Hospital.Users.View
 {
-    public class AnswerRequestsForDaysOffView
+	public class AnswerRequestsForDaysOffView
 	{
 		private List<RequestForDaysOff> _pendingRequests;
-		private RequestForDaysOffService _requestForDaysOffService;
-		private NotificationService _notificationService;
-		private UserService _userService;
+		private IRequestForDaysOffService _requestForDaysOffService;
+		private INotificationService _notificationService; //ovde
+		private IUserService _userService;
 
 		public AnswerRequestsForDaysOffView()
 		{
-			this._requestForDaysOffService = new RequestForDaysOffService();
+			this._requestForDaysOffService = Globals.container.Resolve<IRequestForDaysOffService>();
 			this._pendingRequests = FilterPending(_requestForDaysOffService.RequestsForDaysOff);
-			this._userService = new UserService();
-			this._notificationService = new NotificationService();
+			this._userService = Globals.container.Resolve<IUserService>();
+			this._notificationService = Globals.container.Resolve<INotificationService>(); //ovde
 		}
 
 		public List<RequestForDaysOff> FilterPending(List<RequestForDaysOff> requests)
 		{
 			List<RequestForDaysOff> pendingRequests = new List<RequestForDaysOff>();
-			foreach(RequestForDaysOff request in requests)
+			foreach (RequestForDaysOff request in requests)
 			{
-				if(request.StateRequired == RequestForDaysOff.State.Waiting)
+				if (request.StateRequired == RequestForDaysOff.State.Waiting)
 				{
 					pendingRequests.Add(request);
 				}
@@ -39,7 +40,7 @@ namespace Hospital.Users.View
 
 		public void ShowRequests()
 		{
-			for(int i = 0; i < _pendingRequests.Count; i++)
+			for (int i = 0; i < _pendingRequests.Count; i++)
 			{
 				RequestForDaysOff request = _pendingRequests[i];
 				Console.WriteLine("{0}. Doktor : {1} | Od: {2} | Do: {3} | Razlog : {4}", i + 1, _userService.GetUserFullName(request.EmailDoctor),
@@ -64,7 +65,7 @@ namespace Hospital.Users.View
 		{
 			ShowRequests();
 			int index = EnterRequestIndex();
-			return _pendingRequests[index-1];
+			return _pendingRequests[index - 1];
 		}
 
 		public int GetAction()
@@ -103,7 +104,7 @@ namespace Hospital.Users.View
 
 		public void AnswerRequest()
 		{
-			if(_pendingRequests.Count == 0)
+			if (_pendingRequests.Count == 0)
 			{
 				Console.WriteLine("Trenutno nema zahteva za obradu.");
 				return;

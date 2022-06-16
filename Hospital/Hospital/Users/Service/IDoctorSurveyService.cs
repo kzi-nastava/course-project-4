@@ -12,6 +12,7 @@ namespace Hospital.Users.Service
 {
     public interface IDoctorSurveyService
     {
+        IDoctorSurveyRepository DoctorSurveyRepository { get; }
         List<DoctorSurvey> EvaluatedDoctors { get; }
         DoctorSurvey EvaluateDoctor(Appointment appointment);
         DoctorSurveyResult GetSurveyResultForDoctor(DoctorUser doctor);

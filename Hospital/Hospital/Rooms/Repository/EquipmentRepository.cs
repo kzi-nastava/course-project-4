@@ -8,6 +8,7 @@ using Microsoft.VisualBasic.FileIO;
 
 using Hospital.Rooms.Model;
 using Hospital.Rooms.Service;
+using Autofac;
 
 namespace Hospital.Rooms.Repository
 {
@@ -17,9 +18,9 @@ namespace Hospital.Rooms.Repository
         private IRoomService _roomService;
         private List<Equipment> _allEquipment;
 
-        public EquipmentRepository(IRoomService roomService)
+        public EquipmentRepository()
         {
-            _roomService = roomService;
+            _roomService = Globals.container.Resolve<IRoomService>(); ;
             _allEquipment = Load();
         }
 

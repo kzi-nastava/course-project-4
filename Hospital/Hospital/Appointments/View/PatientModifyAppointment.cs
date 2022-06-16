@@ -9,27 +9,27 @@ using Hospital.Users.View;
 using Hospital.Users.Service;
 using Hospital.Appointments.Service;
 using Hospital.Appointments.Model;
-
+using Hospital;
+using Autofac;
 namespace Hospital.Appointments.View
 {
     public class PatientModifyAppointment
     {
         private Patient _currentPatient;
         private PatientAppointmentsService _patientAppointment;
-        private UserActionService _userActionService;
-        private PatientRequestService _requestService;
-       private AppointmentService _appointmentService;
+        private IUserActionService _userActionService;
+        private PatientRequestService _requestService; //ovde
+        private IAppointmentService _appointmentService;
 
-        public PatientModifyAppointment(Patient patient, PatientAppointmentsService patientAppointmentsService, UserActionService userActionService, AppointmentService appointmentService)
+        public PatientModifyAppointment(Patient patient, PatientAppointmentsService patientAppointmentsService)
         {
 
             this._currentPatient = patient;
             this._patientAppointment = patientAppointmentsService;
-            this._userActionService = userActionService;
-            this._requestService = new PatientRequestService();
-            this._appointmentService = appointmentService;
+            this._userActionService = Globals.container.Resolve<IUserActionService>();
+            this._requestService = new PatientRequestService(); //ovde
+            this._appointmentService = Globals.container.Resolve<IAppointmentService>();
         }
-
         public void DeleteOwnAppointment()
         {
             Appointment appointmentForDelete = this.PickAppointmentForDeleteOrUpdate();

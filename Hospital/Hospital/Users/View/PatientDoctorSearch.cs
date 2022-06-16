@@ -8,19 +8,20 @@ using Hospital.Users.Service;
 using Hospital.Appointments.View;
 using Hospital.Users.Model;
 using Hospital;
-
+using Hospital;
+using Autofac;
 namespace Hospital.Users.View
 {
     public class PatientDoctorSearch
     {
         private Patient _currentRegisteredUser;
-        private UserService _userService;
+        private IUserService _userService;
         private PatientSchedulingAppointment _patientScheduling;
 
-        public PatientDoctorSearch(Patient patient, UserService userService, PatientSchedulingAppointment patientScheduling)
+        public PatientDoctorSearch(Patient patient, PatientSchedulingAppointment patientScheduling)
         {
             this._currentRegisteredUser = patient;
-            this._userService = userService;
+            this._userService = Globals.container.Resolve<IUserService>();
             this._patientScheduling = patientScheduling;
         }
 
@@ -49,7 +50,7 @@ namespace Hospital.Users.View
         {
             Console.WriteLine();
             Console.Write(String.Format("{0,3}|{1,10}|{2,10}|{3,10}|{4,10}",
-                "Br.", "Ime", "Prezime", "Email", "Specijalizacija")+"\n");
+                "Br.", "Ime", "Prezime", "Email", "Specijalizacija") + "\n");
         }
 
         private void PrintDoctors(List<DoctorUser> doctors)
@@ -58,20 +59,20 @@ namespace Hospital.Users.View
             for (int i = 0; i < doctors.Count; i++)
             {
                 Console.WriteLine(String.Format("{0,3}|{1,10}|{2,10}|{3,10}|{4,10}",
-                           i+1, doctors[i].Name, doctors[i].Surname, doctors[i].Email, doctors[i].SpecialityDoctor));
+                           i + 1, doctors[i].Name, doctors[i].Surname, doctors[i].Email, doctors[i].SpecialityDoctor));
             }
         }
 
         private void FindDoctorByParameter(string searchParameter, int numberParameter)
         {
             List<DoctorUser> selectedDoctors = new List<DoctorUser>();
-            Console.WriteLine(_userService.UsersRepository.DoctorUsers.Count);
-            foreach (DoctorUser doctor in _userService.UsersRepository.DoctorUsers)
+            Console.WriteLine(_userService.UserRepository.DoctorUsers.Count);
+            foreach (DoctorUser doctor in _userService.UserRepository.DoctorUsers)
             {
                 if (Utils.Capitalize(searchParameter).Equals(doctor.Name) && numberParameter == 0 ||
                     Utils.Capitalize(searchParameter).Equals(doctor.Surname) && numberParameter == 1 ||
                     Utils.Capitalize(searchParameter).Equals(doctor.SpecialityDoctor.ToString()) && numberParameter == 2)
-               
+
                     selectedDoctors.Add(doctor);
             }
 
@@ -181,7 +182,7 @@ namespace Hospital.Users.View
                 choice = Console.ReadLine();
             } while (!int.TryParse(choice, out numDoctor) || numDoctor < 1 || numDoctor > doctors.Count);
 
-            this._patientScheduling.SchedulingAppointment(doctors[numDoctor-1].Email);
+            this._patientScheduling.SchedulingAppointment(doctors[numDoctor - 1].Email);
         }
     }
 }

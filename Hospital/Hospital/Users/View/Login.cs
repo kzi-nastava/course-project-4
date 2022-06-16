@@ -3,18 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Autofac;
+using Hospital;
 using Hospital.Users.Service;
 using Hospital.Users.Model;
 using Hospital.Rooms.Service;
-using Hospital.Rooms.Repository;
 using Hospital.Appointments.Service;
-
+using Hospital;
+using Autofac;
 namespace Hospital.Users.View
 {
     public class Login
     {
-        UserService _userService = new UserService();
+        IUserService _userService = Globals.container.Resolve<IUserService>();
         User _registeredUser;
 
         public void LogIn()
@@ -57,22 +58,15 @@ namespace Hospital.Users.View
             Console.WriteLine($"\nDobrodosli {this._registeredUser.Name + " " + this._registeredUser.Surname}");
 
             // Move equipment if scheduled time has passed
-            IRoomRepository roomRepository = new RoomRepository();
-            IRoomService roomService = new RoomService(roomRepository);
-            IEquipmentRepository equipmentRepository = new EquipmentRepository(roomService);
-            IEquipmentService equipmentService = new EquipmentService(equipmentRepository, roomService);
-            IEquipmentMovingRepository equipmentMovingRepository = new EquipmentMovingRepository();
-            IEquipmentMovingService equipmentMovingService = new EquipmentMovingService(equipmentMovingRepository, equipmentService, roomService);
+            IEquipmentMovingService equipmentMovingService = Globals.container.Resolve<IEquipmentMovingService>();
             equipmentMovingService.MoveEquipment();
 
-            // Merge or split rooms if complex renovations are finished
-            AppointmentService appointmentService = new AppointmentService();
-            IRenovationRepository renovationRepository = new RenovationRepository();
-            IRenovationService renovationService = new RenovationService(renovationRepository, roomService, appointmentService, equipmentService);
+            // Merge or split rooms if complex renovations are finished           
+            IRenovationService renovationService = Globals.container.Resolve<IRenovationService>();
             renovationService.Renovate();
 
             if (this._registeredUser.UserRole == User.Role.Patient)
-            { 
+            {
                 // patient
                 Patient registeredPatient = new Patient(this._registeredUser.Email);
                 registeredPatient.PatientMenu();
@@ -84,11 +78,11 @@ namespace Hospital.Users.View
                 registeredDoctor.DoctorMenu();
             }
             else if (this._registeredUser.UserRole == User.Role.Secretary)
-			{
+            {
                 // secretary
-                Secretary registeredSecretary = new Secretary(this._userService);
+                Secretary registeredSecretary = new Secretary();
                 registeredSecretary.SecretaryMenu();
-			}
+            }
             else if (this._registeredUser.UserRole == User.Role.Manager)
             {
                 // manager

@@ -13,26 +13,27 @@ using Hospital.Drugs.View;
 using Hospital.Users.Service;
 using Hospital.Drugs.Service;
 using Hospital.Users.Repository;
-
+using Hospital;
+using Autofac;
 namespace Hospital.Users.View
 {
     public class Patient : IMenuView
     {
         private string _email;
-        private PatientAppointmentsService _patientService;
-        private AppointmentService _appointmentService;
+        private PatientAppointmentsService _patientService; //ovde
+        private IAppointmentService _appointmentService;
         private PatientSchedulingAppointment _patientScheduling;
         private PatientAnamnesis _patientAnamnesis;
         private PatientDoctorSearch _doctorSearch;
         private PatientDoctorSurvey _doctorSurvey;
         private List<Appointment> _currentAppointments;
         private PatientDrugNotification _drugNotification;
-        private UserService _userService;
-        private UserActionService _userActionService;
-        private DrugNotificationService _drugNotificationService;
+        private IUserService _userService;
+        private IUserActionService _userActionService;
+        private IDrugNotificationService _drugNotificationService;
         private PatientModifyAppointment _modifyAppointment;
         private RecommendedAppointment _recommendedAppointment;
-        private IHospitalSurveyService _hospitalSurveyService;
+        private HospitalSurveyService _hospitalSurveyService;
 
         public string Email { get { return _email; } }
         public List<Appointment> PatientAppointments
@@ -45,20 +46,20 @@ namespace Hospital.Users.View
         public Patient(string email)
         {
             this._email = email;
-            this._appointmentService = new AppointmentService();
-            this._drugNotificationService = new DrugNotificationService();
-            this._userService = new UserService();
-            this._userActionService = new UserActionService(this);
-            this._patientService = new PatientAppointmentsService(this, _appointmentService);
-            this._patientScheduling = new PatientSchedulingAppointment(this, _appointmentService, _userService, _patientService, _userActionService);
-            this._patientAnamnesis = new PatientAnamnesis(this, _appointmentService, _userService, _patientService);
+            this._appointmentService = Globals.container.Resolve<IAppointmentService>();
+            this._drugNotificationService = Globals.container.Resolve<IDrugNotificationService>();
+            this._userService = Globals.container.Resolve<IUserService>();
+            this._userActionService = Globals.container.Resolve<IUserActionService>();
+            this._patientService = new PatientAppointmentsService(this);
+            this._patientScheduling = new PatientSchedulingAppointment(this, _patientService);
+            this._patientAnamnesis = new PatientAnamnesis(this, _patientService);
             this._currentAppointments = this._patientService.RefreshPatientAppointments();
-            this._doctorSearch = new PatientDoctorSearch(this, _userService, _patientScheduling);
-            this._doctorSurvey = new PatientDoctorSurvey(_userService, _patientService);
-            this._drugNotification = new PatientDrugNotification(this, _appointmentService, _drugNotificationService);
-            this._modifyAppointment = new PatientModifyAppointment(this, _patientService, _userActionService, _appointmentService);
-            this._recommendedAppointment = new RecommendedAppointment(this, _userService, _patientService, _userActionService, _patientScheduling, _appointmentService);
-            this._hospitalSurveyService = new HospitalSurveyService(this._email, new HospitalSurveyRepository());
+            this._doctorSearch = new PatientDoctorSearch(this, _patientScheduling);
+            this._doctorSurvey = new PatientDoctorSurvey(_patientService);
+            this._drugNotification = new PatientDrugNotification(this);
+            this._modifyAppointment = new PatientModifyAppointment(this, _patientService);
+            this._recommendedAppointment = new RecommendedAppointment(this, _patientService, _patientScheduling);
+            this._hospitalSurveyService = new HospitalSurveyService(this._email);
         }
 
         // methods

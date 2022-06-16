@@ -9,19 +9,20 @@ using Hospital.Appointments.Service;
 using Hospital.Appointments.Model;
 using Hospital.Rooms.View;
 using Hospital.Users.Model;
-
+using Hospital;
+using Autofac;
 namespace Hospital.Appointments.View
 {
     public class DoctorReferral
     {
-        UserService userService;
-        ReferralService referralService;
-        MedicalRecordService medicalRecordService;
+        private IUserService userService;
+        private IReferralService referralService;
+        private IMedicalRecordService medicalRecordService;
         public DoctorReferral()
         {
-            userService = new UserService();
-            referralService = new ReferralService();
-            medicalRecordService = new MedicalRecordService();
+            userService = Globals.container.Resolve<IUserService>();
+            referralService = Globals.container.Resolve<IReferralService>();
+            medicalRecordService = Globals.container.Resolve<IMedicalRecordService>();
 
         }
 
@@ -36,10 +37,10 @@ namespace Hospital.Appointments.View
                 {
                     this.ChooseDoctor(appointment, anamnesis);
                 }
-                
+
             } while (!choice.Equals("1") && !choice.Equals("2"));
 
-            
+
             DynamicEquipmentRecords dynamicEquipmentRecords = new DynamicEquipmentRecords();
             dynamicEquipmentRecords.DisplayAmountOfDynamicEquipments(appointment.RoomNumber.ToString());
 
@@ -64,7 +65,7 @@ namespace Hospital.Appointments.View
                 }
             } while (!choice.Equals("1") && !choice.Equals("2"));
 
-           
+
 
         }
         private void ReferralToSpecificDoctor(Appointment appointment, string anamnesis)

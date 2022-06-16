@@ -4,29 +4,31 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Hospital;
+using Autofac;
 using Hospital.Users.Repository;
 using Hospital.Users.Model;
 
 namespace Hospital.Users.Service
 {
-	public class NotificationService : INotificationService
+	public class NotificationService
 	{
-		private NotificationRepository _notificationRepository;
+		private INotificationRepository _notificationRepository;
 		private List<Notification> _notifications;
 
 		public List<Notification> Notifications { get { return _notifications; } }
+		public INotificationRepository Repository { get { return _notificationRepository; } }
 
 		public NotificationService()
 		{
-			_notificationRepository = new NotificationRepository();
+			_notificationRepository = Globals.container.Resolve<INotificationRepository>(); //ovde
 			_notifications = _notificationRepository.Load();
 		}
 
 		public void ReadNotification(Notification notificationRead)
 		{
-			
-			foreach(Notification notification in _notifications)
+
+			foreach (Notification notification in _notifications)
 			{
 				if (notification.Id.Equals(notificationRead.Id))
 				{

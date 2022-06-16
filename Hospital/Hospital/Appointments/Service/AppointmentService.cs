@@ -14,25 +14,27 @@ using Hospital.Rooms.Repository;
 using Hospital.Rooms.Model;
 using Hospital.Users.View;
 using Hospital.Rooms.Service;
+using Hospital;
+using Autofac;
 
 namespace Hospital.Appointments.Service
 {
     public class AppointmentService : IAppointmentService
     {
-        private AppointmentRepository _appointmentRepository;
-        private UserService _userService;
+        private IAppointmentRepository _appointmentRepository;
+        private IUserService _userService;
         private List<Appointment> _appointments;
         private List<User> _users;
         private IRoomRepository _roomRepository;
         private List<Room> _rooms;
 
-        public AppointmentRepository AppointmentRepository { get { return _appointmentRepository; } }
+        public IAppointmentRepository AppointmentRepository { get { return _appointmentRepository; } }
         public List<Appointment> Appointments { get { return _appointments; } set { _appointments = value; } }
         public AppointmentService()
         {
-            _appointmentRepository = new AppointmentRepository();
-            _userService = new UserService();
-            _roomRepository = new RoomRepository();
+            _appointmentRepository = Globals.container.Resolve<IAppointmentRepository>();
+            _userService = Globals.container.Resolve<IUserService>();
+            _roomRepository = Globals.container.Resolve<IRoomRepository>();
             _appointments = _appointmentRepository.Load();
             _users = _userService.Users;
             _rooms = _roomRepository.Load();
@@ -57,19 +59,19 @@ namespace Hospital.Appointments.Service
         }
 
         public bool IsDoctorFree(User doctor, DateTime startTime)
-		{
-            foreach(Appointment appointment in _appointments)
-			{
+        {
+            foreach (Appointment appointment in _appointments)
+            {
                 DateTime endTime = startTime.AddMinutes(60);
                 if (appointment.DoctorEmail == doctor.Email && appointment.DateAppointment.Date == DateTime.Now.Date
                     && CheckOverlapTime(appointment, startTime, endTime))
                     return false;
-			}
+            }
             return true;
-		}
+        }
 
         public bool CheckOverlapTime(Appointment appointment, DateTime startTime, DateTime endTime)
-		{
+        {
             if ((startTime <= appointment.StartTime) && (appointment.EndTime <= endTime))
                 return true;
             else if ((appointment.StartTime <= endTime) && (endTime <= appointment.EndTime))
@@ -79,10 +81,10 @@ namespace Hospital.Appointments.Service
             else if ((appointment.StartTime <= startTime) && (endTime <= appointment.EndTime))
                 return true;
             return false;
-		}
+        }
 
         public List<Appointment> GetFilteredSortedAppointments()
-		{
+        {
             var orderedAppointments = _appointments.OrderBy(a => a.Urgent).ThenByDescending(a => a.DateAppointment).ToList();
             List<Appointment> validAppointments = new List<Appointment>();
             foreach (Appointment appointment in orderedAppointments)
@@ -98,46 +100,46 @@ namespace Hospital.Appointments.Service
             return validAppointments;
         }
 
-		public Appointment FindLeastUrgentAppointment()
+        public Appointment FindLeastUrgentAppointment()
         {
             List<Appointment> validAppointments = GetFilteredSortedAppointments();
-            
+
             int i = 1;
             foreach (Appointment appointment in validAppointments)
-			{
+            {
                 string urgent = appointment.Urgent ? "Hitno" : "";
                 Console.WriteLine("{0}. Pacijent: {1} | Doktor: {2} | {3} | {4} | {5}", i, _userService.GetUserFullName(appointment.PatientEmail),
                     _userService.GetUserFullName(appointment.DoctorEmail), appointment.DateAppointment.ToString("dd/MM/yyyy"),
                     appointment.StartTime.ToString("HH:mm"), urgent);
                 i++;
-			}
+            }
             string indexInput;
             int index;
-			do
-			{
+            do
+            {
                 Console.Write(">>");
                 indexInput = Console.ReadLine();
-			} while (!int.TryParse(indexInput, out index) || index < 1 || index > validAppointments.Count());
+            } while (!int.TryParse(indexInput, out index) || index < 1 || index > validAppointments.Count());
             return validAppointments[index - 1];
 
         }
 
         public User FindFreeDoctor(DoctorUser.Speciality speciality, Appointment newAppointment)
-		{
+        {
             List<User> allDoctors = _userService.FilterDoctors(speciality);
-            foreach(User doctor in allDoctors)
-			{
+            foreach (User doctor in allDoctors)
+            {
                 newAppointment.DoctorEmail = doctor.Email;
-				if (IsAppointmentFreeForDoctor(newAppointment))
-				{
+                if (IsAppointmentFreeForDoctor(newAppointment))
+                {
                     return doctor;
-				}
-			}
+                }
+            }
             newAppointment.DoctorEmail = "null";
             Console.WriteLine("\nNema slobodnih doktora u ovom terminu. \n");
             return null;
-            
-		}
+
+        }
 
         public List<Appointment> GetDoctorAppointment(User user)
         {
@@ -156,7 +158,7 @@ namespace Hospital.Appointments.Service
             foreach (Appointment appointment in _appointments)
             {
                 if (appointment.DoctorEmail.Equals(newAppointment.DoctorEmail) && appointment.DateAppointment == newAppointment.DateAppointment
-                    && CheckOverlapTime(appointment,newAppointment.StartTime, newAppointment.EndTime))
+                    && CheckOverlapTime(appointment, newAppointment.StartTime, newAppointment.EndTime))
                 {
                     Console.WriteLine("Termin je vec zauzet!");
                     return false;
@@ -166,7 +168,7 @@ namespace Hospital.Appointments.Service
                     Console.WriteLine("Pacijent vec ima zakazan drugi pregled u ovom terminu!");
                     return false;
                 }
-                if((appointment.DateAppointment == newAppointment.DateAppointment) && (CheckOverlapTime(appointment, newAppointment.StartTime, newAppointment.EndTime))&& (appointment.RoomNumber.Equals(newAppointment.RoomNumber)))
+                if ((appointment.DateAppointment == newAppointment.DateAppointment) && (CheckOverlapTime(appointment, newAppointment.StartTime, newAppointment.EndTime)) && (appointment.RoomNumber.Equals(newAppointment.RoomNumber)))
                 {
                     Console.WriteLine("Soba u ovom terminu je zauzeta!");
                     return false;
@@ -191,10 +193,10 @@ namespace Hospital.Appointments.Service
                     updateAppointment.RoomNumber = appointmentChange.RoomNumber;
                     updateAppointment.AppointmentPerformed = appointmentChange.AppointmentPerformed;
                 }
-               
+
             }
             Save();
-            
+
         }
 
         public void PerformAppointment(Appointment performAppointment)
@@ -234,7 +236,7 @@ namespace Hospital.Appointments.Service
 
         public Room FindFreeRoom(DateTime newDate, DateTime newStartTime)
         {
-            IRoomService roomService = new RoomService(_roomRepository);
+            RoomService roomService = new RoomService();
             List<Room> freeRooms = roomService.AllRooms;  // at the beginning all the rooms are free
 
             foreach (Appointment appointment in this._appointments)

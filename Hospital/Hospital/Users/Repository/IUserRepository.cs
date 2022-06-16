@@ -9,5 +9,6 @@ namespace Hospital.Users.Repository
 {
     public interface IUserRepository: IRepository<User>
     {
+        List<DoctorUser> DoctorUsers { get; set; }
     }
 }

@@ -5,33 +5,33 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Globalization;
 using System.IO;
-
+using Hospital;
+using Autofac;
 using Hospital.Appointments.Service;
 using Hospital.Appointments.Model;
 using Hospital.Users.View;
 using Hospital.Appointments.Repository;
-using Hospital;
 
 namespace Hospital.Appointments.View
 {
     public class PatientAppointmentsService
     {
-        private AppointmentService _appointmentService;
+        private IAppointmentService _appointmentService;
         private List<Appointment> _allAppointments;
         private Patient _currentRegisteredUser;
 
-        public AppointmentService AppointmentService { get { return _appointmentService; } }
+        public IAppointmentService AppointmentService { get { return _appointmentService; } }
 
-        public PatientAppointmentsService(Patient patient, AppointmentService appointmentService)
+        public PatientAppointmentsService(Patient patient)
         {
-            this._appointmentService = appointmentService;
+            this._appointmentService = Globals.container.Resolve<IAppointmentService>();
             this._allAppointments = _appointmentService.AppointmentRepository.Load();
             this._currentRegisteredUser = patient;
         }
 
-        public List<Appointment> RefreshPatientAppointments() 
+        public List<Appointment> RefreshPatientAppointments()
         {
-             this._allAppointments = _appointmentService.AppointmentRepository.Load();
+            this._allAppointments = _appointmentService.AppointmentRepository.Load();
 
             // finding all appointments for the registered patient that have not been deleted and has not yet passed
             List<Appointment> patientCurrentAppointment = new List<Appointment>();
@@ -169,16 +169,16 @@ namespace Hospital.Appointments.View
             }
         }
 
-        public List<Appointment> GetPerformedAppointmentForPatient(bool print=true)
+        public List<Appointment> GetPerformedAppointmentForPatient(bool print = true)
         {
             List<Appointment> performedAppointment = new List<Appointment>();
-            if(print) this._currentRegisteredUser.TableHeaderForPatient();
+            if (print) this._currentRegisteredUser.TableHeaderForPatient();
             foreach (Appointment appointment in this._appointmentService.Appointments)
             {
                 if (appointment.PatientEmail.Equals(this._currentRegisteredUser.Email) && appointment.AppointmentPerformed)
                 {
                     performedAppointment.Add(appointment);
-                    if(print) Console.Write("\n" + performedAppointment.Count + ". " + appointment.DisplayOfPatientAppointment());
+                    if (print) Console.Write("\n" + performedAppointment.Count + ". " + appointment.DisplayOfPatientAppointment());
                 }
             }
             return performedAppointment;

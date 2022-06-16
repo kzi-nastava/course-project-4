@@ -7,7 +7,7 @@ using Hospital.Appointments.Model;
 
 namespace Hospital.Appointments.Service
 {
-	public interface IPatientRequestService : IService<Appointment>
+	public interface IPatientRequestService
 	{
 		List<Appointment> Requests{	get; }
 		Appointment FindInitialAppointment(string id);

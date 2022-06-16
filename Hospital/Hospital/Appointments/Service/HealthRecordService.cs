@@ -4,7 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-
+using Autofac;
+using Hospital;
 using Hospital.Appointments.Repository;
 using Hospital.Users.Repository;
 using Hospital.Appointments.Model;
@@ -12,27 +13,26 @@ using Hospital.Users.Model;
 
 namespace Hospital.Appointments.Service
 {
-    public class HealthRecordService: IHealthRecordService
+    public class HealthRecordService : IHealthRecordService
     {
-        private HealthRecordRepository _healthRecordRepository;
-        private UserRepository _userRepository;
+        private IHealthRecordRepository _healthRecordRepository;
+        private IUserRepository _userRepository;
         private List<HealthRecord> _healthRecords;
         private List<User> _users;
 
         public HealthRecordService()
         {
-            _healthRecordRepository = new HealthRecordRepository();
-            _userRepository = new UserRepository();
+            _healthRecordRepository = Globals.container.Resolve<IHealthRecordRepository>();
+            _userRepository = Globals.container.Resolve<IUserRepository>();
             _healthRecords = _healthRecordRepository.Load();
             _users = _userRepository.Load();
 
         }
 
-        public List<HealthRecord> HealthRecords { get{ return _healthRecords; } }
+        public List<HealthRecord> HealthRecords { get { return _healthRecords; } }
 
-        public HealthRecordRepository HealthRecordRepository { get { return _healthRecordRepository; } }
+        public IHealthRecordRepository HealthRecordRepository { get { return _healthRecordRepository; } }
 
-        
         public void CreateHealthRecord(User patient)
         {
             List<HealthRecord> healthRecords = this.HealthRecords;
@@ -40,7 +40,6 @@ namespace Hospital.Appointments.Service
             HealthRecord newHealthRecord = new HealthRecord(id.ToString(), patient.Email, 0, 0, "0", "0", "0");
             this.HealthRecords.Add(newHealthRecord);
             _healthRecordRepository.Save(this._healthRecords);
-
         }
 
         public void Update(HealthRecord healthRecordForUpdate)

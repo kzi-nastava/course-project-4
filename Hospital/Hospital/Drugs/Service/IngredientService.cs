@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Autofac;
+using Hospital;
 using Hospital.Drugs.Repository;
 using Hospital.Drugs.Model;
 
@@ -12,14 +13,14 @@ namespace Hospital.Drugs.Service
     public class IngredientService : IIngredientService
     {
         private IIngredientRepository _ingredientRepository;
-        
-        public IngredientService(IIngredientRepository ingredientRepository)
+
+        public IngredientService()
         {
-            this._ingredientRepository = ingredientRepository;
+            this._ingredientRepository = Globals.container.Resolve<IIngredientRepository>();
         }
 
         public List<Ingredient> Ingredients { get { return _ingredientRepository.Ingredients; } }
-        
+
         public Ingredient Get(string id)
         {
             return _ingredientRepository.Get(id);

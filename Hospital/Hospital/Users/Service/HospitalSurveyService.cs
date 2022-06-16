@@ -5,32 +5,34 @@ using System.Text;
 using System.Threading.Tasks;
 using Hospital.Users.Repository;
 using Hospital.Users.Model;
+using Autofac;
+using Hospital;
 
 namespace Hospital.Users.Service
 {
-    public class HospitalSurveyService: IHospitalSurveyService
+    public class HospitalSurveyService
     {
         private IHospitalSurveyRepository _hospitalServiceRepository;
         private List<HospitalSurvey> _surveyResults;
-        private UserService _userService;
+        private IUserService _userService;
         private string _patientEmail;
 
-        public HospitalSurveyService(string patientEmail, HospitalSurveyRepository hospitalSurveyRepository)
+        public List<HospitalSurvey> SurveyResults { get { return _surveyResults; } }
+
+        public HospitalSurveyService(string patientEmail)
         {
             this._patientEmail = patientEmail;
-            this._hospitalServiceRepository = hospitalSurveyRepository;
+            this._hospitalServiceRepository = Globals.container.Resolve<IHospitalSurveyRepository>();
             this._surveyResults = _hospitalServiceRepository.Load();
-            this._userService = new UserService();
+            this._userService = Globals.container.Resolve<IUserService>();
         }
-
-        public List<HospitalSurvey> SurveyResults { get { return _surveyResults; } }
 
         public void EvaluateHospitalSurvey()
         {
             foreach (HospitalSurvey hospitalSurvey in this._surveyResults)
             {
-                if (hospitalSurvey.PatientEmail.Equals(this._patientEmail)) 
-                { Console.WriteLine("Vec ste ocenili rad bolnice."); return; }    
+                if (hospitalSurvey.PatientEmail.Equals(this._patientEmail))
+                { Console.WriteLine("Vec ste ocenili rad bolnice."); return; }
             }
             HospitalSurvey surveyResult = this.InputValuesForServey(this._patientEmail);
             this.AddNewSurvey(surveyResult);
@@ -56,7 +58,7 @@ namespace Hospital.Users.Service
             return hospitalSurvey;
         }
 
-        public void AddNewSurvey(HospitalSurvey newRatedSurvey)
+        private void AddNewSurvey(HospitalSurvey newRatedSurvey)
         {
             this._surveyResults.Add(newRatedSurvey);
             this._hospitalServiceRepository.Save(this._surveyResults);
@@ -69,16 +71,16 @@ namespace Hospital.Users.Service
 
             float qualitySum = 0;
             int[] qualityCount = new int[6] { 0, 0, 0, 0, 0, 0 };
-            
+
             float cleanlinessSum = 0;
             int[] cleanlinessCount = new int[6] { 0, 0, 0, 0, 0, 0 };
-            
+
             float satisfiedSum = 0;
             int[] satisfiedCount = new int[6] { 0, 0, 0, 0, 0, 0 };
-            
+
             float recommendationSum = 0;
             int[] recommendationCount = new int[6] { 0, 0, 0, 0, 0, 0 };
-            
+
             List<string> comments = new List<string>();
 
             foreach (HospitalSurvey survey in _surveyResults)

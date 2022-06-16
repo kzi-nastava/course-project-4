@@ -3,20 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Hospital;
+using Autofac;
 using Hospital.Rooms.Service;
 using Hospital.Rooms.Model;
 
 namespace Hospital.Rooms.View
 {
-    public class DynamicEquipmentMovingView
+	public class DynamicEquipmentMovingView
 	{
-		private DynamicEquipmentMovingService _dynamicEquipmentMovingService;
-		private DynamicRoomEquipmentService _dynamicRoomEquipmentService;
+		private DynamicEquipmentMovingService _dynamicEquipmentMovingService; //ovde
+		private IDynamicRoomEquipmentService _dynamicRoomEquipmentService;
+
 		public DynamicEquipmentMovingView()
 		{
-			this._dynamicEquipmentMovingService = new DynamicEquipmentMovingService();
-			this._dynamicRoomEquipmentService = new DynamicRoomEquipmentService();
+			this._dynamicEquipmentMovingService = new DynamicEquipmentMovingService(); //ovde
+			this._dynamicRoomEquipmentService = Globals.container.Resolve<IDynamicRoomEquipmentService>();
 		}
 
 		public void ShowMissingEquipment(List<KeyValuePair<string, DynamicEquipment>> missingEquipment)
@@ -80,7 +82,7 @@ namespace Hospital.Rooms.View
 		public void ShowRoomsWithEquipment(List<Room> rooms)
 		{
 			int i = 1;
-			foreach(Room room in rooms)
+			foreach (Room room in rooms)
 			{
 				Console.WriteLine("{0}. Soba: {1}", i, room.Id);
 				i++;

@@ -6,16 +6,17 @@ using System.Threading.Tasks;
 
 using Hospital.Rooms.Service;
 using Hospital.Rooms.Model;
-
+using Hospital;
+using Autofac;
 namespace Hospital.Rooms.View
 {
-    public class RoomView : IRoomView
+    public class RoomView
     {
         private IRoomService _roomService;
 
-        public RoomView(IRoomService roomService)
+        public RoomView()
         {
-            this._roomService = roomService;
+            this._roomService = Globals.container.Resolve<IRoomService>();
         }
 
         public void ManageRooms()
@@ -115,7 +116,7 @@ namespace Hospital.Rooms.View
             List<Room> allRooms = _roomService.AllRooms;
             foreach (Room room in allRooms)
             {
-                Console.WriteLine("Broj sobe: " + room.Id + ", naziv sobe: " + room.Name + ", tip sobe: " 
+                Console.WriteLine("Broj sobe: " + room.Id + ", naziv sobe: " + room.Name + ", tip sobe: "
                     + room.TypeDescription + ", obrisana: " + room.IsDeleted);
             }
         }

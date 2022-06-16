@@ -4,15 +4,16 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Autofac;
+using Hospital;
 using Hospital.Users.Model;
 using Hospital.Rooms.Service;
 using Hospital.Appointments.Service;
 using Hospital.Drugs.Service;
 using Hospital.Users.Service;
 using Hospital.Rooms.View;
-using Hospital.Rooms.Repository;
 using Hospital.Drugs.View;
+using Hospital.Rooms.Repository;
 using Hospital.Drugs.Repository;
 using Hospital.Users.Repository;
 
@@ -21,59 +22,54 @@ namespace Hospital.Users.View
     public class Manager : IMenuView
     {
         private User _currentRegisteredManager;
-
         private IRoomService _roomService;
         private IEquipmentService _equipmentService;
         private IEquipmentMovingService _equipmentMovingService;
-        private AppointmentService _appointmentService;
+        private IAppointmentService _appointmentService;
         private IRenovationService _renovationService;
         private IIngredientService _ingredientService;
         private IDrugProposalService _drugProposalService;
         private IDoctorSurveyService _doctorSurveyService;
-        private IHospitalSurveyService _hospitalSurveyService;
+        private HospitalSurveyService _hospitalSurveyService;
 
-        private IRoomView _roomView;
-        private IEquipmentView _equipmentView;
-        private IRenovationView _renovationView;
-        private IIngredientView _ingredientView;
-        private IDrugView _drugView;
-        private ISurveyView _surveyView;
+        private RoomView _roomView;
+        private EquipmentView _equipmentView;
+        private RenovationView _renovationView;
+        private IngredientView _ingredientView;
+        private DrugView _drugView;
+        private SurveyView _surveyView;
 
         public Manager(User currentRegisteredManager)
         {
-            IRoomRepository roomRepository = new RoomRepository();
-            IEquipmentMovingRepository equipmentMovingRepository = new EquipmentMovingRepository();
-            IRenovationRepository renovationRepository = new RenovationRepository();
-
             this._currentRegisteredManager = currentRegisteredManager;
-            this._roomService = new RoomService(roomRepository);
+            this._roomService = Globals.container.Resolve<IRoomService>();
 
-            IEquipmentRepository equipmentRepository = new EquipmentRepository(_roomService);
+            EquipmentRepository equipmentRepository = new EquipmentRepository();
 
-            this._equipmentService = new EquipmentService(equipmentRepository, _roomService);
-            this._equipmentMovingService = new EquipmentMovingService(equipmentMovingRepository, _equipmentService, _roomService);
-            this._appointmentService = new AppointmentService();
-            this._renovationService = new RenovationService(renovationRepository, _roomService, _appointmentService, _equipmentService);
+            this._equipmentService = Globals.container.Resolve<IEquipmentService>();
+            this._equipmentMovingService = Globals.container.Resolve<IEquipmentMovingService>();
+            this._appointmentService = Globals.container.Resolve<IAppointmentService>();
+            this._renovationService = Globals.container.Resolve<IRenovationService>();
 
-            IIngredientRepository ingredientRepository = new IngredientRepository();
-            this._ingredientService = new IngredientService(ingredientRepository);
-            IDrugProposalRepository drugProposalRepository = new DrugProposalRepository(_ingredientService);
-            this._drugProposalService = new DrugProposalService(drugProposalRepository);
+            IIngredientRepository ingredientRepository = Globals.container.Resolve<IIngredientRepository>();
+            this._ingredientService = new IngredientService();
+            IDrugProposalRepository drugProposalRepository = Globals.container.Resolve<IDrugProposalRepository>();
+            this._drugProposalService = new DrugProposalService();
 
             IDoctorSurveyRepository doctorSurveyRepository = new DoctorSurveyRepository();
-            this._doctorSurveyService = new DoctorSurveyService(doctorSurveyRepository);
+            this._doctorSurveyService = Globals.container.Resolve<IDoctorSurveyService>();
             IHospitalSurveyRepository hospitalSurveyRepository = new HospitalSurveyRepository();
-            this._hospitalSurveyService = new HospitalSurveyService("", hospitalSurveyRepository);
+            this._hospitalSurveyService = new HospitalSurveyService("");
 
-            this._roomView = new RoomView(_roomService);
-            this._equipmentView = new EquipmentView(_roomService, _equipmentService, _equipmentMovingService);
-            this._renovationView = new RenovationView(_roomService, _appointmentService, _renovationService);
-            this._ingredientView = new IngredientView(_ingredientService);
-            this._drugView = new DrugView(_ingredientService, _drugProposalService);
-            this._surveyView = new SurveyView(_doctorSurveyService, _hospitalSurveyService);
+            this._roomView = new RoomView();
+            this._equipmentView = new EquipmentView();
+            this._renovationView = new RenovationView();
+            this._ingredientView = new IngredientView();
+            this._drugView = new DrugView();
+            this._surveyView = new SurveyView();
         }
 
-        public void ManagerMenu() 
+        public void ManagerMenu()
         {
             string choice;
             Console.WriteLine("\n\tMENI");
@@ -123,6 +119,6 @@ namespace Hospital.Users.View
                 else if (choice.Equals("13"))
                     this.LogOut();
             } while (true);
-        } 
+        }
     }
 }

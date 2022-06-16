@@ -10,7 +10,7 @@ namespace Hospital.Drugs.Service
 {
     public interface IDrugNotificationService
     {
-        DrugNotificationRepository DrugNotificationRepository { get; }
+        IDrugNotificationRepository DrugNotificationRepository { get; }
         List<DrugNotification> Notifications { get; set; }
         void ChangeNotificationTime(string patientEmail);
 

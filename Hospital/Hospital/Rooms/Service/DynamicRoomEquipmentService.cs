@@ -10,7 +10,7 @@ using Hospital.Rooms.Model;
 
 namespace Hospital.Rooms.Service
 {
-    public class DynamicRoomEquipmentService: IDynamicRoomEquipmentService
+    public class DynamicRoomEquipmentService : IDynamicRoomEquipmentService
     {
 
         private DynamicRoomEquipmentRepository _equipmentRepository;
@@ -25,24 +25,24 @@ namespace Hospital.Rooms.Service
         public List<DynamicRoomEquipment> DynamicEquipments { get { return _dynamicEquipments; } }
 
         public void ChangeEquipmentAmount(string roomId, string equipmentId, int amount, bool add)
-		{
-            foreach(DynamicRoomEquipment dynamicRoomEquipment in _dynamicEquipments)
-			{
-                if(dynamicRoomEquipment.IdRoom == roomId)
-				{
+        {
+            foreach (DynamicRoomEquipment dynamicRoomEquipment in _dynamicEquipments)
+            {
+                if (dynamicRoomEquipment.IdRoom == roomId)
+                {
                     if (add)
                         dynamicRoomEquipment.AmountEquipment[equipmentId] += amount;
                     else
                         dynamicRoomEquipment.AmountEquipment[equipmentId] -= amount;
                     break;
                 }
-			}
+            }
             UpdateFile();
         }
-       
-        public void  UpdateDictionary(Dictionary<string, int> amount, string idRoom)
+
+        public void UpdateDictionary(Dictionary<string, int> amount, string idRoom)
         {
-            for(int i = 0; i < this._dynamicEquipments.Count; i++)
+            for (int i = 0; i < this._dynamicEquipments.Count; i++)
             {
                 if (this._dynamicEquipments[i].IdRoom.Equals(idRoom))
                 {
@@ -51,7 +51,7 @@ namespace Hospital.Rooms.Service
                 }
             }
             UpdateFile();
-            
+
         }
 
         public void UpdateFile()

@@ -3,19 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Hospital;
+using Autofac;
 using Hospital.Drugs.Service;
 using Hospital.Drugs.Model;
 
 namespace Hospital.Drugs.View
 {
-    public class IngredientView : IIngredientView
+    public class IngredientView
     {
         private IIngredientService _ingredientService;
 
-        public IngredientView(IIngredientService ingredientService)
+        public IngredientView()
         {
-            this._ingredientService = ingredientService;
+            this._ingredientService = Globals.container.Resolve<IIngredientService>();
         }
 
         public void ManageIngredients()
