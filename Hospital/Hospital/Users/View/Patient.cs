@@ -59,7 +59,7 @@ namespace Hospital.Users.View
             this._drugNotification = new PatientDrugNotification(this);
             this._modifyAppointment = new PatientModifyAppointment(this, _patientService);
             this._recommendedAppointment = new RecommendedAppointment(this, _patientService, _patientScheduling);
-            this._hospitalSurveyService = new HospitalSurveyService(this._email);
+            this._hospitalSurveyService = new HospitalSurveyService();
         }
 
         // methods
@@ -103,7 +103,7 @@ namespace Hospital.Users.View
                 else if (choice.Equals("8"))
                     this._drugNotification.ShowDrugNotification();
                 else if (choice.Equals("9"))
-                    this._hospitalSurveyService.EvaluateHospitalSurvey();
+                    this._hospitalSurveyService.EvaluateHospitalSurvey(this._email);
                 else if (choice.Equals("10"))
                     this._doctorSurvey.GetAppointmentsForEvaluation();
                 else if (choice.Equals("11"))

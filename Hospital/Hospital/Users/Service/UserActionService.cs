@@ -10,7 +10,7 @@ using Hospital.Users.View;
 
 namespace Hospital.Users.Service
 {
-    public class UserActionService
+    public class UserActionService : IUserActionService
     {
         private IUserActionRepository _actionRepository;
         private List<UserAction> _actions;

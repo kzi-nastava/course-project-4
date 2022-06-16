@@ -59,7 +59,7 @@ namespace Hospital.Users.View
             IDoctorSurveyRepository doctorSurveyRepository = new DoctorSurveyRepository();
             this._doctorSurveyService = Globals.container.Resolve<IDoctorSurveyService>();
             IHospitalSurveyRepository hospitalSurveyRepository = new HospitalSurveyRepository();
-            this._hospitalSurveyService = new HospitalSurveyService("");
+            this._hospitalSurveyService = new HospitalSurveyService();
 
             this._roomView = new RoomView();
             this._equipmentView = new EquipmentView();

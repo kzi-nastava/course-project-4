@@ -11,7 +11,7 @@ using Hospital.Rooms.Model;
 
 namespace Hospital.Rooms.Service
 {
-    public class RenovationService
+    public class RenovationService : IRenovationService
     {
         public List<Renovation> AllRenovations { get { return _renovationRepository.AllRenovations; } }
         private IRenovationRepository _renovationRepository;

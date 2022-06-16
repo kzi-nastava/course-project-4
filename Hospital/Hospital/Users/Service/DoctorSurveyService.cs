@@ -11,7 +11,7 @@ using Hospital.Appointments.Model;
 
 namespace Hospital.Users.Service
 {
-    public class DoctorSurveyService
+    public class DoctorSurveyService : IDoctorSurveyService
     {
         private IDoctorSurveyRepository _doctorServiceRepository;
         private List<DoctorSurvey> _evaluatedDoctors;

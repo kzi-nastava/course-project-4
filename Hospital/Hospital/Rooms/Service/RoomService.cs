@@ -10,7 +10,7 @@ using Hospital;
 
 namespace Hospital.Rooms.Service
 {
-    public class RoomService
+    public class RoomService : IRoomService
     {
         private IRoomRepository _roomRepository;
 
