@@ -10,14 +10,13 @@ using Hospital.Users.View;
 
 namespace Hospital.Users.Service
 {
-    public class UserActionService
+    public class UserActionService: IUserActionService
     {
         private UserActionRepository _actionRepository;
         private List<UserAction> _actions;
         private Patient _currentPatient;
 
         public UserActionRepository ActionRepository { get { return _actionRepository; } }
-        public List<UserAction> Actions { get { return _actions; } }
 
         public UserActionService(Patient currentPatient)
         {
@@ -65,7 +64,7 @@ namespace Hospital.Users.Service
             else
                 return;
 
-            this._actionRepository.BlockAccessApplication();
+            this._actionRepository.Save(this._actions);
             this._currentPatient.LogOut(); //log out from account
         }
     }

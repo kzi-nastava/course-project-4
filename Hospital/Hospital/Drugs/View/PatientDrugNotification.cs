@@ -44,8 +44,8 @@ namespace Hospital.Drugs.View
                 choice = Console.ReadLine();
                 if (choice.Equals("1"))
                 {
-                    this._drugNotificationService.DrugNotificationRepository.ChangeTimeNotification(this._currentPatient.Email);
-                    this._drugNotificationService = new DrugNotificationService(); // refresh data
+                    this._drugNotificationService.ChangeNotificationTime(this._currentPatient.Email);
+                    this._drugNotificationService.Notifications = this._drugNotificationService.DrugNotificationRepository.Load(); // refresh data
                 }
                 else if (choice.Equals("2"))
                     return;
