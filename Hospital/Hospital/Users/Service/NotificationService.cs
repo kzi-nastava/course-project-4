@@ -11,7 +11,7 @@ using Hospital.Users.Model;
 
 namespace Hospital.Users.Service
 {
-	public class NotificationService
+	public class NotificationService : INotificationService
 	{
 		private INotificationRepository _notificationRepository;
 		private List<Notification> _notifications;

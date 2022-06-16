@@ -11,7 +11,7 @@ using Hospital.Rooms.Model;
 
 namespace Hospital.Rooms.Repository
 {
-    public class DynamicEquipmentRequestRepository
+    public class DynamicEquipmentRequestRepository : IDynamicEquipmentRequestRepository
 	{
 		public List<DynamicEquipmentRequest> Load()
 		{
