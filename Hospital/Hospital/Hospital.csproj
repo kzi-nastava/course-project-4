@@ -38,7 +38,6 @@
   <ItemGroup>
     <Compile Include="Drugs\Repository\IDrugNotificationRepository.cs" />
     <Compile Include="Drugs\Service\IDrugNotificationService.cs" />
-    <Compile Include="IRepository.cs" />
     <Compile Include="Drugs\View\IDrugView.cs" />
     <Compile Include="Drugs\View\IIngredientView.cs" />
     <Compile Include="IRepository.cs" />
