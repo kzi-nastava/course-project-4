@@ -13,7 +13,7 @@ namespace Hospital.Drugs.Model
         private DateTime _timeNotification;
 
         public string PatientEmail { get { return _patientEmail; } }
-         public DateTime TimeNotification { get { return _timeNotification; } }
+         public DateTime TimeNotification { get { return _timeNotification; } set { _timeNotification = value; } }
 
         public DrugNotification(string patientEmail, DateTime timeNotification)
         {

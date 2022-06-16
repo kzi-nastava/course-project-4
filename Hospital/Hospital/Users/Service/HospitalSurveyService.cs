@@ -8,14 +8,14 @@ using Hospital.Users.Model;
 
 namespace Hospital.Users.Service
 {
-    public class HospitalSurveyService : IHospitalSurveyService
+    public class HospitalSurveyService: IHospitalSurveyService
     {
         private IHospitalSurveyRepository _hospitalServiceRepository;
         private List<HospitalSurvey> _surveyResults;
         private UserService _userService;
         private string _patientEmail;
 
-        public HospitalSurveyService(string patientEmail, IHospitalSurveyRepository hospitalSurveyRepository)
+        public HospitalSurveyService(string patientEmail)
         {
             this._patientEmail = patientEmail;
             this._hospitalServiceRepository = hospitalSurveyRepository;
@@ -32,11 +32,31 @@ namespace Hospital.Users.Service
                 if (hospitalSurvey.PatientEmail.Equals(this._patientEmail)) 
                 { Console.WriteLine("Vec ste ocenili rad bolnice."); return; }    
             }
-            HospitalSurvey surveyResult = this._hospitalServiceRepository.InputValuesForServey(this._patientEmail);
+            HospitalSurvey surveyResult = this.InputValuesForServey(this._patientEmail);
             this.AddNewSurvey(surveyResult);
         }
 
-        private void AddNewSurvey(HospitalSurvey newRatedSurvey)
+        public HospitalSurvey InputValuesForServey(string patientEmail)
+        {
+            Console.WriteLine("\nBolnicu ocenjujete ocenama od 1 do 5");
+            Console.Write("\nKvalitet usluga bolnice: ");
+            int quality = Int32.Parse(Console.ReadLine());
+            Console.Write("Koliko je cista bolnica? : ");
+            int cleanliness = Int32.Parse(Console.ReadLine());
+            Console.Write("Da li ste zadovoljni? : ");
+            int satisfied = Int32.Parse(Console.ReadLine());
+            Console.Write("Da li biste predlozili bolnicu prijateljima? : ");
+            int recommendation = Int32.Parse(Console.ReadLine());
+            Console.Write("Komentar: ");
+            string comment = Console.ReadLine();
+
+            HospitalSurvey hospitalSurvey =
+                new HospitalSurvey(patientEmail, quality, cleanliness, satisfied, recommendation, comment);
+
+            return hospitalSurvey;
+        }
+
+        public void AddNewSurvey(HospitalSurvey newRatedSurvey)
         {
             this._surveyResults.Add(newRatedSurvey);
             this._hospitalServiceRepository.Save(this._surveyResults);

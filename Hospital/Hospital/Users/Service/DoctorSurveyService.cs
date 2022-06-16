@@ -6,14 +6,17 @@ using System.Threading.Tasks;
 
 using Hospital.Users.Repository;
 using Hospital.Users.Model;
+using Hospital.Appointments.Model;
 
 namespace Hospital.Users.Service
 {
-    public class DoctorSurveyService : IDoctorSurveyService
+    public class DoctorSurveyService: IDoctorSurveyService
     {
         private IDoctorSurveyRepository _doctorServiceRepository;
         private List<DoctorSurvey> _evaluatedDoctors;
         private UserService _userService;
+
+        public List<DoctorSurvey> EvaluatedDoctors { get { return _evaluatedDoctors; } }
 
         public DoctorSurveyService(IDoctorSurveyRepository doctorSurveyRepository)
         {
@@ -22,8 +25,21 @@ namespace Hospital.Users.Service
             _userService = new UserService();
         }
 
-        public List<DoctorSurvey> EvaluatedDoctors { get { return _evaluatedDoctors; } }
-        public IDoctorSurveyRepository DoctorSurveyRepository { get { return _doctorServiceRepository; } }
+        public DoctorSurvey EvaluateDoctor(Appointment appointment)
+        {
+            Console.WriteLine("\nDoktora ocenjujete ocenama od 1 do 5");
+            Console.Write("\nKvalitet usluge doktora: ");
+            int quality = Int32.Parse(Console.ReadLine());
+            Console.Write("Da li biste doktora preporucili prijatelju: ");
+            int recommendation = Int32.Parse(Console.ReadLine());
+            Console.Write("Komentar: ");
+            string comment = Console.ReadLine();
+
+            DoctorSurvey evaluatedDoctor =
+                new DoctorSurvey(appointment.AppointmentId, appointment.PatientEmail, appointment.DoctorEmail, quality, recommendation, comment);
+
+            return evaluatedDoctor;
+        }
 
         public DoctorSurveyResult GetSurveyResultForDoctor(DoctorUser doctor)
         {

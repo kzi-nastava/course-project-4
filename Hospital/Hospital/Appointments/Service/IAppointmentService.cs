@@ -9,7 +9,7 @@ using Hospital.Users.Model;
 
 namespace Hospital.Appointments.Service
 {
-    public interface IAppointmentService: IService<Appointment>
+    public interface IAppointmentService
     {
         void Save();
         bool OverlapingAppointmentExists(DateTime start, DateTime end, string roomId);

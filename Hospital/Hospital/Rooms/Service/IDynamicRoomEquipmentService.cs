@@ -7,7 +7,7 @@ using Hospital.Rooms.Model;
 
 namespace Hospital.Rooms.Service
 {
-    public interface IDynamicRoomEquipmentService: IService<DynamicEquipment>
+    public interface IDynamicRoomEquipmentService
     {
         void UpdateFile();
         void UpdateDictionary(Dictionary<string, int> amount, string idRoom);

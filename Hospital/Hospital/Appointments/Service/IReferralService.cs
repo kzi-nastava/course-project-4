@@ -8,7 +8,7 @@ using Hospital.Users.Model;
 
 namespace Hospital.Appointments.Service
 {
-    public interface IReferralService: IService<Referral>
+    public interface IReferralService
     {
         void Add(Referral referral);
         void UseReferral(Referral usedReferral);

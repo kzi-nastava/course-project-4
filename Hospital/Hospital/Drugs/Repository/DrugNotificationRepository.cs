@@ -11,7 +11,7 @@ using Hospital.Drugs.Model;
 
 namespace Hospital.Drugs.Repository
 {
-    public class DrugNotificationRepository
+    public class DrugNotificationRepository: IDrugNotificationRepository
 	{
 		public List<DrugNotification> Load()
 		{
@@ -33,19 +33,13 @@ namespace Hospital.Drugs.Repository
 			return drugNotifications;
 		}
 
-		public void ChangeTimeNotification(string userEmail)
+		public void Save(List<DrugNotification> notifications)
 		{
-			Console.Write("\nUnesite koliko vremena ranije zelite da dobije obavestenje: ");
-			string newTime = Console.ReadLine();
-
 			List<string> lines = new List<string>();
 			string line;
-			foreach (DrugNotification notification in this.Load())
+			foreach (DrugNotification notification in notifications)
 			{
-				if (notification.PatientEmail.Equals(userEmail))
-					line = notification.PatientEmail + "," + newTime;
-				else
-					line = notification.PatientEmail + "," + notification.TimeNotification.ToString("HH:mm");
+				line = notification.PatientEmail + "," + notification.TimeNotification.ToString("HH:mm");
 				lines.Add(line);
 			}
 			File.WriteAllLines(@"..\..\Data\drugNotification.csv", lines.ToArray());

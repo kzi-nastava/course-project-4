@@ -10,7 +10,7 @@ using Hospital.Appointments.Model;
 
 namespace Hospital.Users.Repository
 {
-    public class DoctorSurveyRepository : IDoctorSurveyRepository
+    public class DoctorSurveyRepository: IDoctorSurveyRepository
     {
         public List<DoctorSurvey> Load()
         {
@@ -35,22 +35,6 @@ namespace Hospital.Users.Repository
                 }
             }
             return evaluatedDoctors;
-        }
-
-        public DoctorSurvey EvaluateDoctor(Appointment appointment)
-        {
-            Console.WriteLine("\nDoktora ocenjujete ocenama od 1 do 5");
-            Console.Write("\nKvalitet usluge doktora: ");
-            int quality = Int32.Parse(Console.ReadLine());
-            Console.Write("Da li biste doktora preporucili prijatelju: ");
-            int recommendation = Int32.Parse(Console.ReadLine());
-            Console.Write("Komentar: ");
-            string comment = Console.ReadLine();
-
-            DoctorSurvey evaluatedDoctor =
-                new DoctorSurvey(appointment.AppointmentId, appointment.PatientEmail, appointment.DoctorEmail, quality, recommendation, comment);
-
-            return evaluatedDoctor;
         }
 
         public void Save(List<DoctorSurvey> doctorSurveys)

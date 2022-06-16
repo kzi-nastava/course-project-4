@@ -7,7 +7,7 @@ using Hospital.Rooms.Model;
 
 namespace Hospital.Rooms.Service
 {
-    public interface IWarehouseService: IService<DynamicEquipment>
+    public interface IWarehouseService
     {
         List<DynamicEquipment> GetMissingEquipment();
         string GetNameEquipment(string id);

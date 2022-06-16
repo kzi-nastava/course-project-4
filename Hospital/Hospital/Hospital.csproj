@@ -36,10 +36,12 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Drugs\Repository\IDrugNotificationRepository.cs" />
+    <Compile Include="Drugs\Service\IDrugNotificationService.cs" />
+    <Compile Include="IRepository.cs" />
     <Compile Include="Drugs\View\IDrugView.cs" />
     <Compile Include="Drugs\View\IIngredientView.cs" />
     <Compile Include="IRepository.cs" />
-    <Compile Include="IService.cs" />
     <Compile Include="Rooms\Model\Room.cs" />
     <Compile Include="Rooms\Model\DynamicRoomEquipment.cs" />
     <Compile Include="Rooms\Model\DynamicEquipment.cs" />
@@ -96,6 +98,7 @@
     <Compile Include="Users\Repository\HospitalSurveyRepository.cs" />
     <Compile Include="Users\Repository\IDoctorSurveyRepository.cs" />
     <Compile Include="Users\Repository\IHospitalSurveyRepository.cs" />
+    <Compile Include="Users\Repository\IUserActionRepository.cs" />
     <Compile Include="Users\Repository\UserRepository.cs" />
     <Compile Include="Users\Repository\IUserRepository.cs" />
     <Compile Include="Users\Repository\NotificationRepository.cs" />
@@ -106,6 +109,7 @@
     <Compile Include="Users\Service\HospitalSurveyService.cs" />
     <Compile Include="Users\Service\IDoctorSurveyService.cs" />
     <Compile Include="Users\Service\IHospitalSurveyService.cs" />
+    <Compile Include="Users\Service\IUserActionService.cs" />
     <Compile Include="Users\Service\UserService.cs" />
     <Compile Include="Users\Service\IUserService.cs" />
     <Compile Include="Users\Service\NotificationService.cs" />
